@@ -16,9 +16,9 @@ public class AuthController : Controller
     }
     
     [HttpPost("/login")]
-    public async Task<IActionResult> Get([FromBody] LoginViewModel viewModel)
+    public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
     {
-        var response = await _authenticationClient.LoginAsync(viewModel.Username, viewModel.Password);
+        var response = await _authenticationClient.LoginAsync(request.Username, request.Password);
         if (response.StatusCode is HttpStatusCode.Unauthorized)
             return Unauthorized();
 
@@ -42,10 +42,4 @@ public class AuthController : Controller
 
         return Ok();
     }
-}
-
-public class LoginViewModel
-{
-    public string Username { get; set; }
-    public string Password { get; set; }
 }

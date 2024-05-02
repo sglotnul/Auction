@@ -37,6 +37,8 @@ public class Startup
                 options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
+                    ValidateAudience = false,
+                    ValidateIssuer = false,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSection.Get<AuthOptions>()!.Key))
                 };
                 options.Events = new JwtBearerEvents

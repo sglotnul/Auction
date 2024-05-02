@@ -4,6 +4,9 @@ namespace Auction.Model;
 
 public class AppDbContext : DbContext
 {
+	private const string DefaultUserId = "26214742-0a8b-40ea-ab76-ec78aeee3429";
+	
+	public DbSet<User> Users { get; set; }
 	public DbSet<Profile> Profiles { get; set; }
 	public DbSet<Auction> Auctions { get; set; }
 	public DbSet<ConsultationSession> ConsultationSessions { get; set; }
@@ -22,7 +25,10 @@ public class AppDbContext : DbContext
 			entity.HasKey(e => e.Id);
 			entity.HasOne(e => e.User)
 				.WithOne()
-				.HasForeignKey<Profile>(e => e.UserID);
+				.HasForeignKey<Profile>(e => e.UserId);
+
+			entity.HasIndex(e => e.UserId)
+				.IsUnique();
 		});
 		
 		modelBuilder.Entity<Auction>(entity =>
@@ -30,7 +36,7 @@ public class AppDbContext : DbContext
 			entity.HasKey(e => e.Id);
 			entity.HasOne(e => e.StudentUser)
 				.WithMany()
-				.HasForeignKey(e => e.StudentUserID);
+				.HasForeignKey(e => e.StudentUserId);
 		});
 		
 		modelBuilder.Entity<ConsultationSession>(entity =>
@@ -38,13 +44,22 @@ public class AppDbContext : DbContext
 			entity.HasKey(e => e.Id);
 			entity.HasOne(e => e.Auction)
 				.WithMany()
-				.HasForeignKey(e => e.AuctionID);
+				.HasForeignKey(e => e.AuctionId);
 			entity.HasOne(e => e.ConsultantUser)
 				.WithMany()
-				.HasForeignKey(e => e.ConsultantUserID);
+				.HasForeignKey(e => e.ConsultantUserId);
 			entity.HasOne(e => e.StudentUser)
 				.WithMany()
-				.HasForeignKey(e => e.StudentUserID);
+				.HasForeignKey(e => e.StudentUserId);
+		});
+
+		modelBuilder.Entity<User>(entity =>
+		{
+			entity.HasData(new User
+			{
+				Id = DefaultUserId,
+				Role = Role.Admin
+			});
 		});
 	}
 }
