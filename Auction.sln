@@ -1,0 +1,28 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auction.Services", "Auction.Services\Auction.Services.csproj", "{FBE3DDF2-C14C-45B1-9A19-B3CC0CAA1545}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auction.Model", "Auction.Model\Auction.Model.csproj", "{C8F07C03-0A21-4132-8876-EAA61F2A2E18}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auction.Migrator", "Auction.Migrator\Auction.Migrator.csproj", "{98F07653-4CC7-4757-97C3-DA3C3BE471EE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FBE3DDF2-C14C-45B1-9A19-B3CC0CAA1545}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBE3DDF2-C14C-45B1-9A19-B3CC0CAA1545}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBE3DDF2-C14C-45B1-9A19-B3CC0CAA1545}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBE3DDF2-C14C-45B1-9A19-B3CC0CAA1545}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8F07C03-0A21-4132-8876-EAA61F2A2E18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8F07C03-0A21-4132-8876-EAA61F2A2E18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8F07C03-0A21-4132-8876-EAA61F2A2E18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8F07C03-0A21-4132-8876-EAA61F2A2E18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98F07653-4CC7-4757-97C3-DA3C3BE471EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98F07653-4CC7-4757-97C3-DA3C3BE471EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98F07653-4CC7-4757-97C3-DA3C3BE471EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98F07653-4CC7-4757-97C3-DA3C3BE471EE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
