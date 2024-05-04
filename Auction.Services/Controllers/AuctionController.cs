@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Auction.Services;
 
-[Route("auctions")]
+[Route("api/auctions")]
 public class AuctionController : Controller
 {
 	private readonly AppDbContext _dbContext;
@@ -29,8 +29,8 @@ public class AuctionController : Controller
 	public async Task<IActionResult> GetCurrentsAuctionsAsync()
 	{
 		var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-		var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == userId);
 
+		var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == userId);
 		if (user is null)
 			throw new InvalidDataException($"User with Id={userId} not found.");
 
@@ -45,8 +45,8 @@ public class AuctionController : Controller
 	public async Task<IActionResult> CreateAuctionAsync()
 	{
 		var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-		var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == userId);
 
+		var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == userId);
 		if (user is null)
 			throw new InvalidDataException($"User with Id={userId} not found.");
 
@@ -55,7 +55,7 @@ public class AuctionController : Controller
 
 		var auction = new Model.Auction
 		{
-			StudentUser = user
+			StudentUserId = userId!
 		};
 
 		await _dbContext.Auctions.AddAsync(auction);
@@ -68,14 +68,22 @@ public class AuctionController : Controller
 	[Authorize]
 	public async Task<IActionResult> PlaceBidAsync([FromRoute] int id)
 	{
+		if (!await _dbContext.Auctions.AnyAsync(a => a.Id == id))
+			return NotFound();
+
 		var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-		if (userId is null)
-			throw new InvalidOperationException("User Id is null.");
+		
+		var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == userId);
+		if (user is null)
+			throw new InvalidDataException($"User with Id={userId} not found.");
+		
+		if (user.Role is not Role.Consultant and not Role.Admin)
+			return Forbid();
 
 		var bid = new ConsultantBid
 		{
 			AuctionId = id,
-			ConsultantUserId = userId
+			ConsultantUserId = userId!
 		};
 
 		await _dbContext.ConsultantBids.AddAsync(bid);

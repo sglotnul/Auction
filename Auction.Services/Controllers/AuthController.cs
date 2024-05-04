@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Auction.Services;
 
+[Route("api")]
 public class AuthController : Controller
 {
     private readonly IAuthenticationClient _authenticationClient;
