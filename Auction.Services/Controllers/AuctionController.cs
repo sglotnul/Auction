@@ -24,7 +24,7 @@ public class AuctionController : Controller
 		return Json(await _dbContext.Auctions.ToArrayAsync());
 	}
 	
-	[HttpGet("im")]
+	[HttpGet("user")]
 	[Authorize]
 	public async Task<IActionResult> GetCurrentsAuctionsAsync()
 	{
@@ -38,5 +38,49 @@ public class AuctionController : Controller
 			return Forbid();
 
 		return Json(await _dbContext.Auctions.Where(a => a.StudentUserId == userId).ToArrayAsync());
+	}
+
+	[HttpPost("create")]
+	[Authorize]
+	public async Task<IActionResult> CreateAuctionAsync()
+	{
+		var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+		var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == userId);
+
+		if (user is null)
+			throw new InvalidDataException($"User with Id={userId} not found.");
+
+		if (user.Role is not Role.Student and not Role.Admin)
+			return Forbid();
+
+		var auction = new Model.Auction
+		{
+			StudentUser = user
+		};
+
+		await _dbContext.Auctions.AddAsync(auction);
+		await _dbContext.SaveChangesAsync();
+
+		return Ok();
+	}
+	
+	[HttpPost("{id:int}/bid")]
+	[Authorize]
+	public async Task<IActionResult> PlaceBidAsync([FromRoute] int id)
+	{
+		var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+		if (userId is null)
+			throw new InvalidOperationException("User Id is null.");
+
+		var bid = new ConsultantBid
+		{
+			AuctionId = id,
+			ConsultantUserId = userId
+		};
+
+		await _dbContext.ConsultantBids.AddAsync(bid);
+		await _dbContext.SaveChangesAsync();
+
+		return Ok();
 	}
 }

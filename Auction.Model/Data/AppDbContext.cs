@@ -9,6 +9,7 @@ public class AppDbContext : DbContext
 	public DbSet<User> Users { get; set; }
 	public DbSet<Profile> Profiles { get; set; }
 	public DbSet<Auction> Auctions { get; set; }
+	public DbSet<ConsultantBid> ConsultantBids { get; set; }
 	public DbSet<ConsultationSession> ConsultationSessions { get; set; }
 	
 	public AppDbContext(DbContextOptions<AppDbContext> options)
@@ -37,6 +38,17 @@ public class AppDbContext : DbContext
 			entity.HasOne(e => e.StudentUser)
 				.WithMany()
 				.HasForeignKey(e => e.StudentUserId);
+		});
+		
+		modelBuilder.Entity<ConsultantBid>(entity =>
+		{
+			entity.HasKey(e => e.Id);
+			entity.HasOne(e => e.Auction)
+				.WithMany()
+				.HasForeignKey(e => e.AuctionId);
+			entity.HasOne(e => e.ConsultantUser)
+				.WithMany()
+				.HasForeignKey(e => e.ConsultantUserId);
 		});
 		
 		modelBuilder.Entity<ConsultationSession>(entity =>
