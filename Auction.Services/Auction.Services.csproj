@@ -12,6 +12,15 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
+      <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="8.0.4" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\Shared\_Layout.cshtml" />
     </ItemGroup>
 
 </Project>

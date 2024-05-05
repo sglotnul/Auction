@@ -51,12 +51,15 @@ public class Startup
                 };
             });
 
-        services.AddControllers();
+        services.AddControllersWithViews();
+        
     }
     
     public void Configure(IApplicationBuilder app)
     {
         app.UseWebSockets();
+        
+        app.UseStaticFiles();
 
         app.UseRouting();
         
@@ -65,6 +68,9 @@ public class Startup
         
         app.UseEndpoints(e => e.MapControllers());
         
-        app.UseStaticFiles();
+        app.UseSpa(spa =>
+        {
+            spa.Options.SourcePath = "client_app/build";
+        });
     }
 }

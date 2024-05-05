@@ -2,11 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Auction.Services;
 
-public class MainController
+public class HomeController : Controller
 {
 	[Route("{*url}", Order = int.MaxValue)]
-	public Task<IActionResult> IndexAsync()
+	public IActionResult Index()
 	{
-		throw new NotImplementedException();
+		return View();
 	}
 }
