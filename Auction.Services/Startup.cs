@@ -52,14 +52,18 @@ public class Startup
             });
 
         services.AddControllersWithViews();
-        
+
+        services.AddSpaStaticFiles(configuration =>
+        {
+            configuration.RootPath = "client_app/build";
+        });
     }
     
     public void Configure(IApplicationBuilder app)
     {
         app.UseWebSockets();
         
-        app.UseStaticFiles();
+        app.UseSpaStaticFiles();
 
         app.UseRouting();
         
@@ -70,7 +74,7 @@ public class Startup
         
         app.UseSpa(spa =>
         {
-            spa.Options.SourcePath = "client_app/build";
+            spa.Options.SourcePath = "client_app";
         });
     }
 }
