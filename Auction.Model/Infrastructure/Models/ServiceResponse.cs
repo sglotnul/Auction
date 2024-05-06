@@ -4,14 +4,17 @@ namespace Auction.Model;
 
 public class ServiceResponse<TResult>
 {
-	public TResult? Result { get; }
 	public HttpStatusCode StatusCode { get; }
+	public TResult? Result { get; }
+	public string? ErrorMessage { get; }
 
 	public ServiceResponse(
 		HttpStatusCode statusCode,
-		TResult? result)
+		TResult? result,
+		string? errorMessage)
 	{
 		StatusCode = statusCode;
 		Result = result;
+		ErrorMessage = errorMessage;
 	}
 }

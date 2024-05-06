@@ -1,23 +1,40 @@
 import React, { useState, useContext } from 'react';
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from '../../contexts/AuthContext';
 
 const LoginPage = () => {
-    const { login } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    const { user, login } = useContext(AuthContext);
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    
+    if (user){
+        navigate('/auctions');
+    }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        login(email, password);
+
+        const { success, errorMessage } = await login(email, password);
+
+        if (success) {
+            navigate('/auctions');
+        } else {
+            setError(errorMessage);
+        }
     };
 
     return (
         <form onSubmit={handleSubmit}>
+            {error && <p>{error}</p>}
             <input
-                type="email"
+                type="text"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email"
+                placeholder="Username"
                 required
             />
             <input
