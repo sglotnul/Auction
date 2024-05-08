@@ -1,6 +1,7 @@
-import React, { useState, useContext } from 'react';
-import { useNavigate } from "react-router-dom";
-import { AuthContext } from '../../contexts/AuthContext';
+import React, {useState, useContext} from 'react';
+import {useNavigate} from "react-router-dom";
+import AuthContext from '../../contexts/AuthContext';
+import DefaultPageLayout from "../DefaultPageLayout";
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -28,24 +29,26 @@ const LoginPage = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            {error && <p>{error}</p>}
-            <input
-                type="text"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Username"
-                required
-            />
-            <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
-                required
-            />
-            <button type="submit">Login</button>
-        </form>
+        <DefaultPageLayout>
+            <form onSubmit={handleSubmit}>
+                {error && <p>{error}</p>}
+                <input
+                    type='text'
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder='Username'
+                    required
+                />
+                <input
+                    type='password'
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder='Password'
+                    required
+                />
+                <button type='submit'>Login</button>
+            </form>
+        </DefaultPageLayout>
     );
 };
 

@@ -4,11 +4,11 @@ import useAuctions from "../../hooks/useAuctions";
 import AuctionCard from "../AuctionCard";
 
 const AuctionsPage = () => {
-	const auctions = useAuctions([]);
+	const auctions = useAuctions(null);
 
 	return (
 		<DefaultPageLayout>
-			<div className="auction-list">
+			<div className='auction-list'>
 				{auctions.map(
 					(auction) => <AuctionCard key={auction.id} auction={auction}/>
 				)}

@@ -1,6 +1,6 @@
 import { createContext, useCallback, useEffect, useState } from 'react';
 
-export const AuthContext = createContext(null);
+const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
@@ -67,3 +67,5 @@ function mapMessage(status) {
             return `Ошибка: ${status}`;
     }
 }
+
+export default AuthContext;

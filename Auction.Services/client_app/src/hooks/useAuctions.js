@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 
-const useAuctions = () => {
+const useAuctions = (filter) => {
     const [auctions, setAuctions] = useState([]);
 
     useEffect(() => {
@@ -14,7 +14,7 @@ const useAuctions = () => {
         };
 
         fetchAuctions();
-    }, []);
+    }, [filter]);
     
     return auctions;
 }

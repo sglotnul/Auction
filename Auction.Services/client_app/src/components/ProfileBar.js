@@ -1,6 +1,7 @@
 import ProfileDrawer from "./ProfileDrawer";
 import React, {Fragment, useCallback, useContext, useState} from "react";
-import {AuthContext} from "../contexts/AuthContext";
+import AuthContext from "../contexts/AuthContext";
+import {Link} from "react-router-dom";
 
 const ProfileBar = () => {
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -21,8 +22,9 @@ const ProfileBar = () => {
 
 	if (!user) {
 		return (
-			<div>
-				Регистрация
+			<div style={{display: 'inline'}}>
+				<Link to='/login'>Sing Up      </Link>
+				<Link to='/login'>Sing In</Link>
 			</div>
 		)
 	}
@@ -30,7 +32,7 @@ const ProfileBar = () => {
 	return (
 		<Fragment>
 			<div onClick={toggleDrawer(true)}>
-				Здравствуйте, {user.userName}!
+				Hello, {user.userName}!
 			</div>
 			<ProfileDrawer isOpen={isDrawerOpen} toggleDrawer={toggleDrawer}/>
 		</Fragment>
