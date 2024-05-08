@@ -21,7 +21,13 @@ public class AuctionController : Controller
 	[HttpGet("")]
 	public async Task<IActionResult> GetAuctionsAsync()
 	{
-		return Json(await _dbContext.Auctions.ToArrayAsync());
+		var auctions = await _dbContext.Auctions.ToArrayAsync();
+		return Json(auctions.Length != 0 ? auctions : [
+			new Model.Auction
+			{
+				Id = 1,
+				StudentUserId = "afdsgag"
+			}]);
 	}
 	
 	[HttpGet("user")]
