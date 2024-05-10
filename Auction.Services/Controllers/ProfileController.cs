@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Auction.Services;
 
-[Route("api/profile")]
+[Route("api/profiles")]
 [Authorize]
 public class ProfileController : Controller
 {
@@ -23,13 +23,11 @@ public class ProfileController : Controller
 	public async Task<IActionResult> GetUsersProfileAsync()
 	{
 		var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+		var user = await _dbContext.Users.Include(user => user.Profile).SingleOrDefaultAsync(user => user.Id == userId);
 		
-		var profile = await _dbContext.Profiles.SingleOrDefaultAsync(p => p.UserId == userId);
-		if (profile is null)
-			throw new InvalidDataException();
+		if (user is null)
+			throw new InvalidDataException($"User with Id={userId} not found.");
 
-		var response = new ProfileResponseDto(profile.Id);
-
-		return Json(response);
+		return Json(new ProfileResponseDto(user.Profile?.Id));
 	}
 }

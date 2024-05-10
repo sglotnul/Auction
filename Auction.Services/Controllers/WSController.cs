@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Auction.Services;
 
-[Authorize]
 public class WSController : Controller
 {
     [Route("/ws")]

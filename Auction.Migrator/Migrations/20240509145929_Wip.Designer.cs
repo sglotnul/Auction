@@ -3,6 +3,7 @@ using System;
 using Auction.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Migrator.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240509145929_Wip")]
+    partial class Wip
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,7 +67,7 @@ namespace Migrator.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("AuctionCategories");
+                    b.ToTable("AuctionCategory");
                 });
 
             modelBuilder.Entity("Auction.Model.Category", b =>
@@ -81,24 +84,7 @@ namespace Migrator.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Math"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Economy"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Chemistry"
-                        });
+                    b.ToTable("Category");
                 });
 
             modelBuilder.Entity("Auction.Model.ConsultantBid", b =>

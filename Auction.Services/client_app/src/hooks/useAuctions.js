@@ -2,21 +2,32 @@ import {useEffect, useState} from 'react';
 
 const useAuctions = (filter) => {
     const [auctions, setAuctions] = useState([]);
+    const [count, setCount] = useState(0);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchAuctions = async () => {
-            const response = await fetch('api/auctions');
+            setLoading(true)
+            
+            const uri = new URL('api/auctions', window.location.href);
+            uri.search = filter.getQueryString();
+            
+            const response = await fetch(uri);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
 
-            setAuctions(await response.json());
+            const data = await response.json();
+            
+            setAuctions(data.auctions);
+            setCount(data.count);
+            setLoading(false);
         };
 
         fetchAuctions();
     }, [filter]);
     
-    return auctions;
+    return [auctions, count, loading];
 }
 
 export default useAuctions;

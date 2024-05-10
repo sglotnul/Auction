@@ -19,15 +19,24 @@ public class AuctionController : Controller
 	}
 	
 	[HttpGet("")]
-	public async Task<IActionResult> GetAuctionsAsync()
+	public async Task<IActionResult> GetAuctionsAsync([FromQuery] AuctionsRequest request)
 	{
-		var auctions = await _dbContext.Auctions.ToArrayAsync();
-		return Json(auctions.Length != 0 ? auctions : [
-			new Model.Auction
-			{
-				Id = 1,
-				StudentUserId = "afdsgag"
-			}]);
+		var auctions = _dbContext.Auctions.AsQueryable();
+
+		if (request.Categories is not null && request.Categories.Count != 0)
+		{
+			auctions = _dbContext.AuctionCategories
+				.Where(ac => request.Categories.Contains(ac.CategoryId))
+				.Select(ac => ac.Auction)
+				.Distinct();
+		}
+
+		var result = new AuctionsResponse
+		{
+			Auctions = await auctions.ToArrayAsync()
+		};
+		
+		return Json(result);
 	}
 	
 	[HttpGet("user")]

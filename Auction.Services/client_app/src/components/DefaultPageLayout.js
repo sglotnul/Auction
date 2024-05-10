@@ -4,8 +4,12 @@ import ProfileBar from "./ProfileBar";
 const Header = () => {
     return (
         <header>
-            <h1>Auction</h1>
-            <ProfileBar/>
+            <div className='wrapper'>
+                <div className="header-container">
+                    <h1>Auction</h1>
+                    <ProfileBar/>
+                </div>
+            </div>
         </header>
     );
 };
@@ -22,9 +26,11 @@ const DefaultPageLayout = ({ children }) => {
     return (
         <Fragment>
             <Header/>
-                <div className='layout'>
+            <div className='layout'>
+                <div className='wrapper'>
                     {children}
                 </div>
+            </div>
             <Footer/>
         </Fragment>
     );
