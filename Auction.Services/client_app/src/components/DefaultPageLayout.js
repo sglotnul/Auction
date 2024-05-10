@@ -1,5 +1,6 @@
 import React, {Fragment} from 'react';
 import ProfileBar from "./ProfileBar";
+import WebSocketComponent from "./WebSocketComponent";
 
 const Header = () => {
     return (
@@ -8,6 +9,7 @@ const Header = () => {
                 <div className="header-container">
                     <h1>Auction</h1>
                     <ProfileBar/>
+                    <WebSocketComponent/>
                 </div>
             </div>
         </header>

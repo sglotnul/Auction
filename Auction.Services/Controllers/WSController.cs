@@ -33,6 +33,7 @@ public class WSController : Controller
                 true,
                 CancellationToken.None);
             
+            /*
             var buffer = new byte[1024 * 4];
             await webSocket.ReceiveAsync(
                 new ArraySegment<byte>(buffer), CancellationToken.None);
@@ -40,6 +41,7 @@ public class WSController : Controller
             var s = Encoding.UTF8.GetString(buffer).TrimEnd('\0');
             Console.WriteLine(s);
             Console.WriteLine(s.Length);
+            */
 
             await Task.Delay(TimeSpan.FromSeconds(10));
         }
