@@ -9,6 +9,10 @@ const ProfileBar = () => {
 	const { loading: userLoading, user } = useContext(AuthContext);
 
 	const toggleDrawer = (open) => (event) => {
+		if (!event){
+			return;
+		}
+		
 		if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
 			return;
 		}
@@ -26,7 +30,7 @@ const ProfileBar = () => {
 	if (!user) {
 		return (
 			<div style={{display: 'inline'}}>
-				<Link to='/login'>Sing Up      </Link>
+				<Link to='/register'>Sing Up      </Link>
 				<Link to='/login'>Sing In</Link>
 			</div>
 		)

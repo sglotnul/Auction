@@ -5,9 +5,9 @@ namespace Auction.Model;
 
 public interface IAuthenticationClient
 {
-	Task<ServiceResponse<JwtResponse>> AddUserAsync(string username, string password);
+	Task<ServiceResponse<AddUserResponse>> AddUserAsync(string username, string password);
 
-	Task<ServiceResponse<JwtResponse>> LoginAsync(string username, string password);
+	Task<ServiceResponse<JwtResponse>> GetTokenAsync(string username, string password);
 }
 
 public class AuthenticationClient : IAuthenticationClient
@@ -20,35 +20,36 @@ public class AuthenticationClient : IAuthenticationClient
 		_httpClient = httpClient;
 	}
 	
-	public async Task<ServiceResponse<JwtResponse>> AddUserAsync(string username, string password)
+	public async Task<ServiceResponse<AddUserResponse>> AddUserAsync(string username, string password)
 	{
 		var response = await _httpClient.PostAsync("add", JsonContent.Create(new { username, password }));
-		return await GetResponseDtoAsync(response);
+		return await GetResponseDtoAsync<AddUserResponse>(response);
 	}
 	
-	public async Task<ServiceResponse<JwtResponse>> LoginAsync(string username, string password)
+	public async Task<ServiceResponse<JwtResponse>> GetTokenAsync(string username, string password)
 	{
-		var response = await _httpClient.PostAsync("login", JsonContent.Create(new { username, password }));
-		return await GetResponseDtoAsync(response);
+		var response = await _httpClient.PostAsync("get-token", JsonContent.Create(new { username, password }));
+		return await GetResponseDtoAsync<JwtResponse>(response);
 	}
 
-	private static async Task<ServiceResponse<JwtResponse>> GetResponseDtoAsync(HttpResponseMessage response)
+	private static async Task<ServiceResponse<TResponse>> GetResponseDtoAsync<TResponse>(HttpResponseMessage response)
+		where TResponse : class
 	{
-		var result = (JwtResponse?)null;
-		var errorMessage = (string?)null;
+		var result = (TResponse?)null;
+		var errorCode = (string?)null;
 
 		if (response.StatusCode == HttpStatusCode.OK)
 		{
-			result = await response.Content.ReadFromJsonAsync<JwtResponse>();
+			result = await response.Content.ReadFromJsonAsync<TResponse>();
 		}
 		else
 		{
-			errorMessage = await response.Content.ReadAsStringAsync();
+			errorCode = await response.Content.ReadAsStringAsync();
 		}
 		
-		return new ServiceResponse<JwtResponse>(
+		return new ServiceResponse<TResponse>(
 			response.StatusCode,
 			result,
-			errorMessage);
+			errorCode);
 	}
 }

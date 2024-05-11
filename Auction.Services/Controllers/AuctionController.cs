@@ -33,10 +33,20 @@ public class AuctionController : Controller
 
 		var result = new AuctionsResponse
 		{
-			Auctions = await auctions.ToArrayAsync()
+			Auctions = await auctions.Include(a => a.StudentUser.Profile).ToArrayAsync()
 		};
 		
 		return Json(result);
+	}
+	
+	[HttpGet("{id:int}")]
+	public async Task<IActionResult> GetAuctionsAsync(int id)
+	{
+		var auction = await _dbContext.Auctions.Include(a => a.StudentUser.Profile).SingleOrDefaultAsync(a => a.Id == id);
+		if (auction is null)
+			return NotFound();
+		
+		return Json(auction);
 	}
 	
 	[HttpGet("user")]

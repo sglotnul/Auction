@@ -1,9 +1,10 @@
 import React, {useContext} from 'react';
 import Drawer from '@mui/material/Drawer';
 import AuthContext from "../contexts/AuthContext";
+import {Button} from "@mui/material";
 
 const ProfileDrawer = ({isOpen, onClose}) => {
-    const { user } = useContext(AuthContext);
+    const { user, logout } = useContext(AuthContext);
     
     return (
         <Drawer
@@ -11,7 +12,12 @@ const ProfileDrawer = ({isOpen, onClose}) => {
             open={isOpen}
             onClose={onClose}
         >
-            Hi, {user.userName}
+            <div className="profile-drawer">
+                <h1>Hi, {user.userName}</h1>
+                <Button onClick={logout}>
+                    Log Out
+                </Button>
+            </div>
         </Drawer>
     );
 };

@@ -61,6 +61,11 @@ public class Startup
     
     public void Configure(IApplicationBuilder app)
     {
+        app.UseExceptionHandler(new ExceptionHandlerOptions
+        {
+            ExceptionHandler = context => context.Response.WriteAsync("InternalServerError")
+        });
+        
         app.UseWebSockets();
         
         app.UseSpaStaticFiles();

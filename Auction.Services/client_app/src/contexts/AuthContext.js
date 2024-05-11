@@ -8,6 +8,8 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const initializeUser = async () => {
+            setLoading(true);
+            
             const fetchedUser = await tryGetUser();
             setUser(fetchedUser);
 
@@ -20,7 +22,7 @@ export const AuthProvider = ({ children }) => {
     const login = useCallback(async (username, password) => {
         setLoading(true);
     
-        const response = await fetch('api/login', {
+        const response = await fetch('/api/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
@@ -34,38 +36,65 @@ export const AuthProvider = ({ children }) => {
 
         setLoading(false);
         
-        return {success: response.ok, errorMessage: mapMessage(response.status)};
+        const mapMessage = (status) => {
+            switch (status) {
+                case 200:
+                    return null;
+                case 401:
+                    return 'Invalid user name or password';
+                case 500:
+                    return 'Internal server error';
+                default:
+                    return `Unexpected error`;
+            }
+        }
+        
+        return mapMessage(response.status);
     },[]);
 
-    const logout = useCallback(() => {
-        setUser(null);
+    const logout = useCallback(async () => {
+        setLoading(true);
+        
+        const response = await fetch('/api/logout', { method: 'POST' });
+
+        if (response.ok) {
+            setUser(null);
+        }
+
+        setLoading(false);
+    },[]);
+
+    const register = useCallback(async (username, password, role) => {
+        setLoading(true);
+
+        const response = await fetch('/api/register', { 
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify({username, password, role})
+        });
+
+        if (response.ok) {
+            setUser(await response.json());
+        }
+
+        setLoading(false);
     },[]);
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout }}>
+        <AuthContext.Provider value={{ user, loading, login, logout, register }}>
             {children}
         </AuthContext.Provider>
     );
 };
 
 async function tryGetUser() {
-    const response = await fetch('api/user');
+    const response = await fetch('/api/user');
     if (response.ok) {
         return await response.json();
     }
     return null;
-}
-
-function mapMessage(status) {
-    switch (status) {
-        case 401:
-            return 'Неверное имя пользователя или пароль';
-        case 500:
-            return 'Внутренняя ошибка сервера';
-        // Добавьте другие кейсы для разных HTTP статусов, если необходимо
-        default:
-            return `Ошибка: ${status}`;
-    }
 }
 
 export default AuthContext;

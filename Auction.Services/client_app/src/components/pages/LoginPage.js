@@ -8,7 +8,7 @@ const LoginPage = () => {
 
     const { user, login } = useContext(AuthContext);
 
-    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     
@@ -19,11 +19,9 @@ const LoginPage = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const { success, errorMessage } = await login(email, password);
+        const errorMessage = await login(username, password);
 
-        if (success) {
-            navigate('/auctions');
-        } else {
+        if (errorMessage) {
             setError(errorMessage);
         }
     };
@@ -34,8 +32,8 @@ const LoginPage = () => {
                 {error && <p>{error}</p>}
                 <input
                     type='text'
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                     placeholder='Username'
                     required
                 />

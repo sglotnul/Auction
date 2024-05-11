@@ -8,7 +8,7 @@ const useCategories = () => {
         const fetchCategories = async () => {
             setLoading(true);
             
-            const response = await fetch('api/categories');
+            const response = await fetch('/api/categories');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }

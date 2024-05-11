@@ -6,15 +6,15 @@ public class ServiceResponse<TResult>
 {
 	public HttpStatusCode StatusCode { get; }
 	public TResult? Result { get; }
-	public string? ErrorMessage { get; }
+	public string? ErrorCode { get; }
 
 	public ServiceResponse(
 		HttpStatusCode statusCode,
 		TResult? result,
-		string? errorMessage)
+		string? errorCode)
 	{
 		StatusCode = statusCode;
 		Result = result;
-		ErrorMessage = errorMessage;
+		ErrorCode = errorCode;
 	}
 }

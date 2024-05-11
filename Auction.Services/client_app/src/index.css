@@ -4,9 +4,7 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: Arial, "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -57,6 +55,11 @@ header {
   gap: 20px;
 }
 
+.profile-drawer {
+  position: relative;
+  width: 640px;
+}
+
 .auctions-page {
   display: flex;
 }
@@ -95,10 +98,40 @@ header {
   box-sizing: border-box;
   border-radius: 4px;
   border: 1px solid transparent;
-  transition: border .1s ease-in, box-shadow 1s;
-  cursor: pointer;
 }
 
-.auction-card:hover{
-  box-shadow: 0 2px 12px rgb(197, 197, 197);
+.auction-card-title { 
+  display: block;
+  color: #468ffd;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.auction-card-outer-link {
+  position: relative;
+  z-index: 1;
+}
+
+.auction-card-inner-link {
+  position: relative;
+  z-index: 2;
+}
+
+.auction-card-student {
+  display: block;
+  color: #2a3137;
+  font-size: 14px;
+}
+
+.auction-card-student:hover {
+  text-decoration: underline;
+}
+
+.bid-button {
+  background-color: #0dc267;
+  color: transparent;
+  border-radius: 4px;
+  width: 130px;
+  height: 30px;
 }

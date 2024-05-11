@@ -4,7 +4,6 @@ using System.Security.Claims;
 
 using Auction.Model;
 
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -27,76 +26,82 @@ public class AuthController : Controller
     public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequest request)
     {
         var response = await _authenticationClient.AddUserAsync(request.Username, request.Password);
-
-        if (response.StatusCode is HttpStatusCode.Unauthorized)
-            return Unauthorized();
-
-        if (response.StatusCode != HttpStatusCode.OK)
-            throw new InvalidOperationException("Status code is not 200.");
+        if (response.StatusCode is not HttpStatusCode.OK)
+            return StatusCode((int)response.StatusCode, response.ErrorCode);
         
-        if (response.Result is null)
+        if (response.Result?.JwtToken is null || response.Result?.UserId is null)
             throw new InvalidOperationException();
 
-        var result = response.Result;
+        var user = new User
+        {
+            Id = response.Result.UserId,
+            Role = request.Role
+        };
+
+        await _dbContext.Users.AddAsync(user);
+        await _dbContext.SaveChangesAsync();
 
         AuthTokenCookieHelper.Append(
             Response, 
-            result.Token, 
-            new CookieOptions
-            {
-                HttpOnly = true,
-                SameSite = SameSiteMode.Strict,
-                Expires = result.ExpirationDateTime
-            });
+            response.Result.JwtToken.Token, 
+            response.Result.JwtToken.ExpirationDateTime);
 
-        return Ok();
+        var claims = GetClaimsFromToken(response.Result.JwtToken.Token);
+
+        var userName = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+        if (userName is null)
+            throw new InvalidOperationException("Authorized user name is null.");
+
+        return Json(
+            new UserResponse
+            {
+                UserId = response.Result.UserId,
+                UserName = userName,
+                Role = request.Role
+            });
     }
     
     [HttpPost("login")]
     public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
     {
-        var response = await _authenticationClient.LoginAsync(request.Username, request.Password);
-
-        if (response.StatusCode is HttpStatusCode.Unauthorized)
-            return Unauthorized(response.ErrorMessage);
-
-        if (response.StatusCode != HttpStatusCode.OK)
-            throw new InvalidOperationException($"Status code is not 200. Error: {response.ErrorMessage}");
+        var response = await _authenticationClient.GetTokenAsync(request.Username, request.Password);
+        if (response.StatusCode is not HttpStatusCode.OK)
+            return StatusCode((int)response.StatusCode, response.ErrorCode);
         
         if (response.Result is null)
-            throw new InvalidOperationException($"{nameof(response.Result)} cannot be null");
-
-        var result = response.Result;
+            throw new InvalidOperationException();
 
         AuthTokenCookieHelper.Append(
             Response, 
-            result.Token, 
-            new CookieOptions
-            {
-                HttpOnly = true,
-                SameSite = SameSiteMode.Strict,
-                Expires = result.ExpirationDateTime
-            });
+            response.Result.Token, 
+            response.Result.ExpirationDateTime);
 
-        var claims = GetClaimsFromToken(result.Token);
-        
+        var claims = GetClaimsFromToken(response.Result.Token);
+
         var userId = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         var userName = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
-
+        if (userName is null)
+            throw new InvalidOperationException("Authorized user name is null.");
+        
         var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == userId);
         if (user is null)
             throw new InvalidDataException($"User with Id={userId} not found.");
-        
-        if (userName is null)
-            throw new InvalidOperationException("Authorized user name is null.");
 
         return Json(
              new UserResponse
              {
-                 UserId = userId!,
+                 UserId = user.Id,
                  UserName = userName,
                  Role = user.Role
              });
+    }
+    
+    [HttpPost("logout")]
+    [Authorize]
+    public IActionResult LogoutAsync()
+    {
+        AuthTokenCookieHelper.Remove(Response);
+        return Ok();
     }
     	
     [HttpGet("user")]

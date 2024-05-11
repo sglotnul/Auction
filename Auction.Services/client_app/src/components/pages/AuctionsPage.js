@@ -4,9 +4,11 @@ import DefaultPageLayout from "../DefaultPageLayout";
 import AuctionsCategoryFilter from "../AuctionsCategoryFilter";
 import AuctionsFilter from "../../models/AuctionsFilter";
 import AuctionCard from "../AuctionCard";
+import {Link} from "react-router-dom";
 
 const AuctionsPage = () => {
 	const [filter, setFilter] = useState(createFilter());
+	const [auctions, count, auctionsLoading] = useAuctions(filter);
 
 	useEffect(() => {
 		const newUrl = new URL(window.location);
@@ -21,20 +23,18 @@ const AuctionsPage = () => {
 
 	return (
 		<DefaultPageLayout>
-			<AuctionsCountView filter={filter}/>
+			<AuctionsCountView count={count} loading={auctionsLoading}/>
 			<div className="auctions-page">
 				<div className='filter-list'>
 					<AuctionsCategoryFilter initialCategories={filter.categories} onSubmit={onCategoryFilterChanged}/>
 				</div>
-				<AuctionsList filter={filter}/>
+				<AuctionsList auctions={auctions} loading={auctionsLoading}/>
 			</div>
 		</DefaultPageLayout>
 	);
 };
 
-const AuctionsCountView = ({filter}) => {
-	const [_ , count, loading] = useAuctions(filter);
-
+const AuctionsCountView = ({count, loading}) => {
 	if (loading) {
 		return (
 			<div className="auctions-count-bar">
@@ -50,9 +50,7 @@ const AuctionsCountView = ({filter}) => {
 	);
 }
 
-const AuctionsList = ({filter}) => {
-	const [auctions, _, loading] = useAuctions(filter);
-
+const AuctionsList = ({auctions, loading}) => {
 	if (loading) {
 		return (
 			<div className='auction-list'>
@@ -65,7 +63,11 @@ const AuctionsList = ({filter}) => {
 		<div className='auction-list'>
 			{auctions.length > 0
 				? auctions.map(
-					(auction) => <AuctionCard key={auction.id} auction={auction}/>
+					(auction) => (
+						<Link className="auction-card-outer-link" to={`/auctions/${auction.id}`}>
+							<AuctionCard key={auction.id} auction={auction}/>
+						</Link>
+					)
 				)
 				: "Nothing found"
 			}

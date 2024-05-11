@@ -9,7 +9,7 @@ const useAuctions = (filter) => {
         const fetchAuctions = async () => {
             setLoading(true)
             
-            const uri = new URL('api/auctions', window.location.href);
+            const uri = new URL('/api/auctions', window.location.href);
             uri.search = filter.getQueryString();
             
             const response = await fetch(uri);

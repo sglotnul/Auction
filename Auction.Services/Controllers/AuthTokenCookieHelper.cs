@@ -9,8 +9,23 @@ public static class AuthTokenCookieHelper
 		return request.Cookies[CookieKey];
 	}
 	
-	public static void Append(HttpResponse response, string value, CookieOptions cookieOptions)
+	public static void Append(HttpResponse response, string value, DateTime expirationDateTime)
 	{
-		response.Cookies.Append(CookieKey, value, cookieOptions);
+		var options = GetCookieOptions();
+		options.Expires = expirationDateTime;
+
+		response.Cookies.Append(CookieKey, value, options);
 	}
+	
+	public static void Remove(HttpResponse response)
+	{
+		response.Cookies.Delete(CookieKey, GetCookieOptions());
+	}
+	
+	private static CookieOptions GetCookieOptions() 
+		=> new()
+		{
+			HttpOnly = true,
+			SameSite = SameSiteMode.Strict
+		};
 }

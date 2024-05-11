@@ -1,15 +1,15 @@
 import React, {Fragment} from 'react';
 import ProfileBar from "./ProfileBar";
 import WebSocketComponent from "./WebSocketComponent";
+import {Link} from "react-router-dom";
 
 const Header = () => {
     return (
         <header>
-            <div className='wrapper'>
+            <div className="wrapper">
                 <div className="header-container">
-                    <h1>Auction</h1>
+                    <Link to="/"><h1>Auction</h1></Link>
                     <ProfileBar/>
-                    <WebSocketComponent/>
                 </div>
             </div>
         </header>
