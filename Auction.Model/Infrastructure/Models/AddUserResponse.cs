@@ -1,3 +1,3 @@
 ﻿namespace Auction.Model;
 
-public record AddUserResponse(JwtResponse JwtToken, string UserId);
+public record AddUserResponse(string UserId);

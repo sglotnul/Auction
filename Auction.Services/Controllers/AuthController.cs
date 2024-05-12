@@ -25,28 +25,28 @@ public class AuthController : Controller
     [HttpPost("register")]
     public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequest request)
     {
-        var response = await _authenticationClient.AddUserAsync(request.Username, request.Password);
-        if (response.StatusCode is not HttpStatusCode.OK)
-            return StatusCode((int)response.StatusCode, response.ErrorCode);
+        var userResponse = await _authenticationClient.AddUserAsync(request.Username, request.Password);
+        if (userResponse.StatusCode is not HttpStatusCode.OK)
+            return StatusCode((int)userResponse.StatusCode, userResponse.ErrorCode);
         
-        if (response.Result?.JwtToken is null || response.Result?.UserId is null)
+        if (userResponse.Result?.UserId is null)
+            throw new InvalidOperationException();
+        
+        var tokenResponse = await _authenticationClient.GetTokenAsync(request.Username, request.Password);
+        if (userResponse.StatusCode is not HttpStatusCode.OK)
+            return StatusCode((int)userResponse.StatusCode, userResponse.ErrorCode);
+        
+        if (tokenResponse.Result?.Token is null)
             throw new InvalidOperationException();
 
-        var user = new User
-        {
-            Id = response.Result.UserId,
-            Role = request.Role
-        };
-
-        await _dbContext.Users.AddAsync(user);
-        await _dbContext.SaveChangesAsync();
+        await CreateUserAsync();
 
         AuthTokenCookieHelper.Append(
             Response, 
-            response.Result.JwtToken.Token, 
-            response.Result.JwtToken.ExpirationDateTime);
+            tokenResponse.Result.Token, 
+            tokenResponse.Result.ExpirationDateTime);
 
-        var claims = GetClaimsFromToken(response.Result.JwtToken.Token);
+        var claims = GetClaimsFromToken(tokenResponse.Result.Token);
 
         var userName = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
         if (userName is null)
@@ -55,10 +55,22 @@ public class AuthController : Controller
         return Json(
             new UserResponse
             {
-                UserId = response.Result.UserId,
+                UserId = userResponse.Result.UserId,
                 UserName = userName,
                 Role = request.Role
             });
+
+        async Task CreateUserAsync()
+        {
+            var user = new User
+            {
+                Id = userResponse.Result.UserId,
+                Role = request.Role
+            };
+
+            await _dbContext.Users.AddAsync(user);
+            await _dbContext.SaveChangesAsync();
+        }
     }
     
     [HttpPost("login")]

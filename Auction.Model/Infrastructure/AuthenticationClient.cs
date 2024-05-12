@@ -7,7 +7,7 @@ public interface IAuthenticationClient
 {
 	Task<ServiceResponse<AddUserResponse>> AddUserAsync(string username, string password);
 
-	Task<ServiceResponse<JwtResponse>> GetTokenAsync(string username, string password);
+	Task<ServiceResponse<TokenResponse>> GetTokenAsync(string username, string password);
 }
 
 public class AuthenticationClient : IAuthenticationClient
@@ -26,10 +26,10 @@ public class AuthenticationClient : IAuthenticationClient
 		return await GetResponseDtoAsync<AddUserResponse>(response);
 	}
 	
-	public async Task<ServiceResponse<JwtResponse>> GetTokenAsync(string username, string password)
+	public async Task<ServiceResponse<TokenResponse>> GetTokenAsync(string username, string password)
 	{
 		var response = await _httpClient.PostAsync("get-token", JsonContent.Create(new { username, password }));
-		return await GetResponseDtoAsync<JwtResponse>(response);
+		return await GetResponseDtoAsync<TokenResponse>(response);
 	}
 
 	private static async Task<ServiceResponse<TResponse>> GetResponseDtoAsync<TResponse>(HttpResponseMessage response)

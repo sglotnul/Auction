@@ -1,6 +1,6 @@
 namespace Auction.Model;
 
-public record JwtResponse
+public record TokenResponse
 {
 	public string Token { get; init; }
 	public DateTime ExpirationDateTime { get; init; }
