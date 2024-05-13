@@ -31,9 +31,11 @@ public class AuctionController : Controller
 				.Distinct();
 		}
 
+		auctions = auctions.Where(a => a.Status == AuctionStatus.Active).Include(a => a.StudentUser.Profile);
+
 		var result = new AuctionsResponse
 		{
-			Auctions = await auctions.Include(a => a.StudentUser.Profile).ToArrayAsync()
+			Auctions = await auctions.ToArrayAsync()
 		};
 		
 		return Json(result);
