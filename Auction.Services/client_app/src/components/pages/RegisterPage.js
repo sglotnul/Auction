@@ -1,4 +1,5 @@
 import React, {useContext, useState} from 'react';
+import {Button, FormControlLabel, RadioGroup, Radio, TextField} from "@mui/material";
 import DefaultPageLayout from "../DefaultPageLayout";
 import {useNavigate} from "react-router-dom";
 import AuthContext from "../../contexts/AuthContext";
@@ -7,10 +8,20 @@ const RegisterPage = () => {
     const navigate = useNavigate();
 
     const { user, register } = useContext(AuthContext);
-    
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [role, setRole] = useState('1');
+
+    const [tab, setTab] = useState(0);
+    const [enabledTab, setEnabledTab] = useState(0);
+    const [formData, setFormData] = useState({
+        username: null,
+        password: null,
+        role: '1',
+        firstName: null,
+        lastName: null,
+        gender: null,
+        age: null,
+        education: null,
+        about: null,
+    });
 
     if (user){
         navigate('/auctions');
@@ -19,32 +30,139 @@ const RegisterPage = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        await register(username, password, parseInt(role));
+        await register(formData.username, formData.password, parseInt(formData.role));
     };
 
+    const changeTab = (newTab, enableNext = false) => (e) => {
+        e.preventDefault();
+        
+        if (!enableNext && enabledTab < newTab) {
+            return;
+        }
+
+        setEnabledTab(newTab);
+        setTab(newTab);
+    };
+
+    const handleInputChange = (event) => {
+        setFormData({ ...formData, [event.target.name]: event.target.value });
+    };
+    
     return (
         <DefaultPageLayout>
-            <form onSubmit={handleSubmit}>
-                <input
-                    type='text'
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder='Username'
-                    required
-                />
-                <input
-                    type='password'
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder='Password'
-                    required
-                />
-                <select value={role} onChange={(e) => setRole(e.target.value)}>
-                    <option value='1'>Student</option>
-                    <option value='2'>Consultant</option>
-                </select>
-                <button type='submit'>Sing Up</button>
-            </form>
+            <div className="auth-container">
+                <div className="tab-bar register-tabs">
+                    <div className={enabledTab >= 0 ? 'tab' : 'tab disabled'} onClick={changeTab(0)}>Account</div>
+                    <div className={enabledTab >= 1 ? 'tab' : 'tab disabled'} onClick={changeTab(1)}>Role</div>
+                    <div className={enabledTab >= 2 ? 'tab' : 'tab disabled'} onClick={changeTab(2)}>Profile</div>
+                </div>
+                {tab === 0 && (
+                    <form onSubmit={changeTab(tab + 1, true)}>
+                        <div className="register-input-container">
+                            <TextField
+                                label="User name"
+                                name="username"
+                                value={formData.username}
+                                onChange={handleInputChange}
+                                fullWidth
+                                margin="normal"
+                                required
+                            />
+                            <TextField
+                                label="Password"
+                                name="password"
+                                type="password"
+                                value={formData.password}
+                                onChange={handleInputChange}
+                                fullWidth
+                                margin="normal"
+                                required
+                            />
+                        </div>
+                        <Button type="submit" variant="contained">
+                            Confirm
+                        </Button>
+                    </form>
+                )}
+                {tab === 1 && (
+                    <>
+                        <div className="register-input-container">
+                            <RadioGroup
+                                aria-label="role"
+                                name="role"
+                                value={formData.role}
+                                onChange={handleInputChange}
+                            >
+                                <FormControlLabel value="1" control={<Radio />} label="Student" />
+                                <FormControlLabel value="2" control={<Radio />} label="Consultant" />
+                            </RadioGroup>
+                        </div>
+                        <Button variant="contained" onClick={changeTab(tab + 1, true)}>
+                        Confirm
+                        </Button>
+                    </>
+                )}
+                {tab === 2 && (
+                    <div>
+                        <form onSubmit={handleSubmit}>
+                            <TextField
+                                label="First name"
+                                name="firstName"
+                                value={formData.firstName}
+                                onChange={handleInputChange}
+                                fullWidth
+                                margin="normal"
+                            />
+                            <TextField
+                                label="Last name"
+                                name="lastName"
+                                value={formData.lastName}
+                                onChange={handleInputChange}
+                                fullWidth
+                                margin="normal"
+                            />
+                            <TextField
+                                label="Gender"
+                                name="gender"
+                                value={formData.gender}
+                                onChange={handleInputChange}
+                                fullWidth
+                                margin="normal"
+                            />
+                            <TextField
+                                label="Age"
+                                name="age"
+                                type="number"
+                                value={formData.age}
+                                onChange={handleInputChange}
+                                fullWidth
+                                margin="normal"
+                            />
+                            <TextField
+                                label="Education"
+                                name="education"
+                                value={formData.education}
+                                onChange={handleInputChange}
+                                fullWidth
+                                margin="normal"
+                            />
+                            <TextField
+                                label="About"
+                                name="about"
+                                multiline
+                                rows={4}
+                                value={formData.about}
+                                onChange={handleInputChange}
+                                fullWidth
+                                margin="normal"
+                            />
+                            <Button type="submit" variant="contained">
+                                Confirm
+                            </Button>
+                        </form>
+                    </div>
+                )}
+            </div>
         </DefaultPageLayout>
     );
 };
