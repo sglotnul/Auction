@@ -1,111 +1,75 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Net;
-using System.Security.Claims;
-
 using Auction.Model;
 
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Auction.Services;
 
 [Route("api")]
-public class AuthController : Controller
+public class AuthController : ControllerBase
 {
-    private readonly IAuthenticationClient _authenticationClient;
-    private readonly AppDbContext _dbContext;
+    private readonly UserManager<User> _userManager;
+    private readonly IAuthTokenProvider _tokenProvider;
 
-    public AuthController(IAuthenticationClient authenticationClient, AppDbContext dbContext)
+    public AuthController(UserManager<User> userManager, IAuthTokenProvider tokenProvider, IErrorCodeResolver errorCodeResolver) 
+        : base(errorCodeResolver)
     {
-        _authenticationClient = authenticationClient;
-        _dbContext = dbContext;
+        _userManager = userManager;
+        _tokenProvider = tokenProvider;
     }
     
     [HttpPost("register")]
     public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequest request)
     {
-        var userResponse = await _authenticationClient.AddUserAsync(request.Username, request.Password);
-        if (userResponse.StatusCode is not HttpStatusCode.OK)
-            return StatusCode((int)userResponse.StatusCode, userResponse.ErrorCode);
-        
-        if (userResponse.Result?.UserId is null)
-            throw new InvalidOperationException();
-        
-        var tokenResponse = await _authenticationClient.GetTokenAsync(request.Username, request.Password);
-        if (userResponse.StatusCode is not HttpStatusCode.OK)
-            return StatusCode((int)userResponse.StatusCode, userResponse.ErrorCode);
-        
-        if (tokenResponse.Result?.Token is null)
-            throw new InvalidOperationException();
+        _userManager.PasswordValidators.Clear();
+		
+        var user = new User { UserName = request.UserName };
+        var result = await _userManager.CreateAsync(user, request.Password);
 
-        await CreateUserAsync();
+        if (!result.Succeeded)
+        {
+            return ErrorCode(result.Errors.FirstOrDefault()?.Code ?? throw new InvalidOperationException());
+        }
+
+        var tokenDto = _tokenProvider.GetToken(user);
 
         AuthTokenCookieHelper.Append(
             Response, 
-            tokenResponse.Result.Token, 
-            tokenResponse.Result.ExpirationDateTime);
-
-        var claims = GetClaimsFromToken(tokenResponse.Result.Token);
-
-        var userName = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
-        if (userName is null)
-            throw new InvalidOperationException("Authorized user name is null.");
+            tokenDto.Token, 
+            tokenDto.ExpirationDateTime);
 
         return Json(
             new UserResponse
             {
-                UserId = userResponse.Result.UserId,
-                UserName = userName,
+                UserId = user.Id,
+                UserName = user.UserName,
                 Role = request.Role
             });
-
-        async Task CreateUserAsync()
-        {
-            var user = new User
-            {
-                Id = userResponse.Result.UserId,
-                Role = request.Role
-            };
-
-            await _dbContext.Users.AddAsync(user);
-            await _dbContext.SaveChangesAsync();
-        }
     }
     
     [HttpPost("login")]
     public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
     {
-        var response = await _authenticationClient.GetTokenAsync(request.Username, request.Password);
-        if (response.StatusCode is not HttpStatusCode.OK)
-            return StatusCode((int)response.StatusCode, response.ErrorCode);
-        
-        if (response.Result is null)
-            throw new InvalidOperationException();
+        var user = await _userManager.FindByNameAsync(request.Username);
+
+        if (user == null || !await _userManager.CheckPasswordAsync(user, request.Password)) 
+            return ErrorCode(ErrorCodes.InvalidUserNameOrPassword);
+
+        var tokenDto = _tokenProvider.GetToken(user);
 
         AuthTokenCookieHelper.Append(
             Response, 
-            response.Result.Token, 
-            response.Result.ExpirationDateTime);
-
-        var claims = GetClaimsFromToken(response.Result.Token);
-
-        var userId = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var userName = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
-        if (userName is null)
-            throw new InvalidOperationException("Authorized user name is null.");
-        
-        var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == userId);
-        if (user is null)
-            throw new InvalidDataException($"User with Id={userId} not found.");
+            tokenDto.Token, 
+            tokenDto.ExpirationDateTime);
 
         return Json(
-             new UserResponse
-             {
-                 UserId = user.Id,
-                 UserName = userName,
-                 Role = user.Role
-             });
+            new UserResponse
+            {
+                UserId = user.Id,
+                UserName = user.UserName!,
+                Role = user.Role
+            });
     }
     
     [HttpPost("logout")]
@@ -120,31 +84,17 @@ public class AuthController : Controller
     [Authorize]
     public async Task<IActionResult> GetUserAsync()
     {
-        var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var userName = HttpContext.User.Identity?.Name;
-
-        var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == userId);
+        var user = await _userManager.GetUserAsync(HttpContext.User);
+     
         if (user is null)
-            throw new InvalidDataException($"User with Id={userId} not found.");
-        
-        if (userName is null)
-            throw new InvalidOperationException("Authorized user name is null.");
+            throw new InvalidOperationException("Authorized user not found.");
         
         return Json(
             new UserResponse
             {
-                UserId = userId!,
-                UserName = userName,
+                UserId = user.Id,
+                UserName = user.UserName!,
                 Role = user.Role
             });
-    }
-
-    private static IReadOnlyCollection<Claim> GetClaimsFromToken(string token)
-    {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        if (tokenHandler.ReadToken(token) is not JwtSecurityToken jwtToken)
-            throw new InvalidOperationException();
-
-        return jwtToken.Claims.ToArray();
     }
 }

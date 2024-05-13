@@ -1,19 +1,22 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Auction.Model;
 
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityDbContext<User>
 {
+	private const string DefaultUserName = "admin";
+	private const string DefaultUserPassword = "admin";
 	private const string DefaultUserId = "26214742-0a8b-40ea-ab76-ec78aeee3429";
 	
-	public DbSet<User> Users { get; set; }
-	public DbSet<Profile> Profiles { get; set; }
-	public DbSet<Category> Categories { get; set; }
-	public DbSet<AuctionCategory> AuctionCategories { get; set; }
-	public DbSet<Auction> Auctions { get; set; }
-	public DbSet<ConsultantBid> ConsultantBids { get; set; }
-	public DbSet<ConsultationSession> ConsultationSessions { get; set; }
-	
+	public DbSet<Profile> Profiles { get; set; } = null!;
+	public DbSet<Category> Categories { get; set; } = null!;
+	public DbSet<AuctionCategory> AuctionCategories { get; set; } = null!;
+	public DbSet<Auction> Auctions { get; set; } = null!;
+	public DbSet<ConsultantBid> ConsultantBids { get; set; } = null!;
+	public DbSet<ConsultationSession> ConsultationSessions { get; set; } = null!;
+
 	public AppDbContext(DbContextOptions<AppDbContext> options)
 		: base(options)
 	{
@@ -92,11 +95,15 @@ public class AppDbContext : DbContext
 
 	private static User CreateInitialUser()
 	{
-		return new User
-		{
-			Id = DefaultUserId,
-			Role = Role.Admin
+		var defaultUser = new User
+		{ 
+			Id = DefaultUserId, 
+			UserName = DefaultUserName,
+			NormalizedUserName = DefaultUserName.ToUpper()
 		};
+		defaultUser.PasswordHash = new PasswordHasher<User>().HashPassword(defaultUser, DefaultUserPassword);
+
+		return defaultUser;
 	}
 	
 	private static IEnumerable<Category> CreateInitialCategories()

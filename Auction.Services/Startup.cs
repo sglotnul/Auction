@@ -2,7 +2,6 @@ using System.Text;
 
 using Auction.Authentication;
 using Auction.Model;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -57,13 +56,20 @@ public class Startup
         {
             configuration.RootPath = "client_app/build";
         });
+
+        services.AddErrorCodeResolver();
     }
     
     public void Configure(IApplicationBuilder app)
     {
         app.UseExceptionHandler(new ExceptionHandlerOptions
         {
-            ExceptionHandler = context => context.Response.WriteAsync("InternalServerError")
+            ExceptionHandler = context =>
+            {
+                var errorCode = app.ApplicationServices.GetRequiredService<IErrorCodeResolver>().GetErrorCode(ErrorCodes.InternalServerError);
+                context.Response.StatusCode = (int)errorCode.HttpCode;
+                return context.Response.WriteAsync(errorCode.ErrorCode);
+            }
         });
         
         app.UseWebSockets();

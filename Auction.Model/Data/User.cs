@@ -1,8 +1,9 @@
+using Microsoft.AspNetCore.Identity;
+
 namespace Auction.Model;
 
-public class User
+public class User : IdentityUser
 {
-	public string Id { get; set; }
 	public Role Role { get; set; }
 	public int? ProfileId { get; set; }
 	public Profile? Profile { get; set; }

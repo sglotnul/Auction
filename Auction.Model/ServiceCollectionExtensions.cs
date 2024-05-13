@@ -1,9 +1,8 @@
 using Auction.Authentication;
-
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace Auction.Model;
 
@@ -18,6 +17,7 @@ public static class ServiceCollectionExtensions
             options.UseNpgsql(connectionString));
 
         services.ConfigureServices(configuration);
+        services.ConfigureIdentityServices();
 
         services.ConfigureOptions(configuration);
 
@@ -26,10 +26,17 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection ConfigureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddHttpClient<IAuthenticationClient, AuthenticationClient>((provider, client) =>
-        {
-            client.BaseAddress = provider.GetRequiredService<IOptions<DiscoveryOptions>>().Value.Authentication;
-        });
+        services.AddScoped<IAuthTokenProvider, AuthTokenProvider>();
+        
+        return services;
+    }
+    
+    private static IServiceCollection ConfigureIdentityServices(this IServiceCollection services)
+    {
+        services
+            .AddIdentity<User, IdentityRole>()
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
 
         return services;
     }
