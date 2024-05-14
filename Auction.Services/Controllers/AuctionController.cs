@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore;
 namespace Auction.Services;
 
 [Route("api/auctions")]
-public class AuctionController : Controller
+public class AuctionController : ControllerBase
 {
 	private readonly AppDbContext _dbContext;
 
-	public AuctionController(AppDbContext dbContext)
+	public AuctionController(AppDbContext dbContext, IErrorCodeResolver errorCodeResolver) : base(errorCodeResolver)
 	{
 		_dbContext = dbContext;
 	}
@@ -46,7 +46,7 @@ public class AuctionController : Controller
 	{
 		var auction = await _dbContext.Auctions.Include(a => a.StudentUser.Profile).SingleOrDefaultAsync(a => a.Id == id);
 		if (auction is null)
-			return NotFound();
+			return ErrorCode(ErrorCodes.NotFound);
 		
 		return Json(auction);
 	}
@@ -96,7 +96,7 @@ public class AuctionController : Controller
 	public async Task<IActionResult> PlaceBidAsync([FromRoute] int id)
 	{
 		if (!await _dbContext.Auctions.AnyAsync(a => a.Id == id))
-			return NotFound();
+			return ErrorCode(ErrorCodes.NotFound);
 
 		var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 		

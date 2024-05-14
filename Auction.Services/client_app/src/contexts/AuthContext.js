@@ -1,10 +1,12 @@
 import { createContext, useCallback, useEffect, useState } from 'react';
+import ErrorCode from "../models/ErrorCode";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
+    const [errorCode, setErrorCode] = useState(null);
 
     useEffect(() => {
         const initializeUser = async () => {
@@ -33,23 +35,11 @@ export const AuthProvider = ({ children }) => {
         if (response.ok) {
             setUser(await response.json());
         }
+        else {
+            setErrorCode(new ErrorCode(await response.text()));
+        }
 
         setLoading(false);
-        
-        const mapMessage = (status) => {
-            switch (status) {
-                case 200:
-                    return null;
-                case 401:
-                    return 'Invalid user name or password';
-                case 500:
-                    return 'Internal server error';
-                default:
-                    return `Unexpected error`;
-            }
-        }
-        
-        return mapMessage(response.status);
     },[]);
 
     const logout = useCallback(async () => {
@@ -83,7 +73,7 @@ export const AuthProvider = ({ children }) => {
     },[]);
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout, register }}>
+        <AuthContext.Provider value={{ user, errorCode, loading, login, logout, register }}>
             {children}
         </AuthContext.Provider>
     );

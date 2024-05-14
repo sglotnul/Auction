@@ -40,6 +40,8 @@ const AuctionsCategoryFilter = ({initialCategories, onSubmit}) => {
             </FormGroup>
             <Button
                 disabled={arraysHaveSameElements(initialCategories, selectedCategories)}
+                variant="contained"
+                fullWidth
                 onClick={onButtonClick}
             >
                 Submit

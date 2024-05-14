@@ -2,7 +2,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Auction.Authentication;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -17,14 +16,12 @@ public class AuthTokenProvider : IAuthTokenProvider
 {
     private static TimeSpan TokenLifeTime => TimeSpan.FromHours(12);
     
-    private static JwtSecurityTokenHandler _tokenHandler = new();
-	
-    private readonly UserManager<User> _userManager;
+    private static readonly JwtSecurityTokenHandler _tokenHandler = new();
+
     private readonly AuthOptions _authOptions;
 
-    public AuthTokenProvider(UserManager<User> userManager, IOptions<AuthOptions> authOptions)
+    public AuthTokenProvider(IOptions<AuthOptions> authOptions)
     {
-        _userManager = userManager;
         _authOptions = authOptions.Value;
     }
     
@@ -33,6 +30,7 @@ public class AuthTokenProvider : IAuthTokenProvider
         var authClaims = new Claim[]
         {
             new(ClaimTypes.Name, user.UserName!),
+            new(ClaimTypes.NameIdentifier, user.Id),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 

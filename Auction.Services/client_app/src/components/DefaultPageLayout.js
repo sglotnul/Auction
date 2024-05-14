@@ -1,6 +1,5 @@
 import React, {Fragment} from 'react';
 import ProfileBar from "./ProfileBar";
-import WebSocketComponent from "./WebSocketComponent";
 import {Link} from "react-router-dom";
 
 const Header = () => {

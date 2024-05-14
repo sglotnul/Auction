@@ -2,15 +2,15 @@ import React, {useState, useContext} from 'react';
 import {useNavigate} from "react-router-dom";
 import AuthContext from '../../contexts/AuthContext';
 import DefaultPageLayout from "../DefaultPageLayout";
+import {Button, TextField} from "@mui/material";
 
 const LoginPage = () => {
     const navigate = useNavigate();
 
-    const { user, login } = useContext(AuthContext);
+    const { user, errorCode, login } = useContext(AuthContext);
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
     
     if (user){
         navigate('/auctions');
@@ -19,33 +19,40 @@ const LoginPage = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const errorMessage = await login(username, password);
-
-        if (errorMessage) {
-            setError(errorMessage);
-        }
+        await login(username, password);
     };
 
     return (
         <DefaultPageLayout>
-            <form onSubmit={handleSubmit}>
-                {error && <p>{error}</p>}
-                <input
-                    type='text'
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder='Username'
-                    required
-                />
-                <input
-                    type='password'
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder='Password'
-                    required
-                />
-                <button type='submit'>Login</button>
-            </form>
+            <div className="auth-container">
+                <form onSubmit={handleSubmit}>
+                    <div className="register-input-container">
+                        {errorCode && <p>{errorCode.message()}</p>}
+                        <TextField
+                            label="User name"
+                            name="username"
+                            value={username}
+                            onChange={e => setUsername(e.target.value)}
+                            fullWidth
+                            margin="normal"
+                            required
+                        />
+                        <TextField
+                            label="Password"
+                            name="password"
+                            type="password"
+                            value={password}
+                            onChange={e => setPassword(e.target.value)}
+                            fullWidth
+                            margin="normal"
+                            required
+                        />
+                        </div>
+                    <Button type="submit" variant="contained" fullWidth>
+                        Login
+                    </Button>
+                </form>
+            </div>
         </DefaultPageLayout>
     );
 };

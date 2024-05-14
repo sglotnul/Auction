@@ -10,22 +10,42 @@ namespace Auction.Services;
 public class AuthController : ControllerBase
 {
     private readonly UserManager<User> _userManager;
+    private readonly AppDbContext _context;
     private readonly IAuthTokenProvider _tokenProvider;
 
-    public AuthController(UserManager<User> userManager, IAuthTokenProvider tokenProvider, IErrorCodeResolver errorCodeResolver) 
+    public AuthController(
+        UserManager<User> userManager,
+        AppDbContext context,
+        IAuthTokenProvider tokenProvider,
+        IErrorCodeResolver errorCodeResolver) 
         : base(errorCodeResolver)
     {
         _userManager = userManager;
+        _context = context;
         _tokenProvider = tokenProvider;
+        
+        _userManager.PasswordValidators.Clear();
     }
     
     [HttpPost("register")]
     public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequest request)
     {
-        _userManager.PasswordValidators.Clear();
-		
-        var user = new User { UserName = request.UserName };
-        var result = await _userManager.CreateAsync(user, request.Password);
+        var profile = request.Profile is null
+            ? null
+            : new Profile
+            {
+                FirstName = request.Profile.FirstName,
+                LastName = request.Profile.LastName,
+                Gender = request.Profile.Gender,
+                Age = request.Profile.Age,
+                Biography = request.Profile.Biography,
+                Education = request.Profile.Education
+            };
+
+        var user = new User { UserName = request.UserName, Role = request.Role, ProfileId = profile?.Id };
+        var result = profile is not null
+            ? await CreateUserWithProfileAsync(user, request.Password, profile)
+            : await CreateUserAsync(user, request.Password);
 
         if (!result.Succeeded)
         {
@@ -96,5 +116,40 @@ public class AuthController : ControllerBase
                 UserName = user.UserName!,
                 Role = user.Role
             });
+    }
+    
+    private Task<IdentityResult> CreateUserAsync(User user, string password)
+    {
+        return _userManager.CreateAsync(user, password);
+    }
+
+    private async Task<IdentityResult> CreateUserWithProfileAsync(User user, string password, Profile profile)
+    {
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+
+        try
+        {
+            await _context.Profiles.AddAsync(profile);
+            await _context.SaveChangesAsync();
+
+            user.ProfileId = profile.Id;
+            var result = await CreateUserAsync(user, password);
+
+            if (result.Succeeded)
+            {
+                await transaction.CommitAsync();
+            }
+            else
+            {
+                await transaction.RollbackAsync();
+            }
+            
+            return result;
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            throw; 
+        }
     }
 }

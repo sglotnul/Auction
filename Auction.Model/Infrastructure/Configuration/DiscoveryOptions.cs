@@ -2,5 +2,5 @@ namespace Auction.Model;
 
 public class DiscoveryOptions
 {
-	public Uri Authentication { get; init; }
+	public Uri Authentication { get; init; } = null!;
 }

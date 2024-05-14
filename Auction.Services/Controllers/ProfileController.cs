@@ -1,33 +1,43 @@
-using System.Security.Claims;
-
 using Auction.Model;
 
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Auction.Services;
 
 [Route("api/profiles")]
 [Authorize]
-public class ProfileController : Controller
+public class ProfileController : ControllerBase
 {
-	private readonly AppDbContext _dbContext;
+	private readonly UserManager<User> _userManager;
 
-	public ProfileController(AppDbContext dbContext)
+	public ProfileController(UserManager<User> userManager, IErrorCodeResolver errorCodeResolver) : base(errorCodeResolver)
 	{
-		_dbContext = dbContext;
+		_userManager = userManager;
 	}
 	
 	[HttpGet("")]
-	public async Task<IActionResult> GetUsersProfileAsync()
+	public async Task<IActionResult> GetUserProfileAsync()
 	{
-		var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-		var user = await _dbContext.Users.Include(user => user.Profile).SingleOrDefaultAsync(user => user.Id == userId);
-		
+		var user = await _userManager.GetUserAsync(HttpContext.User);
 		if (user is null)
-			throw new InvalidDataException($"User with Id={userId} not found.");
+			throw new InvalidDataException("Authorized user not found.");
 
-		return Json(new ProfileResponseDto(user.Profile?.Id));
+		if (user.ProfileId is null)
+			return ErrorCode(ErrorCodes.NotFound);
+
+		return Json(user.Profile);
+	}
+	
+	[HttpGet("{userName}")]
+	public async Task<IActionResult> GetUserProfileAsync(string userName)
+	{
+		var user = await _userManager.FindByNameAsync(userName);
+
+		if (user?.ProfileId is null)
+			return ErrorCode(ErrorCodes.NotFound);
+
+		return Json(user.Profile);
 	}
 }

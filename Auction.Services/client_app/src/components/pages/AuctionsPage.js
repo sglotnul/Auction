@@ -69,7 +69,7 @@ const AuctionsList = ({auctions, loading}) => {
 						</Link>
 					)
 				)
-				: "Nothing found"
+				: 'Nothing found'
 			}
 		</div>
 	);

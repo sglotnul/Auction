@@ -79,7 +79,7 @@ const RegisterPage = () => {
                                 required
                             />
                         </div>
-                        <Button type="submit" variant="contained">
+                        <Button type="submit" variant="contained" fullWidth>
                             Confirm
                         </Button>
                     </form>
@@ -97,7 +97,7 @@ const RegisterPage = () => {
                                 <FormControlLabel value="2" control={<Radio />} label="Consultant" />
                             </RadioGroup>
                         </div>
-                        <Button variant="contained" onClick={changeTab(tab + 1, true)}>
+                        <Button variant="contained" fullWidth onClick={changeTab(tab + 1, true)}>
                         Confirm
                         </Button>
                     </>
@@ -156,7 +156,7 @@ const RegisterPage = () => {
                                 fullWidth
                                 margin="normal"
                             />
-                            <Button type="submit" variant="contained">
+                            <Button type="submit" variant="contained" fullWidth>
                                 Confirm
                             </Button>
                         </form>

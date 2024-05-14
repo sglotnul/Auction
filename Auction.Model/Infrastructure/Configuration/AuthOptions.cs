@@ -2,5 +2,5 @@
 
 public class AuthOptions
 {
-	public string Key { get; init; }
+	public string Key { get; init; } = null!;
 }

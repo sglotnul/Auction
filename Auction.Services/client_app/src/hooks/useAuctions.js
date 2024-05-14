@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+import ErrorCode from "../models/ErrorCode";
 
 const useAuctions = (filter) => {
     const [auctions, setAuctions] = useState([]);
@@ -14,7 +15,7 @@ const useAuctions = (filter) => {
             
             const response = await fetch(uri);
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error(new ErrorCode(await response.text()).message());
             }
 
             const data = await response.json();

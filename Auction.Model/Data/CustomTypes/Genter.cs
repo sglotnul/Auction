@@ -1,6 +1,6 @@
 namespace Auction.Model;
 
-public enum Sex
+public enum Genter
 {
 	Male = 1,
 	Female = 2

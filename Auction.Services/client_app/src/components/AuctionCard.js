@@ -15,15 +15,15 @@ const AuctionCard = ({auction}) => {
     return (
         <div className='auction-card'>
             <span className="auction-card-title">{auction.name}</span>
-            <Link className="auction-card-inner-link auction-card-student" to="/auctions">{getUserFullName(auction.studentUserId, profile)}</Link>
+            <Link className="auction-card-inner-link auction-card-student" to="/auctions">{getUserFullName(auction.studentUser.userName, profile)}</Link>
             {bidButton}
         </div>
     )
 }
 
-function getUserFullName(userId, profile){
+function getUserFullName(userName, profile){
     if (!profile?.firstName && !profile?.lastName) {
-        return `User ${userId}`;
+        return userName;
     }
     
     return `${profile?.firstName} ${profile?.lastName}`.trim();
