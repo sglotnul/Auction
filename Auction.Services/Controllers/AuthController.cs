@@ -34,18 +34,17 @@ public class AuthController : ControllerBase
             ? null
             : new Profile
             {
-                FirstName = request.Profile.FirstName,
-                LastName = request.Profile.LastName,
-                Gender = request.Profile.Gender,
-                Age = request.Profile.Age,
-                Biography = request.Profile.Biography,
-                Education = request.Profile.Education
+                FirstName = request.Profile.FirstName?.Trim(),
+                LastName = request.Profile.LastName?.Trim(),
+                BirthDate = request.Profile.BirthDate?.Date,
+                Biography = request.Profile.Biography?.Trim(),
+                Education = request.Profile.Education?.Trim()
             };
 
-        var user = new User { UserName = request.UserName, Role = request.Role, ProfileId = profile?.Id };
+        var user = new User { UserName = request.UserName.Trim(), Role = request.Role, ProfileId = profile?.Id };
         var result = profile is not null
-            ? await CreateUserWithProfileAsync(user, request.Password, profile)
-            : await CreateUserAsync(user, request.Password);
+            ? await CreateUserWithProfileAsync(user, request.Password.Trim(), profile)
+            : await CreateUserAsync(user, request.Password.Trim());
 
         if (!result.Succeeded)
         {
@@ -71,9 +70,9 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
     {
-        var user = await _userManager.FindByNameAsync(request.Username);
+        var user = await _userManager.FindByNameAsync(request.Username.Trim());
 
-        if (user == null || !await _userManager.CheckPasswordAsync(user, request.Password)) 
+        if (user == null || !await _userManager.CheckPasswordAsync(user, request.Password.Trim())) 
             return ErrorCode(ErrorCodes.InvalidUserNameOrPassword);
 
         var tokenDto = _tokenProvider.GetToken(user);

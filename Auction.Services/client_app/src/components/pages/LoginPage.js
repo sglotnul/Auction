@@ -7,27 +7,34 @@ import {Button, TextField} from "@mui/material";
 const LoginPage = () => {
     const navigate = useNavigate();
 
-    const { user, errorCode, login } = useContext(AuthContext);
+    const { user, login } = useContext(AuthContext);
 
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [username, setUsername] = useState(undefined);
+    const [password, setPassword] = useState(undefined);
+    const [errorCode, setErrorCode] = useState(undefined);
     
-    if (user){
+    if (user) {
         navigate('/auctions');
     }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        await login(username, password);
+        const error = await login(username, password);
+
+        if (error) {
+            setErrorCode(error);
+        }
+        else {
+            setErrorCode(undefined);
+        }
     };
 
     return (
-        <DefaultPageLayout>
+        <DefaultPageLayout errorCode={errorCode}>
             <div className="auth-container">
                 <form onSubmit={handleSubmit}>
                     <div className="register-input-container">
-                        {errorCode && <p>{errorCode.message()}</p>}
                         <TextField
                             label="User name"
                             name="username"

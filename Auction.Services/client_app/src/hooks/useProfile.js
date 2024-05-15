@@ -9,7 +9,7 @@ const useProfile = (userName = null) => {
         const fetchProfile = async () => {
             setLoading(true)
             
-            const response = await fetch(`/api/profiles/${userName}`);
+            const response = userName ? await fetch(`/api/profiles/${userName}`) : await fetch('/api/profiles');
 
             setStatus(response.status);
             if (response.ok) {

@@ -39,6 +39,9 @@ public class AppDbContext : IdentityDbContext<User>
 		modelBuilder.Entity<Profile>(entity =>
 		{
 			entity.HasKey(e => e.Id);
+
+			entity.Property(e => e.BirthDate)
+				.HasColumnType("date");
 		});
 		
 		modelBuilder.Entity<Auction>(entity =>

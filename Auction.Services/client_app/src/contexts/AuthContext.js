@@ -6,7 +6,6 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
-    const [errorCode, setErrorCode] = useState(null);
 
     useEffect(() => {
         const initializeUser = async () => {
@@ -35,11 +34,10 @@ export const AuthProvider = ({ children }) => {
         if (response.ok) {
             setUser(await response.json());
         }
-        else {
-            setErrorCode(new ErrorCode(await response.text()));
-        }
-
+        
         setLoading(false);
+        
+        return response.ok ? null : new ErrorCode(await response.text());
     },[]);
 
     const logout = useCallback(async () => {
@@ -52,9 +50,11 @@ export const AuthProvider = ({ children }) => {
         }
 
         setLoading(false);
+
+        return response.ok ? null : new ErrorCode(await response.text());
     },[]);
 
-    const register = useCallback(async (username, password, role) => {
+    const register = useCallback(async (username, password, role, profile) => {
         setLoading(true);
 
         const response = await fetch('/api/register', { 
@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }) => {
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
             },
-            body: JSON.stringify({username, password, role})
+            body: JSON.stringify({username, password, role, profile})
         });
 
         if (response.ok) {
@@ -70,10 +70,12 @@ export const AuthProvider = ({ children }) => {
         }
 
         setLoading(false);
+
+        return response.ok ? null : new ErrorCode(await response.text());
     },[]);
 
     return (
-        <AuthContext.Provider value={{ user, errorCode, loading, login, logout, register }}>
+        <AuthContext.Provider value={{ user, loading, login, logout, register }}>
             {children}
         </AuthContext.Provider>
     );

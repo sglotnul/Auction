@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import {Button, FormControlLabel, RadioGroup, Radio, TextField} from "@mui/material";
+import {Button, TextField, InputLabel, Select, MenuItem} from "@mui/material";
 import DefaultPageLayout from "../DefaultPageLayout";
 import {useNavigate} from "react-router-dom";
 import AuthContext from "../../contexts/AuthContext";
@@ -11,17 +11,13 @@ const RegisterPage = () => {
 
     const [tab, setTab] = useState(0);
     const [enabledTab, setEnabledTab] = useState(0);
-    const [formData, setFormData] = useState({
-        username: null,
-        password: null,
-        role: '1',
-        firstName: null,
-        lastName: null,
-        gender: null,
-        age: null,
-        education: null,
-        about: null,
+    const [userFormData, setUserFormData] = useState({
+        username: undefined,
+        password: undefined,
+        role: 1
     });
+    const [profileFormData, setProfileFormData] = useState(undefined);
+    const [errorCode, setErrorCode] = useState(undefined);
 
     if (user){
         navigate('/auctions');
@@ -30,7 +26,14 @@ const RegisterPage = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        await register(formData.username, formData.password, parseInt(formData.role));
+        const error = await register(userFormData.username, userFormData.password, userFormData.role, profileFormData);
+
+        if (error) {
+            setErrorCode(error);
+        }
+        else {
+            setErrorCode(undefined);
+        }
     };
 
     const changeTab = (newTab, enableNext = false) => (e) => {
@@ -45,11 +48,26 @@ const RegisterPage = () => {
     };
 
     const handleInputChange = (event) => {
-        setFormData({ ...formData, [event.target.name]: event.target.value });
+        const regex = /^[a-zA-Z0-9@._-]+$/;
+        
+        if (!regex.test(event.target.value)) {
+            return;
+        }
+        
+        setUserFormData({ ...userFormData, [event.target.name]: event.target.value });
     };
     
+    const handleProfileInputChange = (event) => {
+        let prevData = profileFormData;
+        if (!prevData) {
+            prevData = {};
+        }
+        
+        setProfileFormData( { ...prevData, [event.target.name]: event.target.value.trim() });
+    }
+    
     return (
-        <DefaultPageLayout>
+        <DefaultPageLayout errorCode={errorCode}>
             <div className="auth-container">
                 <div className="tab-bar register-tabs">
                     <div className={enabledTab >= 0 ? 'tab' : 'tab disabled'} onClick={changeTab(0)}>Account</div>
@@ -62,7 +80,7 @@ const RegisterPage = () => {
                             <TextField
                                 label="User name"
                                 name="username"
-                                value={formData.username}
+                                value={userFormData.username}
                                 onChange={handleInputChange}
                                 fullWidth
                                 margin="normal"
@@ -72,7 +90,7 @@ const RegisterPage = () => {
                                 label="Password"
                                 name="password"
                                 type="password"
-                                value={formData.password}
+                                value={userFormData.password}
                                 onChange={handleInputChange}
                                 fullWidth
                                 margin="normal"
@@ -87,18 +105,22 @@ const RegisterPage = () => {
                 {tab === 1 && (
                     <>
                         <div className="register-input-container">
-                            <RadioGroup
-                                aria-label="role"
+                            <InputLabel id="select-label">Choose role</InputLabel>
+                            <Select
+                                labelId="select-label"
+                                id="select"
                                 name="role"
-                                value={formData.role}
+                                value={userFormData.role}
                                 onChange={handleInputChange}
+                                label="Role"
+                                fullWidth
                             >
-                                <FormControlLabel value="1" control={<Radio />} label="Student" />
-                                <FormControlLabel value="2" control={<Radio />} label="Consultant" />
-                            </RadioGroup>
+                                <MenuItem value={1}>Student</MenuItem>
+                                <MenuItem value={2}>Consultant</MenuItem>
+                            </Select>
                         </div>
                         <Button variant="contained" fullWidth onClick={changeTab(tab + 1, true)}>
-                        Confirm
+                            Confirm
                         </Button>
                     </>
                 )}
@@ -108,51 +130,43 @@ const RegisterPage = () => {
                             <TextField
                                 label="First name"
                                 name="firstName"
-                                value={formData.firstName}
-                                onChange={handleInputChange}
+                                value={profileFormData?.firstName}
+                                onChange={handleProfileInputChange}
                                 fullWidth
                                 margin="normal"
                             />
                             <TextField
                                 label="Last name"
                                 name="lastName"
-                                value={formData.lastName}
-                                onChange={handleInputChange}
+                                value={profileFormData?.lastName}
+                                onChange={handleProfileInputChange}
                                 fullWidth
                                 margin="normal"
                             />
                             <TextField
-                                label="Gender"
-                                name="gender"
-                                value={formData.gender}
-                                onChange={handleInputChange}
-                                fullWidth
-                                margin="normal"
-                            />
-                            <TextField
-                                label="Age"
-                                name="age"
-                                type="number"
-                                value={formData.age}
-                                onChange={handleInputChange}
-                                fullWidth
+                                InputLabelProps={{ shrink: true }}
+                                label="Birth date"
+                                name="birthDate"
+                                type="date"
+                                value={profileFormData?.birthDate}
+                                onChange={handleProfileInputChange}
                                 margin="normal"
                             />
                             <TextField
                                 label="Education"
                                 name="education"
-                                value={formData.education}
-                                onChange={handleInputChange}
+                                value={profileFormData?.education}
+                                onChange={handleProfileInputChange}
                                 fullWidth
                                 margin="normal"
                             />
                             <TextField
-                                label="About"
-                                name="about"
+                                label="Biography"
+                                name="biography"
                                 multiline
                                 rows={4}
-                                value={formData.about}
-                                onChange={handleInputChange}
+                                value={profileFormData?.biography}
+                                onChange={handleProfileInputChange}
                                 fullWidth
                                 margin="normal"
                             />

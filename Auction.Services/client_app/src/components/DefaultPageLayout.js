@@ -1,6 +1,7 @@
-import React, {Fragment} from 'react';
+import React, {Fragment, useEffect, useState} from 'react';
 import ProfileBar from "./ProfileBar";
 import {Link} from "react-router-dom";
+import ErrorSnackbar from "./ErrorSnackbar";
 
 const Header = () => {
     return (
@@ -23,9 +24,29 @@ const Footer = () => {
     );
 };
 
-const DefaultPageLayout = ({ children }) => {
+const DefaultPageLayout = ({ errorCode, children }) => {
+    const [errorCodes, setErrorCodes] = useState([]);
+    
+    useEffect(() => {
+        if (!errorCode){
+            setErrorCodes([]);
+            return;
+        }
+        
+        if (errorCodes.length < 5) {
+            setErrorCodes(prev => [...prev, errorCode]);
+        }
+    }, [errorCode]);
+
+    const handleClose = (id) => () => {
+        setErrorCodes(prev => prev.filter(error => error.id !== id));
+    };
+    
     return (
         <Fragment>
+            {errorCodes.map((error) => (
+                <ErrorSnackbar key={error.id} message={error.message()} onClose={handleClose(error.id)}/>
+            ))}
             <Header/>
             <div className='layout'>
                 <div className='wrapper'>
