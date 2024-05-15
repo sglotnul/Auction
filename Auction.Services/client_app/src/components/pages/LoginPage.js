@@ -7,14 +7,24 @@ import {Button, TextField} from "@mui/material";
 const LoginPage = () => {
     const navigate = useNavigate();
 
-    const { user, login } = useContext(AuthContext);
+    const { user, loading, login } = useContext(AuthContext);
 
     const [username, setUsername] = useState(undefined);
     const [password, setPassword] = useState(undefined);
     const [errorCode, setErrorCode] = useState(undefined);
+
+    if (loading) {
+        return (
+            <DefaultPageLayout>
+                <div className="default-form-container">
+                    ...Loading
+                </div>
+            </DefaultPageLayout>
+        );
+    }
     
     if (user) {
-        navigate('/auctions');
+        navigate('/');
     }
 
     const handleSubmit = async (event) => {
@@ -32,7 +42,7 @@ const LoginPage = () => {
 
     return (
         <DefaultPageLayout errorCode={errorCode}>
-            <div className="auth-container">
+            <div className="default-form-container">
                 <form onSubmit={handleSubmit}>
                     <div className="register-input-container">
                         <TextField

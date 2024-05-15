@@ -5,6 +5,7 @@ import RegisterPage from './components/pages/RegisterPage';
 import AuctionsPage from './components/pages/AuctionsPage';
 import {AuthProvider} from './contexts/AuthContext';
 import AuctionViewPage from "./components/pages/AuctionViewPage";
+import ProfilePage from "./components/pages/ProfilePage";
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
                   <Route path="/register" element={<RegisterPage />} />
                   <Route path="/auctions" element={<AuctionsPage />} />
                   <Route path="/auctions/:auctionId" element={<AuctionViewPage />} />
+                  <Route path="/profile" element={<ProfilePage />} />
                   <Route path="" element={<AuctionsPage />} />
               </Routes>
           </Router>

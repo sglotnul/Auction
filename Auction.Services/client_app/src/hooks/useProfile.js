@@ -1,8 +1,8 @@
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
+import ErrorCode from "../models/ErrorCode";
 
 const useProfile = (userName = null) => {
-    const [auction, setAuction] = useState(null);
-    const [status, setStatus] = useState(null);
+    const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -11,17 +11,26 @@ const useProfile = (userName = null) => {
             
             const response = userName ? await fetch(`/api/profiles/${userName}`) : await fetch('/api/profiles');
 
-            setStatus(response.status);
             if (response.ok) {
-                setAuction(await response.json());
+                setProfile(await response.json());
             }
             setLoading(false);
         };
 
         fetchProfile();
     }, [userName]);
+    
+    const updateProfile = useCallback(async (profile) => {
+        const response = await fetch('/api/profiles', { method: 'PUT', body: JSON.stringify(profile) });
 
-    return [auction, loading, status];
+        if (response.ok) {
+            setProfile(await response.json());
+        }
+        
+        return response.ok ? null : new ErrorCode(await response.text());
+    }, []);
+
+    return [profile, loading, updateProfile];
 }
 
 export default useProfile;

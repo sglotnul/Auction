@@ -7,13 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace Auction.Services;
 
 [Route("api")]
-public class AuthController : ControllerBase
+public class UserController : ControllerBase
 {
     private readonly UserManager<User> _userManager;
     private readonly AppDbContext _context;
     private readonly IAuthTokenProvider _tokenProvider;
 
-    public AuthController(
+    public UserController(
         UserManager<User> userManager,
         AppDbContext context,
         IAuthTokenProvider tokenProvider,

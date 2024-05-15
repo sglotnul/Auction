@@ -7,7 +7,7 @@ import AuthContext from "../../contexts/AuthContext";
 const RegisterPage = () => {
     const navigate = useNavigate();
 
-    const { user, register } = useContext(AuthContext);
+    const { user, loading, register } = useContext(AuthContext);
 
     const [tab, setTab] = useState(0);
     const [enabledTab, setEnabledTab] = useState(0);
@@ -18,9 +18,19 @@ const RegisterPage = () => {
     });
     const [profileFormData, setProfileFormData] = useState(undefined);
     const [errorCode, setErrorCode] = useState(undefined);
+    
+    if (loading) {
+        return (
+            <DefaultPageLayout>
+                <div className="default-form-container">
+                    ...Loading
+                </div>
+            </DefaultPageLayout>
+        );
+    }
 
     if (user){
-        navigate('/auctions');
+        navigate('/');
     }
 
     const handleSubmit = async (event) => {
@@ -68,7 +78,7 @@ const RegisterPage = () => {
     
     return (
         <DefaultPageLayout errorCode={errorCode}>
-            <div className="auth-container">
+            <div className="default-form-container">
                 <div className="tab-bar register-tabs">
                     <div className={enabledTab >= 0 ? 'tab' : 'tab disabled'} onClick={changeTab(0)}>Account</div>
                     <div className={enabledTab >= 1 ? 'tab' : 'tab disabled'} onClick={changeTab(1)}>Role</div>

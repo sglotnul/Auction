@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import Drawer from '@mui/material/Drawer';
 import {Link} from "react-router-dom";
 import {Button} from "@mui/material";
@@ -9,6 +9,8 @@ const ProfileDrawer = ({isOpen, onClose}) => {
     const { user, logout } = useContext(AuthContext);
     
     const [profile, loading] = useProfile();
+    
+    useEffect(() => console.log('drawer'), []);
     
     if (loading) {
         return (

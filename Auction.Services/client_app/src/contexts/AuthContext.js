@@ -21,8 +21,6 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const login = useCallback(async (username, password) => {
-        setLoading(true);
-    
         const response = await fetch('/api/login', {
             method: 'POST',
             headers: {
@@ -35,28 +33,20 @@ export const AuthProvider = ({ children }) => {
             setUser(await response.json());
         }
         
-        setLoading(false);
-        
         return response.ok ? null : new ErrorCode(await response.text());
     },[]);
 
     const logout = useCallback(async () => {
-        setLoading(true);
-        
         const response = await fetch('/api/logout', { method: 'POST' });
 
         if (response.ok) {
             setUser(null);
         }
 
-        setLoading(false);
-
         return response.ok ? null : new ErrorCode(await response.text());
     },[]);
 
     const register = useCallback(async (username, password, role, profile) => {
-        setLoading(true);
-
         const response = await fetch('/api/register', { 
             method: 'POST',
             headers: {
@@ -68,8 +58,6 @@ export const AuthProvider = ({ children }) => {
         if (response.ok) {
             setUser(await response.json());
         }
-
-        setLoading(false);
 
         return response.ok ? null : new ErrorCode(await response.text());
     },[]);

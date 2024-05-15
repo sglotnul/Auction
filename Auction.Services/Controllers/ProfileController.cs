@@ -46,4 +46,26 @@ public class ProfileController : ControllerBase
 
 		return Json(user.Profile);
 	}
+	
+	[HttpPut("")]
+	public async Task<IActionResult> EditUserProfileAsync([FromBody] ProfileRequest profileRequest)
+	{
+		var user = await _userManager.GetUserAsync(HttpContext.User);
+		if (user is null)
+			throw new InvalidDataException("Authorized user not found.");
+
+		await _context.AddOrUpdateAsync(
+			c => c.Profiles,
+			p => p.Id == user.ProfileId,
+			new Profile
+			{
+				FirstName = profileRequest.FirstName?.Trim(),
+				LastName = profileRequest.LastName?.Trim(),
+				BirthDate = profileRequest.BirthDate?.Date,
+				Biography = profileRequest.Biography?.Trim(),
+				Education = profileRequest.Education?.Trim()
+			});
+
+		return Json(await _context.Profiles.SingleOrDefaultAsync(p => p.Id == user.ProfileId));
+	}
 }

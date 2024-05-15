@@ -29,7 +29,6 @@ const DefaultPageLayout = ({ errorCode, children }) => {
     
     useEffect(() => {
         if (!errorCode){
-            setErrorCodes([]);
             return;
         }
         
