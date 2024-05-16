@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useState} from 'react';
 import ErrorCode from "../models/ErrorCode";
 
-const useProfile = (userName = null) => {
+const useProfile = (userName = null, state) => {
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -18,7 +18,7 @@ const useProfile = (userName = null) => {
         };
 
         fetchProfile();
-    }, [userName]);
+    }, [userName, state]);
     
     const updateProfile = useCallback(async (profile) => {
         const response = await fetch('/api/profiles', { 

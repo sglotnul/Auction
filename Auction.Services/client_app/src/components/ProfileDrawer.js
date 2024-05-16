@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import Drawer from '@mui/material/Drawer';
 import {Link} from "react-router-dom";
 import {Button} from "@mui/material";
@@ -10,7 +10,9 @@ const ProfileDrawer = ({isOpen, onClose}) => {
     const { addError } = useContext(ErrorContext);
     const { user, logout } = useContext(AuthContext);
     
-    const [profile, loading] = useProfile();
+    const [updater, setUpdater] = useState({});
+    
+    const [profile, loading] = useProfile(null, updater);
     
     const onLogout = useCallback(async () => {
         const error = await logout();
@@ -22,6 +24,11 @@ const ProfileDrawer = ({isOpen, onClose}) => {
             onClose();
         }
     }, []);
+    
+    useEffect(() => {
+        if (isOpen)
+            setUpdater({});
+    }, [isOpen]);
     
     return (
         <Drawer
