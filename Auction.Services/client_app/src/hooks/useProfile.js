@@ -21,7 +21,13 @@ const useProfile = (userName = null) => {
     }, [userName]);
     
     const updateProfile = useCallback(async (profile) => {
-        const response = await fetch('/api/profiles', { method: 'PUT', body: JSON.stringify(profile) });
+        const response = await fetch('/api/profiles', { 
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(profile) 
+        });
 
         if (response.ok) {
             setProfile(await response.json());

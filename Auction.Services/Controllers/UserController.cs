@@ -145,7 +145,7 @@ public class UserController : ControllerBase
             
             return result;
         }
-        catch (Exception)
+        catch
         {
             await transaction.RollbackAsync();
             throw; 

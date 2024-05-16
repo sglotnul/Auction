@@ -1,6 +1,5 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {Fragment, useCallback, useEffect, useState} from 'react';
 import useAuctions from "../../hooks/useAuctions";
-import DefaultPageLayout from "../DefaultPageLayout";
 import AuctionsCategoryFilter from "../AuctionsCategoryFilter";
 import AuctionsFilter from "../../models/AuctionsFilter";
 import AuctionCard from "../AuctionCard";
@@ -22,7 +21,7 @@ const AuctionsPage = () => {
 	}, []);
 
 	return (
-		<DefaultPageLayout>
+		<Fragment>
 			<AuctionsCountView count={count} loading={auctionsLoading}/>
 			<div className="auctions-page">
 				<div className='filter-list'>
@@ -30,7 +29,7 @@ const AuctionsPage = () => {
 				</div>
 				<AuctionsList auctions={auctions} loading={auctionsLoading}/>
 			</div>
-		</DefaultPageLayout>
+		</Fragment>
 	);
 };
 

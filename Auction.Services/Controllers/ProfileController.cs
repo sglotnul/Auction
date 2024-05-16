@@ -54,18 +54,40 @@ public class ProfileController : ControllerBase
 		if (user is null)
 			throw new InvalidDataException("Authorized user not found.");
 
-		await _context.AddOrUpdateAsync(
-			c => c.Profiles,
-			p => p.Id == user.ProfileId,
-			new Profile
-			{
-				FirstName = profileRequest.FirstName?.Trim(),
-				LastName = profileRequest.LastName?.Trim(),
-				BirthDate = profileRequest.BirthDate?.Date,
-				Biography = profileRequest.Biography?.Trim(),
-				Education = profileRequest.Education?.Trim()
-			});
+		var newProfile = new Profile
+		{
+			Id = user.ProfileId ?? default,
+			FirstName = profileRequest.FirstName?.Trim(),
+			LastName = profileRequest.LastName?.Trim(),
+			BirthDate = profileRequest.BirthDate?.Date,
+			Biography = profileRequest.Biography?.Trim(),
+			Education = profileRequest.Education?.Trim()
+		};
 
-		return Json(await _context.Profiles.SingleOrDefaultAsync(p => p.Id == user.ProfileId));
+		await using var transaction = await _context.Database.BeginTransactionAsync();
+		try
+		{
+			await _context.AddOrUpdateAsync(
+				c => c.Profiles,
+				p => p.Id == user.ProfileId,
+				newProfile);
+
+			user.ProfileId = newProfile.Id;
+			var result = await _userManager.UpdateAsync(user);
+			
+			if (!result.Succeeded)
+			{
+				await transaction.RollbackAsync();
+				return ErrorCode(result.Errors.FirstOrDefault()?.Code ?? throw new InvalidOperationException());
+			}
+
+			await transaction.CommitAsync();
+			return Json(await _context.Profiles.SingleOrDefaultAsync(p => p.Id == user.ProfileId));
+		}
+		catch
+		{
+			await transaction.RollbackAsync();
+			throw; 
+		}
 	}
 }

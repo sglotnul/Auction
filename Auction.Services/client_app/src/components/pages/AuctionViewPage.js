@@ -1,6 +1,5 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import {useParams} from "react-router-dom";
-import DefaultPageLayout from "../DefaultPageLayout";
 import useAuction from "../../hooks/useAuction";
 import AuctionCard from "../AuctionCard";
 
@@ -10,42 +9,26 @@ const AuctionViewPage = () => {
     const [auction, loading, status] = useAuction(auctionId);
     
     if (loading) {
-        return (
-            <DefaultPageLayout>
-                Loading...
-            </DefaultPageLayout>
-        )
+        return 'Loading...';
     }
     
     if (!auction) {
         switch (status) {
             case 404:
-                return (
-                    <DefaultPageLayout>
-                        Nothing found
-                    </DefaultPageLayout>
-                )
+                return 'Nothing found'
             case 500:
-                return (
-                    <DefaultPageLayout>
-                        Internal server error
-                    </DefaultPageLayout>
-                )
+                return 'Internal server error'
             default:
-                return (
-                    <DefaultPageLayout>
-                        Unexpected error
-                    </DefaultPageLayout>
-                )
+                return 'Unexpected error'
         }
     }
 
     return (
-        <DefaultPageLayout>
+        <Fragment>
             <AuctionCard auction={auction}/>
             <h2>Description:</h2>
             <span>{auction.description}</span>
-        </DefaultPageLayout>
+        </Fragment>
     );
 };
 

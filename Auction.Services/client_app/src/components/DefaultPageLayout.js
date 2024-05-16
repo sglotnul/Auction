@@ -1,7 +1,9 @@
-import React, {Fragment, useEffect, useState} from 'react';
+import React, {Fragment, useContext} from 'react';
 import ProfileBar from "./ProfileBar";
 import {Link} from "react-router-dom";
 import ErrorSnackbar from "./ErrorSnackbar";
+import ErrorContext from "../contexts/ErrorContext";
+import AuthContext from "../contexts/AuthContext";
 
 const Header = () => {
     return (
@@ -24,21 +26,13 @@ const Footer = () => {
     );
 };
 
-const DefaultPageLayout = ({ errorCode, children }) => {
-    const [errorCodes, setErrorCodes] = useState([]);
-    
-    useEffect(() => {
-        if (!errorCode){
-            return;
-        }
-        
-        if (errorCodes.length < 5) {
-            setErrorCodes(prev => [...prev, errorCode]);
-        }
-    }, [errorCode]);
+const DefaultPageLayout = ({ children }) => {
+    console.log(useContext(ErrorContext));
+    console.log(useContext(AuthContext));
+    const {errorCodes, removeError} = useContext(ErrorContext);
 
     const handleClose = (id) => () => {
-        setErrorCodes(prev => prev.filter(error => error.id !== id));
+        removeError(id);
     };
     
     return (

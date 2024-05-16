@@ -1,12 +1,13 @@
 import React, {useContext, useState} from 'react';
 import {Button, TextField, InputLabel, Select, MenuItem} from "@mui/material";
-import DefaultPageLayout from "../DefaultPageLayout";
 import {useNavigate} from "react-router-dom";
 import AuthContext from "../../contexts/AuthContext";
+import ErrorContext from "../../contexts/ErrorContext";
 
 const RegisterPage = () => {
     const navigate = useNavigate();
 
+    const { addError } = useContext(ErrorContext);
     const { user, loading, register } = useContext(AuthContext);
 
     const [tab, setTab] = useState(0);
@@ -17,15 +18,12 @@ const RegisterPage = () => {
         role: 1
     });
     const [profileFormData, setProfileFormData] = useState(undefined);
-    const [errorCode, setErrorCode] = useState(undefined);
     
     if (loading) {
         return (
-            <DefaultPageLayout>
-                <div className="default-form-container">
-                    ...Loading
-                </div>
-            </DefaultPageLayout>
+            <div className="default-form-container">
+                ...Loading
+            </div>
         );
     }
 
@@ -39,10 +37,7 @@ const RegisterPage = () => {
         const error = await register(userFormData.username, userFormData.password, userFormData.role, profileFormData);
 
         if (error) {
-            setErrorCode(error);
-        }
-        else {
-            setErrorCode(undefined);
+            addError(error);
         }
     };
 
@@ -77,117 +72,115 @@ const RegisterPage = () => {
     }
     
     return (
-        <DefaultPageLayout errorCode={errorCode}>
-            <div className="default-form-container">
-                <div className="tab-bar register-tabs">
-                    <div className={enabledTab >= 0 ? 'tab' : 'tab disabled'} onClick={changeTab(0)}>Account</div>
-                    <div className={enabledTab >= 1 ? 'tab' : 'tab disabled'} onClick={changeTab(1)}>Role</div>
-                    <div className={enabledTab >= 2 ? 'tab' : 'tab disabled'} onClick={changeTab(2)}>Profile</div>
-                </div>
-                {tab === 0 && (
-                    <form onSubmit={changeTab(tab + 1, true)}>
-                        <div className="register-input-container">
-                            <TextField
-                                label="User name"
-                                name="username"
-                                value={userFormData.username}
-                                onChange={handleInputChange}
-                                fullWidth
-                                margin="normal"
-                                required
-                            />
-                            <TextField
-                                label="Password"
-                                name="password"
-                                type="password"
-                                value={userFormData.password}
-                                onChange={handleInputChange}
-                                fullWidth
-                                margin="normal"
-                                required
-                            />
-                        </div>
+        <div className="default-form-container">
+            <div className="tab-bar register-tabs">
+                <div className={enabledTab >= 0 ? 'tab' : 'tab disabled'} onClick={changeTab(0)}>Account</div>
+                <div className={enabledTab >= 1 ? 'tab' : 'tab disabled'} onClick={changeTab(1)}>Role</div>
+                <div className={enabledTab >= 2 ? 'tab' : 'tab disabled'} onClick={changeTab(2)}>Profile</div>
+            </div>
+            {tab === 0 && (
+                <form onSubmit={changeTab(tab + 1, true)}>
+                    <div className="register-input-container">
+                        <TextField
+                            label="User name"
+                            name="username"
+                            value={userFormData.username}
+                            onChange={handleInputChange}
+                            fullWidth
+                            margin="normal"
+                            required
+                        />
+                        <TextField
+                            label="Password"
+                            name="password"
+                            type="password"
+                            value={userFormData.password}
+                            onChange={handleInputChange}
+                            fullWidth
+                            margin="normal"
+                            required
+                        />
+                    </div>
+                    <Button type="submit" variant="contained" fullWidth>
+                        Confirm
+                    </Button>
+                </form>
+            )}
+            {tab === 1 && (
+                <>
+                    <div className="register-input-container">
+                        <InputLabel id="select-label">Choose role</InputLabel>
+                        <Select
+                            labelId="select-label"
+                            id="select"
+                            name="role"
+                            value={userFormData.role}
+                            onChange={handleInputChange}
+                            label="Role"
+                            fullWidth
+                        >
+                            <MenuItem value={1}>Student</MenuItem>
+                            <MenuItem value={2}>Consultant</MenuItem>
+                        </Select>
+                    </div>
+                    <Button variant="contained" fullWidth onClick={changeTab(tab + 1, true)}>
+                        Confirm
+                    </Button>
+                </>
+            )}
+            {tab === 2 && (
+                <div>
+                    <form onSubmit={handleSubmit}>
+                        <TextField
+                            label="First name"
+                            name="firstName"
+                            value={profileFormData?.firstName}
+                            onChange={handleProfileInputChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                        <TextField
+                            label="Last name"
+                            name="lastName"
+                            value={profileFormData?.lastName}
+                            onChange={handleProfileInputChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                        <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="Birth date"
+                            name="birthDate"
+                            type="date"
+                            value={profileFormData?.birthDate}
+                            onChange={handleProfileInputChange}
+                            margin="normal"
+                        />
+                        <TextField
+                            label="Education"
+                            name="education"
+                            value={profileFormData?.education}
+                            onChange={handleProfileInputChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                        <TextField
+                            label="Biography"
+                            name="biography"
+                            multiline
+                            rows={4}
+                            value={profileFormData?.biography}
+                            onChange={handleProfileInputChange}
+                            fullWidth
+                            margin="normal"
+                        />
                         <Button type="submit" variant="contained" fullWidth>
                             Confirm
                         </Button>
                     </form>
-                )}
-                {tab === 1 && (
-                    <>
-                        <div className="register-input-container">
-                            <InputLabel id="select-label">Choose role</InputLabel>
-                            <Select
-                                labelId="select-label"
-                                id="select"
-                                name="role"
-                                value={userFormData.role}
-                                onChange={handleInputChange}
-                                label="Role"
-                                fullWidth
-                            >
-                                <MenuItem value={1}>Student</MenuItem>
-                                <MenuItem value={2}>Consultant</MenuItem>
-                            </Select>
-                        </div>
-                        <Button variant="contained" fullWidth onClick={changeTab(tab + 1, true)}>
-                            Confirm
-                        </Button>
-                    </>
-                )}
-                {tab === 2 && (
-                    <div>
-                        <form onSubmit={handleSubmit}>
-                            <TextField
-                                label="First name"
-                                name="firstName"
-                                value={profileFormData?.firstName}
-                                onChange={handleProfileInputChange}
-                                fullWidth
-                                margin="normal"
-                            />
-                            <TextField
-                                label="Last name"
-                                name="lastName"
-                                value={profileFormData?.lastName}
-                                onChange={handleProfileInputChange}
-                                fullWidth
-                                margin="normal"
-                            />
-                            <TextField
-                                InputLabelProps={{ shrink: true }}
-                                label="Birth date"
-                                name="birthDate"
-                                type="date"
-                                value={profileFormData?.birthDate}
-                                onChange={handleProfileInputChange}
-                                margin="normal"
-                            />
-                            <TextField
-                                label="Education"
-                                name="education"
-                                value={profileFormData?.education}
-                                onChange={handleProfileInputChange}
-                                fullWidth
-                                margin="normal"
-                            />
-                            <TextField
-                                label="Biography"
-                                name="biography"
-                                multiline
-                                rows={4}
-                                value={profileFormData?.biography}
-                                onChange={handleProfileInputChange}
-                                fullWidth
-                                margin="normal"
-                            />
-                            <Button type="submit" variant="contained" fullWidth>
-                                Confirm
-                            </Button>
-                        </form>
-                    </div>
-                )}
-            </div>
-        </DefaultPageLayout>
+                </div>
+            )}
+        </div>
     );
 };
 
