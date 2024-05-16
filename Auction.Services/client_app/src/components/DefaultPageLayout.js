@@ -3,7 +3,6 @@ import ProfileBar from "./ProfileBar";
 import {Link} from "react-router-dom";
 import ErrorSnackbar from "./ErrorSnackbar";
 import ErrorContext from "../contexts/ErrorContext";
-import AuthContext from "../contexts/AuthContext";
 
 const Header = () => {
     return (
@@ -27,8 +26,6 @@ const Footer = () => {
 };
 
 const DefaultPageLayout = ({ children }) => {
-    console.log(useContext(ErrorContext));
-    console.log(useContext(AuthContext));
     const {errorCodes, removeError} = useContext(ErrorContext);
 
     const handleClose = (id) => () => {

@@ -9,11 +9,7 @@ const ProfileBar = () => {
 	const { loading: userLoading, user } = useContext(AuthContext);
 
 	const toggleDrawer = (open) => (event) => {
-		if (!event){
-			return;
-		}
-		
-		if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+		if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
 			return;
 		}
 
@@ -22,25 +18,25 @@ const ProfileBar = () => {
 
 	const showDrawer = useCallback(toggleDrawer(true), []);
 	const hideDrawer = useCallback(toggleDrawer(false), []);
-
-	if (userLoading) {
-		return null;
-	}
-
-	if (!user) {
-		return (
-			<div style={{display: 'inline'}}>
-				<Link to='/register'>Sing Up      </Link>
-				<Link to='/login'>Sing In</Link>
-			</div>
-		)
-	}
+	
+	const content = userLoading
+		? null
+		: !user 
+			? (
+				<div style={{display: 'inline'}}>
+					<Link to='/register'>Sing Up      </Link>
+					<Link to='/login'>Sing In</Link>
+				</div>
+			)
+			: (
+				<div onClick={showDrawer}>
+					Hello, {user.userName}!
+				</div>
+			);
 
 	return (
 		<Fragment>
-			<div onClick={showDrawer}>
-				Hello, {user.userName}!
-			</div>
+			{content}
 			<ProfileDrawer isOpen={isDrawerOpen} onClose={hideDrawer}/>
 		</Fragment>
 	)
