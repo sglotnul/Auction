@@ -38,7 +38,7 @@ const LoginPage = () => {
     return (
         <div className="default-form-container">
             <form onSubmit={handleSubmit}>
-                <div className="register-input-container">
+                <div className="default-input-container">
                     <TextField
                         label="User name"
                         name="username"

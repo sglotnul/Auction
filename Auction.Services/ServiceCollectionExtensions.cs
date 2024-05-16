@@ -16,6 +16,8 @@ public static class ServiceCollectionExtensions
             resolver.Map(ErrorCodes.InternalServerError, HttpStatusCode.InternalServerError);
             resolver.Map(ErrorCodes.InvalidUserNameOrPassword, HttpStatusCode.Unauthorized);
             resolver.Map(ErrorCodes.NotFound, HttpStatusCode.NotFound);
+            resolver.Map(ErrorCodes.InvalidRole, HttpStatusCode.Forbidden);
+            
             resolver.Map(DuplicateUserNameCode, HttpStatusCode.BadRequest);
 
             return resolver;

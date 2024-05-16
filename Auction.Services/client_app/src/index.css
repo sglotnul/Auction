@@ -99,6 +99,8 @@ header {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  padding-right: 20px;
+  box-sizing: border-box;
 }
 
 .auction-card {
@@ -161,7 +163,7 @@ header {
   flex: 1;
 }
 
-.register-input-container {
+.default-input-container {
   min-height: 580px;
 }
 

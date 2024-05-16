@@ -17,7 +17,7 @@ const ProfilePage = () => {
     
     useEffect(() => setProfile(initialProfile), [initialProfile]);
 
-    if (loading || userLoading) {
+    if (!!profile != !!initialProfile || loading || userLoading) {
         return (
             <div className="default-form-container">
                 ...Loading
@@ -45,14 +45,13 @@ const ProfilePage = () => {
             prevData = {};
         }
 
-        setProfile({ ...prevData, [event.target.name]: event.target.value.trim() || null });
+        setProfile({ ...prevData, [event.target.name]: event.target.value || null });
     }
     
     return (
         <div className="default-form-container">
             <form onSubmit={handleSubmit}>
                 <TextField
-                    InputLabelProps={{ shrink: !!initialProfile }}
                     label="First name"
                     name="firstName"
                     value={profile?.firstName}
@@ -61,7 +60,6 @@ const ProfilePage = () => {
                     margin="normal"
                 />
                 <TextField
-                    InputLabelProps={{ shrink: !!initialProfile }}
                     label="Last name"
                     name="lastName"
                     value={profile?.lastName}
@@ -70,7 +68,7 @@ const ProfilePage = () => {
                     margin="normal"
                 />
                 <TextField
-                    InputLabelProps={{ shrink: !!initialProfile }}
+                    InputLabelProps={{ shrink: true }}
                     label="Birth date"
                     name="birthDate"
                     type="date"
@@ -79,7 +77,6 @@ const ProfilePage = () => {
                     margin="normal"
                 />
                 <TextField
-                    InputLabelProps={{ shrink: !!initialProfile }}
                     label="Education"
                     name="education"
                     value={profile?.education}
@@ -88,7 +85,6 @@ const ProfilePage = () => {
                     margin="normal"
                 />
                 <TextField
-                    InputLabelProps={{ shrink: !!initialProfile }}
                     label="Biography"
                     name="biography"
                     multiline

@@ -53,13 +53,17 @@ const RegisterPage = () => {
     };
 
     const handleInputChange = (event) => {
-        const regex = /^[a-zA-Z0-9@._-]+$/;
+        const regex = /^[a-zA-Z0-9@._-]*$/;
         
-        if (!regex.test(event.target.value)) {
-            return;
-        }
-        
-        setUserFormData({ ...userFormData, [event.target.name]: event.target.value });
+        setUserFormData(prev => {
+            let value = event.target.value;
+            
+            if (!regex.test(event.target.value)) {
+                value = prev[event.target.name];
+            }
+            
+            return { ...prev, [event.target.name]: value }
+        });
     };
     
     const handleProfileInputChange = (event) => {
@@ -68,7 +72,7 @@ const RegisterPage = () => {
             prevData = {};
         }
         
-        setProfileFormData( { ...prevData, [event.target.name]: event.target.value.trim() });
+        setProfileFormData( { ...prevData, [event.target.name]: event.target.value });
     }
     
     return (
@@ -80,7 +84,7 @@ const RegisterPage = () => {
             </div>
             {tab === 0 && (
                 <form onSubmit={changeTab(tab + 1, true)}>
-                    <div className="register-input-container">
+                    <div className="default-input-container">
                         <TextField
                             label="User name"
                             name="username"
@@ -107,8 +111,8 @@ const RegisterPage = () => {
                 </form>
             )}
             {tab === 1 && (
-                <>
-                    <div className="register-input-container">
+                <form onSubmit={changeTab(tab + 1, true)}>
+                    <div className="default-input-container">
                         <InputLabel id="select-label">Choose role</InputLabel>
                         <Select
                             labelId="select-label"
@@ -123,14 +127,14 @@ const RegisterPage = () => {
                             <MenuItem value={2}>Consultant</MenuItem>
                         </Select>
                     </div>
-                    <Button variant="contained" fullWidth onClick={changeTab(tab + 1, true)}>
+                    <Button type="submit" variant="contained" fullWidth>
                         Confirm
                     </Button>
-                </>
+                </form>
             )}
             {tab === 2 && (
-                <div>
-                    <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit}>
+                    <div className="default-input-container">
                         <TextField
                             label="First name"
                             name="firstName"
@@ -174,11 +178,11 @@ const RegisterPage = () => {
                             fullWidth
                             margin="normal"
                         />
-                        <Button type="submit" variant="contained" fullWidth>
-                            Confirm
-                        </Button>
-                    </form>
-                </div>
+                    </div>
+                    <Button type="submit" variant="contained" fullWidth>
+                        Confirm
+                    </Button>
+                </form>
             )}
         </div>
     );

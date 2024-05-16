@@ -102,7 +102,8 @@ public class AppDbContext : IdentityDbContext<User>
 		{ 
 			Id = DefaultUserId, 
 			UserName = DefaultUserName,
-			NormalizedUserName = DefaultUserName.ToUpper()
+			NormalizedUserName = DefaultUserName.ToUpper(),
+			Role = Role.Admin
 		};
 		defaultUser.PasswordHash = new PasswordHasher<User>().HashPassword(defaultUser, DefaultUserPassword);
 
