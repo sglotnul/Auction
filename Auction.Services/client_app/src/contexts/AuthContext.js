@@ -6,7 +6,6 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
-    const [errorCode, setErrorCode] = useState(null);
 
     useEffect(() => {
         const initializeUser = async () => {
@@ -15,9 +14,6 @@ export const AuthProvider = ({ children }) => {
             const response = await fetch('/api/user');
             if (response.ok) {
                 setUser(await response.json());
-            }
-            else {
-                setErrorCode(new ErrorCode(await response.text()));
             }
 
             setLoading(false);
@@ -42,7 +38,6 @@ export const AuthProvider = ({ children }) => {
 
         const errorCode = await response.text();
 
-        setErrorCode(new ErrorCode(errorCode));
         return new ErrorCode(errorCode);
     },[]);
 
@@ -56,7 +51,6 @@ export const AuthProvider = ({ children }) => {
 
         const errorCode = await response.text();
 
-        setErrorCode(new ErrorCode(errorCode));
         return new ErrorCode(errorCode);
     },[]);
 
@@ -76,12 +70,11 @@ export const AuthProvider = ({ children }) => {
 
         const errorCode = await response.text();
         
-        setErrorCode(new ErrorCode(errorCode));
         return new ErrorCode(errorCode);
     },[]);
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout, register, errorCode }}>
+        <AuthContext.Provider value={{ user, loading, login, logout, register }}>
             {children}
         </AuthContext.Provider>
     );

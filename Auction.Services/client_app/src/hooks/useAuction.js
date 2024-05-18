@@ -1,6 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
-import ErrorCode from "../models/ErrorCode";
-
+import {useEffect, useState} from 'react';
 const useAuction = (id, enabled = true) => {
     const [auction, setAuction] = useState(null);
     const [status, setStatus] = useState(null);
@@ -23,24 +21,8 @@ const useAuction = (id, enabled = true) => {
             fetchAuctions();
         }
     }, [id, enabled]);
-    
-    const updateAuction = useCallback(async (auction) => {
-        const response = await fetch(`/api/auctions/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8'
-            },
-            body: JSON.stringify(auction)
-        });
 
-        if (response.ok) {
-            setAuction(await response.json());
-        }
-
-        return response.ok ? null : new ErrorCode(await response.text());
-    }, []);
-
-    return [auction, loading, status, updateAuction];
+    return [auction, loading, status];
 }
 
 export default useAuction;

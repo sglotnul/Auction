@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Auction.Services;
 
@@ -26,7 +25,7 @@ public class AuctionController : ControllerBase
 	}
 	
 	[HttpGet("")]
-	public async Task<IActionResult> GetAuctionsAsync([FromQuery] AuctionsRequest request)
+	public async Task<IActionResult> GetAuctionsForListAsync([FromQuery] AuctionsRequest request)
 	{
 		var auctions = _dbContext.Auctions.AsQueryable();
 
@@ -35,11 +34,12 @@ public class AuctionController : ControllerBase
 			auctions = auctions.Where(a => a.Categories.Any(ac => request.Categories.Contains(ac.Id)));
 		}
 
-		if (!request.UserName.IsNullOrEmpty())
+		var userId = _userManager.GetUserId(HttpContext.User);
+		if (userId is not null)
 		{
-			auctions = auctions.Where(a => a.StudentUser.UserName == request.UserName);
+			auctions = auctions.Where(a => a.StudentUserId != userId);
 		}
-
+		
 		var result = await auctions
 			.Where(a => a.Status == AuctionStatus.Active)
 			.Select(a => new
@@ -77,8 +77,48 @@ public class AuctionController : ControllerBase
 		});
 	}
 	
+	[HttpGet("user/{userName}")]
+	public async Task<IActionResult> GetAuctionsForListAsync(string userName)
+	{
+		var result = await _dbContext.Auctions
+			.Where(a => a.StudentUser.UserName == userName)
+			.Select(a => new
+			{
+				a.Id,
+				a.Name,
+				a.Description,
+				a.Status,
+				a.StudentUser,
+				Categories = a.Categories.Select(c => new Category
+				{
+					Id = c.Id,
+					Name = c.Name
+				})
+			})
+			.AsNoTracking()
+			.ToArrayAsync();
+
+		return Json(new AuctionsResponse
+		{
+			Auctions = result
+				.Select(a => new AuctionResponse(
+					a.Id,
+					a.Name,
+					a.Description,
+					a.Status,
+					new UserResponse
+					{
+						UserId = a.StudentUser.Id,
+						UserName = a.StudentUser.UserName!,
+						Profile = a.StudentUser.Profile
+					},
+					a.Categories.ToArray()))
+				.ToArray()
+		});
+	}
+	
 	[HttpGet("{id:int}")]
-	public async Task<IActionResult> GetAuctionsAsync(int id)
+	public async Task<IActionResult> GetAuctionAsync(int id)
 	{
 		var auction = await _dbContext.Auctions
 			.Select(a => new

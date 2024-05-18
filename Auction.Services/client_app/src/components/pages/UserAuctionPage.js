@@ -1,23 +1,20 @@
-import React, {useContext, useMemo} from "react";
+import React, {useContext} from "react";
 import AuthContext from "../../contexts/AuthContext";
-import useAuctions from "../../hooks/useAuctions";
-import AuctionsFilter from "../../models/AuctionsFilter";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import AuctionCard from "../AuctionCard";
 import {Button} from "@mui/material";
+import useUserAuctions from "../../hooks/useUserAuctions";
 
 const UserAuctionPage = () => {
     const navigate = useNavigate();
     
     const {userName} = useParams();
     
-    const {user, loading, errorCode} = useContext(AuthContext);
+    const {user, loading} = useContext(AuthContext);
     
-    const filter = useMemo(() => new AuctionsFilter([], userName || user?.userName), [userName, user]);
-    
-    const [auctions, _, auctionsLoading] = useAuctions(filter, !!user || !!userName);
+    const [auctions, auctionsLoading] = useUserAuctions(userName || user?.userName, !!(user || userName));
 
-    if (!userName && errorCode) {
+    if (!userName && !user) {
         navigate('/');
     }
     
@@ -25,14 +22,6 @@ const UserAuctionPage = () => {
         return (
             <div className="auctions-page">
                 ...Loading
-            </div>
-        );
-    }
-    
-    if (!userName && !user) {
-        return (
-            <div className="auctions-page">
-                Nothing found
             </div>
         );
     }

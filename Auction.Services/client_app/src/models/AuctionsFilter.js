@@ -1,22 +1,16 @@
 const CATEGORY_PARAM = 'category';
-const USER_NAME_PARAM = 'userName';
 
 class AuctionsFilter {
     categories = [];
-    userName = null;
-    
-    constructor(categories, userName) {
-        this.categories = categories;
-        this.userName = userName;
-    }
-    
+
     static fromQueryString(search) {
         const searchParams = new URLSearchParams(search);
 
-        const categories = searchParams.getAll(CATEGORY_PARAM);
-        const userName = searchParams.get(USER_NAME_PARAM);
-
-        return new AuctionsFilter(categories, userName || null);
+        const filter = new AuctionsFilter();
+        
+        filter.categories = searchParams.getAll(CATEGORY_PARAM);
+        
+        return filter;
     }
     
     getQueryString(){
@@ -24,15 +18,37 @@ class AuctionsFilter {
         
         this.categories.forEach(c => searchParams.append(CATEGORY_PARAM, c));
         
-        if (this.userName) {
-            searchParams.append(USER_NAME_PARAM, this.userName);
-        }
-        
         return searchParams.toString();
     }
     
     cloneWithUpdatedCategories(categories){
-        return new AuctionsFilter(categories);
+        return this.cloneAndReplace('categories', categories);
+    }
+    
+    cloneAndReplace(property, value) {
+        const clonedInstance = Object.create(Object.getPrototypeOf(this));
+        
+        for (let key in this) {
+            if (this.hasOwnProperty(key)) {
+                clonedInstance[key] = this[key];
+            }
+        }
+        
+        clonedInstance[property] = value;
+
+        return clonedInstance;
+    }
+
+    clone() {
+        const clonedInstance = Object.create(Object.getPrototypeOf(this));
+
+        for (let key in this) {
+            if (this.hasOwnProperty(key)) {
+                clonedInstance[key] = this[key];
+            }
+        }
+
+        return clonedInstance;
     }
 }
 

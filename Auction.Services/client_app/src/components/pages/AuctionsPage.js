@@ -1,4 +1,4 @@
-import React, {Fragment, useCallback, useContext, useEffect, useState} from 'react';
+import React, {Fragment, useCallback, useContext, useEffect, useMemo, useState} from 'react';
 import useAuctions from "../../hooks/useAuctions";
 import AuctionsCategoryFilter from "../AuctionsCategoryFilter";
 import AuctionsFilter from "../../models/AuctionsFilter";
@@ -8,8 +8,15 @@ import AuthContext from "../../contexts/AuthContext";
 import {Button} from "@mui/material";
 
 const AuctionsPage = () => {
-	const [filter, setFilter] = useState(createFilter());
+	const { user } = useContext(AuthContext);
+	
+	const [filter, setFilter] = useState(AuctionsFilter.fromQueryString(window.location.search));
+	
 	const [auctions, count, auctionsLoading] = useAuctions(filter);
+	
+	useEffect(() => {
+		setFilter(filter.clone());
+	}, [user]);
 
 	useEffect(() => {
 		const newUrl = new URL(window.location);
@@ -83,10 +90,6 @@ const AuctionsCountView = ({count, loading}) => {
 			Found {count} auctions
 		</div>
 	);
-}
-
-function createFilter() {
-	return AuctionsFilter.fromQueryString(window.location.search);
 }
 
 export default AuctionsPage;

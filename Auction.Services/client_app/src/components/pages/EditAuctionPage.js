@@ -17,7 +17,7 @@ const EditAuctionPage = () => {
     const { user, loading: userLoading } = useContext(AuthContext);
 
     const [categories, categoriesLoading] = useCategories();
-    const [initialAuction, loading, status, updateAuction] = useAuction(auctionId, !!user);
+    const [initialAuction, loading, status] = useAuction(auctionId, !!user);
 
     const [tab, setTab] = useState(0);
     const [enabledTab, setEnabledTab] = useState(0);
@@ -29,7 +29,7 @@ const EditAuctionPage = () => {
         setAuctionFormData(initialAuction);
     }, [initialAuction]);
 
-    if (!!auctionFormData != !!initialAuction || loading || userLoading || categoriesLoading){
+    if (!!auctionFormData !== !!initialAuction || loading || userLoading || categoriesLoading){
         return (
             <div className="default-container">
                 ...Loading

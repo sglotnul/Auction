@@ -1,4 +1,4 @@
-import React, {Fragment, useContext} from 'react';
+import React, {useContext} from 'react';
 import {useParams} from "react-router-dom";
 import useAuction from "../../hooks/useAuction";
 import AuctionCard from "../AuctionCard";
@@ -30,7 +30,7 @@ const AuctionViewPage = () => {
     const canBid = user?.role === 2 || user?.role === 3;
 
     return (
-        <Fragment>
+        <div className="default-container">
             <AuctionCard auction={auction}>
                 {canBid
                     ? <Button variant="contained">Bid</Button>
@@ -39,7 +39,7 @@ const AuctionViewPage = () => {
             </AuctionCard>
             <h2>Description:</h2>
             <span>{auction.description}</span>
-        </Fragment>
+        </div>
     );
 };
 
