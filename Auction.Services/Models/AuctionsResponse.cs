@@ -8,10 +8,12 @@ public class AuctionsResponse
 	public int Count => Auctions.Count;
 }
 
-public record AuctionResponse(
-	int Id,
-	string Title,
-	string Description,
-	AuctionStatus Status,
-	UserResponse User,
-	IReadOnlyCollection<Category> Categories);
+public record AuctionResponse
+{
+	public int Id { get; init; }
+	public string Title { get; init; } = null!;
+	public string Description { get; init; } = null!;
+	public AuctionStatus Status { get; init; }
+	public UserResponse User { get; init; } = null!;
+	public IEnumerable<CategoryResponse> Categories { get; init; } = null!;
+}

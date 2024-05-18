@@ -18,6 +18,14 @@ public class CategoryController : Controller
 	[HttpGet("")]
 	public async Task<IActionResult> GetCategoriesAsync()
 	{
-		return Json(await _dbContext.Categories.ToArrayAsync());
+		var result = await _dbContext.Categories
+			.Select(c => new CategoryResponse
+			{
+				Id = c.Id,
+				Name = c.Name
+			})
+			.ToArrayAsync();
+		
+		return Json(result);
 	}
 }

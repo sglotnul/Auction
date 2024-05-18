@@ -13,8 +13,7 @@ public class AppDbContext : IdentityDbContext<User>
 	public DbSet<Profile> Profiles { get; set; } = null!;
 	public DbSet<Category> Categories { get; set; } = null!;
 	public DbSet<Auction> Auctions { get; set; } = null!;
-	public DbSet<ConsultantBid> ConsultantBids { get; set; } = null!;
-	public DbSet<ConsultationSession> ConsultationSessions { get; set; } = null!;
+	public DbSet<Bid> Bids { get; set; } = null!;
 
 	public AppDbContext(DbContextOptions<AppDbContext> options)
 		: base(options)
@@ -28,6 +27,7 @@ public class AppDbContext : IdentityDbContext<User>
 		modelBuilder.Entity<User>(entity =>
 		{
 			entity.HasKey(e => e.Id);
+			
 			entity.HasOne(e => e.Profile)
 				.WithMany()
 				.HasForeignKey(e => e.ProfileId);
@@ -46,9 +46,17 @@ public class AppDbContext : IdentityDbContext<User>
 		modelBuilder.Entity<Auction>(entity =>
 		{
 			entity.HasKey(e => e.Id);
-			entity.HasOne(e => e.StudentUser)
-				.WithMany()
-				.HasForeignKey(e => e.StudentUserId);
+			
+			entity.HasOne(e => e.User)
+				.WithMany(e => e.Auctions)
+				.HasForeignKey(e => e.UserId);
+			
+			entity.HasMany(s => s.Categories)
+				.WithMany(c => c.Auctions)
+				.UsingEntity<Dictionary<string, object>>(
+					"AuctionCategory",
+					j => j.HasOne<Category>().WithMany().HasForeignKey("CategoryId"),
+					j => j.HasOne<Auction>().WithMany().HasForeignKey("AuctionId"));
 		});
 		
 		modelBuilder.Entity<Category>(entity =>
@@ -58,37 +66,17 @@ public class AppDbContext : IdentityDbContext<User>
 			entity.HasData(CreateInitialCategories());
 		});
 
-		modelBuilder.Entity<Auction>()
-			.HasMany(s => s.Categories)
-			.WithMany(c => c.Auctions)
-			.UsingEntity<Dictionary<string, object>>(
-				"AuctionCategory",
-				j => j.HasOne<Category>().WithMany().HasForeignKey("CategoryId"),
-				j => j.HasOne<Auction>().WithMany().HasForeignKey("AuctionId"));
-
-		modelBuilder.Entity<ConsultantBid>(entity =>
+		modelBuilder.Entity<Bid>(entity =>
 		{
 			entity.HasKey(e => e.Id);
+			
 			entity.HasOne(e => e.Auction)
-				.WithMany()
+				.WithMany(e => e.Bids)
 				.HasForeignKey(e => e.AuctionId);
-			entity.HasOne(e => e.ConsultantUser)
-				.WithMany()
-				.HasForeignKey(e => e.ConsultantUserId);
-		});
-		
-		modelBuilder.Entity<ConsultationSession>(entity =>
-		{
-			entity.HasKey(e => e.Id);
-			entity.HasOne(e => e.Auction)
-				.WithMany()
-				.HasForeignKey(e => e.AuctionId);
-			entity.HasOne(e => e.ConsultantUser)
-				.WithMany()
-				.HasForeignKey(e => e.ConsultantUserId);
-			entity.HasOne(e => e.StudentUser)
-				.WithMany()
-				.HasForeignKey(e => e.StudentUserId);
+			
+			entity.HasOne(e => e.User)
+				.WithMany(e => e.Bids)
+				.HasForeignKey(e => e.UserId);
 		});
 	}
 

@@ -1,5 +1,4 @@
 using Auction.Model;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +29,20 @@ public class ProfileController : ControllerBase
 		if (user?.ProfileId is null)
 			return ErrorCode(ErrorCodes.NotFound);
 
-		return Json(await _context.Profiles.SingleOrDefaultAsync(p => p.Id == user.ProfileId) ?? throw new InvalidOperationException());
+		var profile = await _context.Profiles.SingleOrDefaultAsync(p => p.Id == user.ProfileId)
+			?? throw new InvalidOperationException();
+
+		var result = new ProfileResponse
+		{
+			Id = profile.Id,
+			FirstName = profile.FirstName,
+			LastName = profile.LastName,
+			BirthDate = profile.BirthDate,
+			Biography = profile.Biography,
+			Education = profile.Education
+		};
+
+		return Json(result);
 	}
 	
 	[HttpPut("")]

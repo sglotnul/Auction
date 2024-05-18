@@ -34,23 +34,31 @@ public class AuctionController : ControllerBase
 		var userId = _userManager.GetUserId(HttpContext.User);
 		if (userId is not null)
 		{
-			auctions = auctions.Where(a => a.StudentUserId != userId);
+			auctions = auctions.Where(a => a.UserId != userId);
 		}
 		
 		var result = await auctions
 			.Where(a => a.Status == AuctionStatus.Active)
-			.Select(a => new
+			.Select(a => new AuctionResponse
 			{
-				a.Id,
-				a.Name,
-				a.Description,
-				a.Status,
-				a.StudentUser,
-				Categories = a.Categories.Select(c => new Category
+				Id = a.Id,
+				Title = a.Title,
+				Description = a.Description,
+				Status = a.Status,
+				User = new UserResponse
 				{
-					Id = c.Id,
-					Name = c.Name
-				})
+					UserId = a.User.Id,
+					UserName = a.User.UserName!,
+					Profile = a.User.Profile
+				},
+				Categories = a.Categories
+					.Select(
+						c => new CategoryResponse
+						{
+							Id = c.Id,
+							Name = c.Name
+						})	
+					.ToArray()
 			})
 			.AsNoTracking()
 			.ToArrayAsync();
@@ -58,19 +66,6 @@ public class AuctionController : ControllerBase
 		return Json(new AuctionsResponse
 		{
 			Auctions = result
-				.Select(a => new AuctionResponse(
-					a.Id,
-					a.Name,
-					a.Description,
-					a.Status,
-					new UserResponse
-					{
-						UserId = a.StudentUser.Id,
-						UserName = a.StudentUser.UserName!,
-						Profile = a.StudentUser.Profile
-					},
-					a.Categories.ToArray()))
-				.ToArray()
 		});
 	}
 	
@@ -78,19 +73,27 @@ public class AuctionController : ControllerBase
 	public async Task<IActionResult> GetAuctionsForListAsync(string userName)
 	{
 		var result = await _dbContext.Auctions
-			.Where(a => a.StudentUser.UserName == userName)
-			.Select(a => new
+			.Where(a => a.User.UserName == userName)
+			.Select(a => new AuctionResponse
 			{
-				a.Id,
-				a.Name,
-				a.Description,
-				a.Status,
-				a.StudentUser,
-				Categories = a.Categories.Select(c => new Category
+				Id = a.Id,
+				Title = a.Title,
+				Description = a.Description,
+				Status = a.Status,
+				User = new UserResponse
 				{
-					Id = c.Id,
-					Name = c.Name
-				})
+					UserId = a.User.Id,
+					UserName = a.User.UserName!,
+					Profile = a.User.Profile
+				},
+				Categories = a.Categories
+					.Select(
+						c => new CategoryResponse
+						{
+							Id = c.Id,
+							Name = c.Name
+						})	
+					.ToArray()
 			})
 			.AsNoTracking()
 			.ToArrayAsync();
@@ -98,19 +101,6 @@ public class AuctionController : ControllerBase
 		return Json(new AuctionsResponse
 		{
 			Auctions = result
-				.Select(a => new AuctionResponse(
-					a.Id,
-					a.Name,
-					a.Description,
-					a.Status,
-					new UserResponse
-					{
-						UserId = a.StudentUser.Id,
-						UserName = a.StudentUser.UserName!,
-						Profile = a.StudentUser.Profile
-					},
-					a.Categories.ToArray()))
-				.ToArray()
 		});
 	}
 	
@@ -118,36 +108,33 @@ public class AuctionController : ControllerBase
 	public async Task<IActionResult> GetAuctionAsync(int id)
 	{
 		var auction = await _dbContext.Auctions
-			.Select(a => new
+			.Select(a => new AuctionResponse
 			{
-				a.Id,
-				a.Name,
-				a.Description,
-				a.Status,
-				a.StudentUser,
-				Categories = a.Categories.Select(c => new Category
+				Id = a.Id,
+				Title = a.Title,
+				Description = a.Description,
+				Status = a.Status,
+				User = new UserResponse
 				{
-					Id = c.Id,
-					Name = c.Name
-				})
+					UserId = a.User.Id,
+					UserName = a.User.UserName!,
+					Profile = a.User.Profile
+				},
+				Categories = a.Categories
+					.Select(
+						c => new CategoryResponse
+						{
+							Id = c.Id,
+							Name = c.Name
+						})	
+					.ToArray()
 			})
 			.SingleOrDefaultAsync(a => a.Id == id);
 
 		if (auction is null)
 			return ErrorCode(ErrorCodes.NotFound);
 		
-		return Json(new AuctionResponse(
-			auction.Id,
-			auction.Name,
-			auction.Description,
-			auction.Status,
-			new UserResponse
-			{
-				UserId = auction.StudentUser.Id,
-				UserName = auction.StudentUser.UserName!,
-				Profile = auction.StudentUser.Profile
-			},
-			auction.Categories.ToArray()));
+		return Json(auction);
 	}
 
 	[HttpPost("create")]
@@ -165,14 +152,13 @@ public class AuctionController : ControllerBase
 		
 		var auction = new Model.Auction
 		{
-			Name = request.Title,
+			Title = request.Title,
 			Description = request.Description,
 			Status = AuctionStatus.Active,
-			StudentUserId = user.Id,
 			Categories = categories
 		};
 
-		await _dbContext.Auctions.AddAsync(auction);
+		user.Auctions.Add(auction);
 		await _dbContext.SaveChangesAsync();
 
 		return Ok(auction.Id);
@@ -190,12 +176,12 @@ public class AuctionController : ControllerBase
 		if (auction is null)
 			return ErrorCode(ErrorCodes.NotFound);
 
-		if (auction.StudentUserId != userId)
+		if (auction.UserId != userId)
 			return ErrorCode(ErrorCodes.Forbidden);
 		
 		var categories = await _dbContext.Categories.Where(c => request.Categories.Contains(c.Id)).ToListAsync();
 		
-		auction.Name = request.Title;
+		auction.Title = request.Title;
 		auction.Description = request.Description;
 		auction.Categories = categories;
 
@@ -220,19 +206,18 @@ public class AuctionController : ControllerBase
 		if (user.Role is not Role.Consultant and not Role.Admin)
 			return ErrorCode(ErrorCodes.InvalidRole);
 		
-		if (user.Id == auction.StudentUserId)
+		if (user.Id == auction.UserId)
 			return ErrorCode(ErrorCodes.Forbidden);
 
-		var bid = new ConsultantBid
+		var bid = new Bid
 		{
-			AuctionId = id,
-			ConsultantUserId = user.Id!,
+			UserId = user.Id,
 			Amount = request.Amount,
 			DateTime = DateTime.Now,
 			Comment = request.Comment
 		};
-
-		await _dbContext.ConsultantBids.AddAsync(bid);
+		
+		auction.Bids.Add(bid);
 		await _dbContext.SaveChangesAsync();
 
 		return Ok();
