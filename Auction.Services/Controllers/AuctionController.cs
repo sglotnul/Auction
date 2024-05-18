@@ -1,3 +1,4 @@
+using System.Data;
 using Auction.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -195,31 +196,60 @@ public class AuctionController : ControllerBase
 	[Authorize]
 	public async Task<IActionResult> PlaceBidAsync([FromRoute] int id, [FromBody] BidRequest request)
 	{
-		var auction = await _dbContext.Auctions.SingleOrDefaultAsync(a => a.Id == id);
-		if (auction is null)
-			return ErrorCode(ErrorCodes.NotFound);
+		if (request.Amount < 0)
+			return ErrorCode(ErrorCodes.InvalidBid);
 		
 		var user = await _userManager.GetUserAsync(HttpContext.User);
+		
 		if (user is null)
 			throw new InvalidDataException("Authorized user id is null.");
 
 		if (user.Role is not Role.Consultant and not Role.Admin)
 			return ErrorCode(ErrorCodes.InvalidRole);
+
+		var auction = await _dbContext.Auctions.SingleOrDefaultAsync(a => a.Id == id);
+		
+		if (auction is null)
+			return ErrorCode(ErrorCodes.NotFound);
 		
 		if (user.Id == auction.UserId)
 			return ErrorCode(ErrorCodes.Forbidden);
 
-		var bid = new Bid
-		{
-			UserId = user.Id,
-			Amount = request.Amount,
-			DateTime = DateTime.UtcNow,
-			Comment = request.Comment
-		};
-		
-		auction.Bids.Add(bid);
-		await _dbContext.SaveChangesAsync();
+		await using var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.Serializable);
 
-		return Ok();
+		try
+		{
+			var actualBid = _dbContext.Bids.Where(b => b.AuctionId == auction.Id).OrderBy(b => b.Amount).FirstOrDefault();
+
+			var actualPrice = actualBid?.Amount is null
+				? auction.InitialPrice
+				: Math.Min(auction.InitialPrice, actualBid.Amount);
+			
+			if (actualPrice - request.Amount < auction.MinDecrease)
+			{
+				await transaction.RollbackAsync();
+				return ErrorCode(ErrorCodes.InvalidBid);
+			}
+
+			var bid = new Bid
+			{
+				UserId = user.Id,
+				Amount = request.Amount,
+				DateTime = DateTime.UtcNow,
+				Comment = request.Comment
+			};
+	
+			auction.Bids.Add(bid);
+			await _dbContext.SaveChangesAsync();
+			
+			await transaction.CommitAsync();
+
+			return Ok();
+		}
+		catch
+		{
+			await transaction.RollbackAsync();
+			throw;
+		}
 	}
 }

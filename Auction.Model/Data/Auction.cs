@@ -6,7 +6,7 @@ public class Auction
 	
 	public string Title { get; set; } = null!;
 	public string Description { get; set; } = null!;
-	public decimal MinIncrease { get; set; }
+	public decimal MinDecrease { get; set; }
 	public decimal InitialPrice { get; set; }
 	
 	public AuctionStatus Status { get; set; }
