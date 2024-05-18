@@ -172,14 +172,14 @@ public class AuctionController : ControllerBase
 		if (userId is null)
 			throw new InvalidDataException("Authorized user id is null.");
 
-		var auction = await _dbContext.Auctions.SingleOrDefaultAsync(a => a.Id == id);
+		var auction = await _dbContext.Auctions.Include(a => a.Categories).SingleOrDefaultAsync(a => a.Id == id);
 		if (auction is null)
 			return ErrorCode(ErrorCodes.NotFound);
 
 		if (auction.UserId != userId)
 			return ErrorCode(ErrorCodes.Forbidden);
 		
-		var categories = await _dbContext.Categories.Where(c => request.Categories.Contains(c.Id)).ToListAsync();
+		var categories = await _dbContext.Categories.Where(c => request.Categories.Contains(c.Id)).Distinct().ToListAsync();
 		
 		auction.Title = request.Title;
 		auction.Description = request.Description;
@@ -213,7 +213,7 @@ public class AuctionController : ControllerBase
 		{
 			UserId = user.Id,
 			Amount = request.Amount,
-			DateTime = DateTime.Now,
+			DateTime = DateTime.UtcNow,
 			Comment = request.Comment
 		};
 		

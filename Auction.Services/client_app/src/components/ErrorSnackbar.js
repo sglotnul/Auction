@@ -19,7 +19,7 @@ const ErrorSnackbar = ({ message, onClose }) => {
         <Snackbar
             anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
             open={open}
-            autoHideDuration={6000}
+            autoHideDuration={2000}
             onClose={close}
         >
             <MuiAlert onClose={close} severity="error" sx={{ width: '100%' }}>

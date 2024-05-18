@@ -52,8 +52,6 @@ const AuctionsList = ({auctions, loading}) => {
 			</div>
 		);
 	}
-	
-	const canBid = user?.role === 2 || user?.role === 3;
 
 	return (
 		<div className='auction-list'>
@@ -61,12 +59,7 @@ const AuctionsList = ({auctions, loading}) => {
 				? auctions.map(
 					(auction) => (
 						<Link className="auction-card-outer-link" to={`/auctions/${auction.id}`}>
-							<AuctionCard key={auction.id} auction={auction} showBidButton={canBid}>
-								{canBid
-									? <Button variant="contained">Bid</Button>
-									: null
-								}
-							</AuctionCard>
+							<AuctionCard key={auction.id} auction={auction} />
 						</Link>
 					)
 				)

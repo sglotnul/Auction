@@ -52,7 +52,7 @@ public class AppDbContext : IdentityDbContext<User>
 				.HasForeignKey(e => e.UserId);
 			
 			entity.HasMany(s => s.Categories)
-				.WithMany(c => c.Auctions)
+				.WithMany()
 				.UsingEntity<Dictionary<string, object>>(
 					"AuctionCategory",
 					j => j.HasOne<Category>().WithMany().HasForeignKey("CategoryId"),

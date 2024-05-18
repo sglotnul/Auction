@@ -95,7 +95,7 @@ const EditAuctionPage = () => {
 
     return (
         <div className="default-container">
-            <div className="tab-bar register-tabs">
+            <div className="tab-bar default-tabs">
                 <div className={enabledTab >= 0 ? 'tab' : 'tab disabled'} onClick={changeTab(0)}>Title</div>
                 <div className={enabledTab >= 1 ? 'tab' : 'tab disabled'} onClick={changeTab(1)}>Description</div>
                 <div className={enabledTab >= 2 ? 'tab' : 'tab disabled'} onClick={changeTab(2)}>Details</div>

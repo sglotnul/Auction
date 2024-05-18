@@ -77,7 +77,7 @@ const RegisterPage = () => {
     
     return (
         <div className="default-container">
-            <div className="tab-bar register-tabs">
+            <div className="tab-bar default-tabs">
                 <div className={enabledTab >= 0 ? 'tab' : 'tab disabled'} onClick={changeTab(0)}>Account</div>
                 <div className={enabledTab >= 1 ? 'tab' : 'tab disabled'} onClick={changeTab(1)}>Role</div>
                 <div className={enabledTab >= 2 ? 'tab' : 'tab disabled'} onClick={changeTab(2)}>Profile</div>
