@@ -1,4 +1,4 @@
-import React, {Fragment, useCallback, useContext, useState} from 'react';
+import React, {Fragment, useCallback, useContext, useEffect, useState} from 'react';
 import {useParams} from "react-router-dom";
 import useAuction from "../../hooks/useAuction";
 import AuctionCard from "../AuctionCard";
@@ -8,9 +8,17 @@ import ErrorCode from "../../models/ErrorCode";
 import ErrorContext from "../../contexts/ErrorContext";
 
 const AuctionViewPage = () => {
+    const { addError } = useContext(ErrorContext);
+    
     const { auctionId } = useParams();
 
-    const [auction, loading, status] = useAuction(auctionId);
+    const [auction, loading, errorCode] = useAuction(auctionId);
+
+    useEffect(() => {
+        if (errorCode) {
+            addError(errorCode);
+        }
+    }, [errorCode]);
     
     if (loading) {
         return (
@@ -21,14 +29,11 @@ const AuctionViewPage = () => {
     }
     
     if (!auction) {
-        switch (status) {
-            case 404:
-                return 'Nothing found'
-            case 500:
-                return 'Internal server error'
-            default:
-                return 'Unexpected error'
-        }
+        return (
+            <div className="default-container">
+                Error.
+            </div>  
+        );
     }
 
     return (

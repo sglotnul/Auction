@@ -4,6 +4,7 @@ import useProfile from "../../hooks/useProfile";
 import AuthContext from "../../contexts/AuthContext";
 import {useNavigate} from "react-router-dom";
 import ErrorContext from "../../contexts/ErrorContext";
+import ErrorCode from "../../models/ErrorCode";
 
 const EditProfilePage = () => {
     const navigate = useNavigate();
@@ -11,16 +12,30 @@ const EditProfilePage = () => {
     const { addError } = useContext(ErrorContext);
     const { user, loading: userLoading } = useContext(AuthContext);
     
-    const [initialProfile, loading, updateProfile] = useProfile(user?.userName, !!user);
+    const [initialProfile, loading, errorCode] = useProfile(user?.userName, !!user);
     
     const [profile, setProfile] = useState(initialProfile);
     
     useEffect(() => setProfile(initialProfile), [initialProfile]);
 
-    if (!!profile != !!initialProfile || loading || userLoading) {
+    useEffect(() => {
+        if (errorCode) {
+            addError(errorCode);
+        }
+    }, [errorCode]);
+
+    if (!!profile !== !!initialProfile || loading || userLoading) {
         return (
             <div className="default-container">
                 ...Loading
+            </div>
+        );
+    }
+    
+    if (!profile) {
+        return (
+            <div className="default-container">
+                Error.
             </div>
         );
     }
@@ -32,10 +47,19 @@ const EditProfilePage = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const error = await updateProfile(profile);
+        const response = await fetch('/api/profiles', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(profile)
+        });
 
-        if (error) {
-            addError(error);
+        if (response.ok) {
+            setProfile(await response.json());
+        }
+        else {
+            addError(new ErrorCode(await response.text()));
         }
     };
 

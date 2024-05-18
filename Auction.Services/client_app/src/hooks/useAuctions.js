@@ -5,6 +5,7 @@ const useAuctions = (filter, enabled = true) => {
     const [auctions, setAuctions] = useState([]);
     const [count, setCount] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [errorCode, setErrorCode] = useState(undefined);
 
     useEffect(() => {
         const fetchAuctions = async () => {
@@ -14,14 +15,16 @@ const useAuctions = (filter, enabled = true) => {
             uri.search = filter.getQueryString();
             
             const response = await fetch(uri);
-            if (!response.ok) {
-                throw new Error(new ErrorCode(await response.text()).message());
+            if (response.ok) {
+                const data = await response.json();
+                
+                setAuctions(data.auctions);
+                setCount(data.count);
             }
-
-            const data = await response.json();
+            else {
+                setErrorCode(new ErrorCode(await response.text()));
+            }
             
-            setAuctions(data.auctions);
-            setCount(data.count);
             setLoading(false);
         };
 
@@ -30,7 +33,7 @@ const useAuctions = (filter, enabled = true) => {
         }
     }, [filter, enabled]);
     
-    return [auctions, count, loading];
+    return [auctions, count, loading, errorCode];
 }
 
 export default useAuctions;

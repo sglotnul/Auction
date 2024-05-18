@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import AuthContext from "../../contexts/AuthContext";
 import {useNavigate} from "react-router-dom";
 import ErrorContext from "../../contexts/ErrorContext";
@@ -12,7 +12,7 @@ const CreateAuctionPage = () => {
     const { addError } = useContext(ErrorContext);
     const { user, loading: userLoading } = useContext(AuthContext);
     
-    const [categories, categoriesLoading] = useCategories();
+    const [categories, categoriesLoading, errorCode] = useCategories();
 
     const [tab, setTab] = useState(0);
     const [enabledTab, setEnabledTab] = useState(0);
@@ -21,6 +21,12 @@ const CreateAuctionPage = () => {
         description: undefined
     });
     const [selectedCategories, setSelectedCategories] = useState([]);
+
+    useEffect(() => {
+        if (errorCode) {
+            addError(errorCode);
+        }
+    }, [errorCode]);
 
     if (userLoading || categoriesLoading){
         return (
@@ -130,7 +136,7 @@ const CreateAuctionPage = () => {
                             multiple
                             value={selectedCategories}
                             onChange={handleCheckboxChange}
-                            renderValue={selected => selected.map(s => categories.find(c => c.id === s).name).join(', ') || 'Choose categories'}
+                            renderValue={selected => selected.map(s => categories.find(c => c.id === s)?.name).join(', ') || 'Choose categories'}
                             fullWidth
                             displayEmpty
                             margin="normal"

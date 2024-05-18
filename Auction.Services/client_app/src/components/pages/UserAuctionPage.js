@@ -1,18 +1,26 @@
-import React, {useContext} from "react";
+import React, {useContext, useEffect} from "react";
 import AuthContext from "../../contexts/AuthContext";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import AuctionCard from "../AuctionCard";
 import {Button} from "@mui/material";
 import useUserAuctions from "../../hooks/useUserAuctions";
+import ErrorContext from "../../contexts/ErrorContext";
 
 const UserAuctionPage = () => {
     const navigate = useNavigate();
     
     const {userName} = useParams();
     
+    const {addError} = useContext(ErrorContext);
     const {user, loading} = useContext(AuthContext);
     
-    const [auctions, auctionsLoading] = useUserAuctions(userName || user?.userName, !!(user || userName));
+    const [auctions, auctionsLoading, errorCode] = useUserAuctions(userName || user?.userName, !!(user || userName));
+
+    useEffect(() => {
+        if (errorCode) {
+            addError(errorCode);
+        }
+    }, [errorCode]);
 
     if (!userName && !user) {
         navigate('/');

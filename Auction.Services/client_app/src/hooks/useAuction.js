@@ -1,19 +1,24 @@
 import {useEffect, useState} from 'react';
+import ErrorCode from "../models/ErrorCode";
+
 const useAuction = (id, enabled = true) => {
-    const [auction, setAuction] = useState(null);
-    const [status, setStatus] = useState(null);
+    const [auction, setAuction] = useState(undefined);
     const [loading, setLoading] = useState(true);
+    const [errorCode, setErrorCode] = useState(undefined);
 
     useEffect(() => {
         const fetchAuctions = async () => {
             setLoading(true)
 
             const response = await fetch(`/api/auctions/${id}`);
-
-            setStatus(response.status);
+            
             if (response.ok) {
                 setAuction(await response.json());
             }
+            else {
+                setErrorCode(new ErrorCode(await response.text()));
+            }
+            
             setLoading(false);
         };
 
@@ -22,7 +27,7 @@ const useAuction = (id, enabled = true) => {
         }
     }, [id, enabled]);
 
-    return [auction, loading, status];
+    return [auction, loading, errorCode];
 }
 
 export default useAuction;

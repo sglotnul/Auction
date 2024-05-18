@@ -6,13 +6,15 @@ import {Link} from "react-router-dom";
 import AuctionCard from "../AuctionCard";
 import AuthContext from "../../contexts/AuthContext";
 import {Button} from "@mui/material";
+import ErrorContext from "../../contexts/ErrorContext";
 
 const AuctionsPage = () => {
 	const { user } = useContext(AuthContext);
+	const { addError } = useContext(ErrorContext);
 	
 	const [filter, setFilter] = useState(AuctionsFilter.fromQueryString(window.location.search));
 	
-	const [auctions, count, auctionsLoading] = useAuctions(filter);
+	const [auctions, count, auctionsLoading, errorCode] = useAuctions(filter);
 	
 	useEffect(() => {
 		setFilter(filter.clone());
@@ -24,6 +26,12 @@ const AuctionsPage = () => {
 
 		window.history.replaceState({}, '', newUrl);
 	}, [filter]);
+	
+	useEffect(() => {
+		if (errorCode) {
+			addError(errorCode);
+		}
+	}, [errorCode]);
 	
 	const onCategoryFilterChanged = useCallback(selectedCategories => {
 		setFilter(prev => prev.cloneWithUpdatedCategories(selectedCategories));

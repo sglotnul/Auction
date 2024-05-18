@@ -1,15 +1,29 @@
-import React, {useCallback, useState, Fragment, useEffect} from 'react';
+import React, {useCallback, useState, useEffect, useContext} from 'react';
 import useCategories from "../hooks/useCategories";
 import {Button, Checkbox, FormControlLabel, FormGroup} from "@mui/material";
+import ErrorContext from "../contexts/ErrorContext";
 
 const AuctionsCategoryFilter = ({initialCategories, onSubmit}) => {
-    const [categories, loading] = useCategories();
+    const { addError } = useContext(ErrorContext);
+    
+    const [categories, loading, errorCode] = useCategories();
+    
     const [selectedCategories, setSelectedCategories] = useState([...initialCategories]);
 
     const onButtonClick = useCallback(e => onSubmit(selectedCategories), [selectedCategories]);
+
+    useEffect(() => {
+        if (errorCode) {
+            addError(errorCode);
+        }
+    }, [errorCode]);
     
     if (loading) {
         return 'Loading...';
+    }
+    
+    if (!categories) {
+        return 'Error.'
     }
 
     const updateSelectedCategories = (categoryId) => (e) => {

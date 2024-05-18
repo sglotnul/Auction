@@ -12,7 +12,13 @@ const ProfileDrawer = ({isOpen, onClose}) => {
     const { addError } = useContext(ErrorContext);
     const { user, logout } = useContext(AuthContext);
     
-    const [profile, loading] = useProfile(user?.userName, user && isOpen);
+    const [profile, loading, errorCode] = useProfile(user?.userName, user && isOpen);
+
+    useEffect(() => {
+        if (errorCode) {
+            addError(errorCode);
+        }
+    }, [errorCode]);
     
     const onLogout = useCallback(async () => {
         const error = await logout();

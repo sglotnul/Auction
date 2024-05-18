@@ -5,7 +5,6 @@ import AuthContext from "../../contexts/AuthContext";
 import useCategories from "../../hooks/useCategories";
 import ErrorCode from "../../models/ErrorCode";
 import {Button, Checkbox, InputLabel, ListItemText, MenuItem, Select, TextField} from "@mui/material";
-import useProfile from "../../hooks/useProfile";
 import useAuction from "../../hooks/useAuction";
 
 const EditAuctionPage = () => {
@@ -16,8 +15,8 @@ const EditAuctionPage = () => {
     const { addError } = useContext(ErrorContext);
     const { user, loading: userLoading } = useContext(AuthContext);
 
-    const [categories, categoriesLoading] = useCategories();
-    const [initialAuction, loading, status] = useAuction(auctionId, !!user);
+    const [categories, categoriesLoading, categoryErrorCode] = useCategories();
+    const [initialAuction, loading, errorCode] = useAuction(auctionId, !!user);
 
     const [tab, setTab] = useState(0);
     const [enabledTab, setEnabledTab] = useState(0);
@@ -29,6 +28,15 @@ const EditAuctionPage = () => {
         setAuctionFormData(initialAuction);
     }, [initialAuction]);
 
+    useEffect(() => {
+        if (errorCode) {
+            addError(errorCode);
+        }
+        if (categoryErrorCode) {
+            addError(categoryErrorCode);
+        }
+    }, [errorCode, categoryErrorCode]);
+
     if (!!auctionFormData !== !!initialAuction || loading || userLoading || categoriesLoading){
         return (
             <div className="default-container">
@@ -38,17 +46,11 @@ const EditAuctionPage = () => {
     }
 
     if (!initialAuction) {
-        switch (status) {
-            case 403:
-                navigate('/');
-                break;
-            case 404:
-                return 'Nothing found';
-            case 500:
-                return 'Internal server error';
-            default:
-                return 'Unexpected error';
-        }
+        return (
+            <div className="default-container">
+                Error.
+            </div>
+        );
     }
 
     const handleSubmit = async (event) => {
@@ -148,7 +150,7 @@ const EditAuctionPage = () => {
                             multiple
                             value={selectedCategories}
                             onChange={handleCheckboxChange}
-                            renderValue={selected => selected.map(s => categories.find(c => c.id === s).name).join(', ') || 'Choose categories'}
+                            renderValue={selected => selected.map(s => categories.find(c => c.id === s)?.name).join(', ') || 'Choose categories'}
                             fullWidth
                             displayEmpty
                             margin="normal"
