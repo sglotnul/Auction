@@ -158,15 +158,11 @@ public class AuctionController : ControllerBase
 		
 		var categories = await _dbContext.Categories.Where(c => request.Categories.Contains(c.Id)).ToListAsync();
 		
-		var newAuction = new Model.Auction
-		{
-			Name = request.Title,
-			Description = request.Description,
-			Status = AuctionStatus.Active,
-			Categories = categories
-		};
+		auction.Name = request.Title;
+		auction.Description = request.Description;
+		auction.Categories = categories;
 
-		_dbContext.Auctions.Entry(auction).CurrentValues.SetValues(newAuction);
+		_dbContext.Update(auction);
 		await _dbContext.SaveChangesAsync();
 
 		return Ok(auction.Id);

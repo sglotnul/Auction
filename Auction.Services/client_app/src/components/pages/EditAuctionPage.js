@@ -24,9 +24,12 @@ const EditAuctionPage = () => {
     const [auctionFormData, setAuctionFormData] = useState(initialAuction);
     const [selectedCategories, setSelectedCategories] = useState([]);
 
-    useEffect(() => setAuctionFormData(initialAuction), [initialAuction]);
+    useEffect(() => {
+        setSelectedCategories(initialAuction?.categories?.map(c => c.id) ?? []);
+        setAuctionFormData(initialAuction);
+    }, [initialAuction]);
 
-    if (userLoading || categoriesLoading){
+    if (!!auctionFormData != !!initialAuction || loading || userLoading || categoriesLoading){
         return (
             <div className="default-container">
                 ...Loading
@@ -34,13 +37,24 @@ const EditAuctionPage = () => {
         );
     }
 
-    if (!user || user.role !== 1 && user.role !== 3)
-        navigate('/');
+    if (!initialAuction) {
+        switch (status) {
+            case 403:
+                navigate('/');
+                break;
+            case 404:
+                return 'Nothing found';
+            case 500:
+                return 'Internal server error';
+            default:
+                return 'Unexpected error';
+        }
+    }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const response = await fetch('/api/auctions/edit', {
+        const response = await fetch(`/api/auctions/${auctionId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
@@ -92,7 +106,7 @@ const EditAuctionPage = () => {
                         <TextField
                             label="Title"
                             name="title"
-                            value={auctionFormData.title}
+                            value={auctionFormData?.title}
                             onChange={handleInputChange}
                             fullWidth
                             margin="normal"
@@ -112,7 +126,7 @@ const EditAuctionPage = () => {
                             name="description"
                             multiline
                             rows={4}
-                            value={auctionFormData.description}
+                            value={auctionFormData?.description}
                             onChange={handleInputChange}
                             fullWidth
                             margin="normal"
