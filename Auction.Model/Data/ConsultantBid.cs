@@ -5,6 +5,9 @@ public class ConsultantBid
 	public int Id { get; set; }
 	public int AuctionId { get; set; }
 	public string ConsultantUserId { get; set; } = null!;
+	public decimal Amount { get; set; }
+	public DateTime DateTime { get; set; }
+	public string Comment { get; set; } = null!;
 	public Auction Auction { get; set; } = null!;
 	public User ConsultantUser { get; set; } = null!;
 }

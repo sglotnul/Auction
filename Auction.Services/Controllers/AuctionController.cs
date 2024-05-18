@@ -1,7 +1,4 @@
-using System.Security.Claims;
-
 using Auction.Model;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -210,24 +207,29 @@ public class AuctionController : ControllerBase
 	
 	[HttpPost("{id:int}/bid")]
 	[Authorize]
-	public async Task<IActionResult> PlaceBidAsync([FromRoute] int id)
+	public async Task<IActionResult> PlaceBidAsync([FromRoute] int id, [FromBody] BidRequest request)
 	{
-		if (!await _dbContext.Auctions.AnyAsync(a => a.Id == id))
+		var auction = await _dbContext.Auctions.SingleOrDefaultAsync(a => a.Id == id);
+		if (auction is null)
 			return ErrorCode(ErrorCodes.NotFound);
-
-		var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 		
-		var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == userId);
+		var user = await _userManager.GetUserAsync(HttpContext.User);
 		if (user is null)
-			throw new InvalidDataException($"User with Id={userId} not found.");
-		
+			throw new InvalidDataException("Authorized user id is null.");
+
 		if (user.Role is not Role.Consultant and not Role.Admin)
-			return Forbid();
+			return ErrorCode(ErrorCodes.InvalidRole);
+		
+		if (user.Id == auction.StudentUserId)
+			return ErrorCode(ErrorCodes.Forbidden);
 
 		var bid = new ConsultantBid
 		{
 			AuctionId = id,
-			ConsultantUserId = userId!
+			ConsultantUserId = user.Id!,
+			Amount = request.Amount,
+			DateTime = DateTime.Now,
+			Comment = request.Comment
 		};
 
 		await _dbContext.ConsultantBids.AddAsync(bid);
