@@ -12,7 +12,6 @@ public class AppDbContext : IdentityDbContext<User>
 	
 	public DbSet<Profile> Profiles { get; set; } = null!;
 	public DbSet<Category> Categories { get; set; } = null!;
-	public DbSet<AuctionCategory> AuctionCategories { get; set; } = null!;
 	public DbSet<Auction> Auctions { get; set; } = null!;
 	public DbSet<ConsultantBid> ConsultantBids { get; set; } = null!;
 	public DbSet<ConsultationSession> ConsultationSessions { get; set; } = null!;
@@ -58,18 +57,15 @@ public class AppDbContext : IdentityDbContext<User>
 			
 			entity.HasData(CreateInitialCategories());
 		});
-		
-		modelBuilder.Entity<AuctionCategory>(entity =>
-		{
-			entity.HasKey(e => new { e.AuctionId, e.CategoryId });
-			entity.HasOne(e => e.Category)
-				.WithMany()
-				.HasForeignKey(e => e.CategoryId);
-			entity.HasOne(e => e.Auction)
-				.WithMany()
-				.HasForeignKey(e => e.AuctionId);
-		});
-		
+
+		modelBuilder.Entity<Auction>()
+			.HasMany(s => s.Categories)
+			.WithMany(c => c.Auctions)
+			.UsingEntity<Dictionary<string, object>>(
+				"AuctionCategory",
+				j => j.HasOne<Category>().WithMany().HasForeignKey("CategoryId"),
+				j => j.HasOne<Auction>().WithMany().HasForeignKey("AuctionId"));
+
 		modelBuilder.Entity<ConsultantBid>(entity =>
 		{
 			entity.HasKey(e => e.Id);

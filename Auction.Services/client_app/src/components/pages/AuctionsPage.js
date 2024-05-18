@@ -1,9 +1,11 @@
-import React, {Fragment, useCallback, useEffect, useState} from 'react';
+import React, {Fragment, useCallback, useContext, useEffect, useState} from 'react';
 import useAuctions from "../../hooks/useAuctions";
 import AuctionsCategoryFilter from "../AuctionsCategoryFilter";
 import AuctionsFilter from "../../models/AuctionsFilter";
-import AuctionCard from "../AuctionCard";
 import {Link} from "react-router-dom";
+import AuctionCard from "../AuctionCard";
+import AuthContext from "../../contexts/AuthContext";
+import {Button} from "@mui/material";
 
 const AuctionsPage = () => {
 	const [filter, setFilter] = useState(createFilter());
@@ -33,6 +35,40 @@ const AuctionsPage = () => {
 	);
 };
 
+const AuctionsList = ({auctions, loading}) => {
+	const { user, loading: userLoading } = useContext(AuthContext);
+	
+	if (loading || userLoading) {
+		return (
+			<div className='auction-list'>
+				Loading...
+			</div>
+		);
+	}
+	
+	const canBid = user?.role === 2 || user?.role === 3;
+
+	return (
+		<div className='auction-list'>
+			{auctions.length > 0
+				? auctions.map(
+					(auction) => (
+						<Link className="auction-card-outer-link" to={`/auctions/${auction.id}`}>
+							<AuctionCard key={auction.id} auction={auction} showBidButton={canBid}>
+								{canBid
+									? <Button variant="contained">Bid</Button>
+									: null
+								}
+							</AuctionCard>
+						</Link>
+					)
+				)
+				: 'Nothing found'
+			}
+		</div>
+	);
+};
+
 const AuctionsCountView = ({count, loading}) => {
 	if (loading) {
 		return (
@@ -48,31 +84,6 @@ const AuctionsCountView = ({count, loading}) => {
 		</div>
 	);
 }
-
-const AuctionsList = ({auctions, loading}) => {
-	if (loading) {
-		return (
-			<div className='auction-list'>
-				Loading...
-			</div>
-		);
-	}
-
-	return (
-		<div className='auction-list'>
-			{auctions.length > 0
-				? auctions.map(
-					(auction) => (
-						<Link className="auction-card-outer-link" to={`/auctions/${auction.id}`}>
-							<AuctionCard key={auction.id} auction={auction}/>
-						</Link>
-					)
-				)
-				: 'Nothing found'
-			}
-		</div>
-	);
-};
 
 function createFilter() {
 	return AuctionsFilter.fromQueryString(window.location.search);

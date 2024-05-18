@@ -6,4 +6,5 @@ public static class ErrorCodes
     public const string InvalidUserNameOrPassword = "InvalidUserNameOrPassword";
     public const string NotFound = "NotFound";
     public const string InvalidRole = "InvalidRole";
+    public const string Forbidden = "Forbidden";
 }

@@ -8,4 +8,6 @@ public class Auction
 	public AuctionStatus Status { get; set; }
 	public string StudentUserId { get; set; } = null!;
 	public User StudentUser { get; set; } = null!;
+	
+	public IList<Category> Categories { get; set; } = new List<Category>();
 }

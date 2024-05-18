@@ -5,13 +5,13 @@ import AuthContext from "../../contexts/AuthContext";
 import {useNavigate} from "react-router-dom";
 import ErrorContext from "../../contexts/ErrorContext";
 
-const ProfilePage = () => {
+const EditProfilePage = () => {
     const navigate = useNavigate();
 
     const { addError } = useContext(ErrorContext);
     const { user, loading: userLoading } = useContext(AuthContext);
     
-    const [initialProfile, loading, updateProfile] = useProfile();
+    const [initialProfile, loading, updateProfile] = useProfile(user?.userName, !!user);
     
     const [profile, setProfile] = useState(initialProfile);
     
@@ -19,7 +19,7 @@ const ProfilePage = () => {
 
     if (!!profile != !!initialProfile || loading || userLoading) {
         return (
-            <div className="default-form-container">
+            <div className="default-container">
                 ...Loading
             </div>
         );
@@ -49,7 +49,7 @@ const ProfilePage = () => {
     }
     
     return (
-        <div className="default-form-container">
+        <div className="default-container">
             <form onSubmit={handleSubmit}>
                 <TextField
                     label="First name"
@@ -113,4 +113,4 @@ function formatDate(dateString) {
     return `${year}-${month}-${day}`;
 }
 
-export default ProfilePage;
+export default EditProfilePage;

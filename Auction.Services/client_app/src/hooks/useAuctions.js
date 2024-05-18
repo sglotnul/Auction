@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import ErrorCode from "../models/ErrorCode";
 
-const useAuctions = (filter) => {
+const useAuctions = (filter, enabled = true) => {
     const [auctions, setAuctions] = useState([]);
     const [count, setCount] = useState(0);
     const [loading, setLoading] = useState(true);
@@ -25,8 +25,10 @@ const useAuctions = (filter) => {
             setLoading(false);
         };
 
-        fetchAuctions();
-    }, [filter]);
+        if (enabled) {
+            fetchAuctions();
+        }
+    }, [filter, enabled]);
     
     return [auctions, count, loading];
 }

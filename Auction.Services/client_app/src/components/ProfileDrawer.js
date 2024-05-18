@@ -1,18 +1,18 @@
 import React, {useCallback, useContext, useEffect, useState} from 'react';
 import Drawer from '@mui/material/Drawer';
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {Button} from "@mui/material";
 import AuthContext from "../contexts/AuthContext";
 import useProfile from "../hooks/useProfile";
 import ErrorContext from "../contexts/ErrorContext";
 
 const ProfileDrawer = ({isOpen, onClose}) => {
+    const navigate = useNavigate();
+    
     const { addError } = useContext(ErrorContext);
     const { user, logout } = useContext(AuthContext);
     
-    const [updater, setUpdater] = useState({});
-    
-    const [profile, loading] = useProfile(null, updater);
+    const [profile, loading] = useProfile(user?.userName, user && isOpen);
     
     const onLogout = useCallback(async () => {
         const error = await logout();
@@ -22,13 +22,11 @@ const ProfileDrawer = ({isOpen, onClose}) => {
         }
         else {
             onClose();
+            navigate('/');
         }
     }, []);
-    
-    useEffect(() => {
-        if (isOpen)
-            setUpdater({});
-    }, [isOpen]);
+
+    const newAuctionLink = () => user.role === 1 || user.role === 3 ? <Link to="/auctions/user" onClick={onClose}>My Auctions</Link> : null;
     
     return (
         <Drawer
@@ -42,7 +40,8 @@ const ProfileDrawer = ({isOpen, onClose}) => {
                     <div className="profile-drawer">
                         <div className="profile-drawer-content">
                             <h1>{getUserFullName(user.userName, profile)}</h1>
-                            <Link to="/profile" onClick={onClose}>Profile</Link>
+                            <Link to="/profile/edit" onClick={onClose} fullWidth>Profile</Link>
+                            {newAuctionLink()}
                         </div>
                         <Button onClick={onLogout} variant="contained" fullWidth color="error">
                             Log Out

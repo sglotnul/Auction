@@ -1,26 +1,30 @@
-import React, {useContext, useState} from "react";
-import AuthContext from "../../contexts/AuthContext";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
+import React, {useContext, useEffect, useState} from "react";
 import ErrorContext from "../../contexts/ErrorContext";
-import {Button, Checkbox, InputLabel, ListItemText, MenuItem, Select, TextField} from "@mui/material";
+import AuthContext from "../../contexts/AuthContext";
 import useCategories from "../../hooks/useCategories";
 import ErrorCode from "../../models/ErrorCode";
+import {Button, Checkbox, InputLabel, ListItemText, MenuItem, Select, TextField} from "@mui/material";
+import useProfile from "../../hooks/useProfile";
+import useAuction from "../../hooks/useAuction";
 
-const CreateAuctionPage = () => {
+const EditAuctionPage = () => {
     const navigate = useNavigate();
+    
+    const { auctionId } = useParams();
 
     const { addError } = useContext(ErrorContext);
     const { user, loading: userLoading } = useContext(AuthContext);
-    
+
     const [categories, categoriesLoading] = useCategories();
+    const [initialAuction, loading, status, updateAuction] = useAuction(auctionId, !!user);
 
     const [tab, setTab] = useState(0);
     const [enabledTab, setEnabledTab] = useState(0);
-    const [auctionFormData, setAuctionFormData] = useState({
-        title: undefined,
-        description: undefined
-    });
+    const [auctionFormData, setAuctionFormData] = useState(initialAuction);
     const [selectedCategories, setSelectedCategories] = useState([]);
+
+    useEffect(() => setAuctionFormData(initialAuction), [initialAuction]);
 
     if (userLoading || categoriesLoading){
         return (
@@ -32,12 +36,12 @@ const CreateAuctionPage = () => {
 
     if (!user || user.role !== 1 && user.role !== 3)
         navigate('/');
-    
+
     const handleSubmit = async (event) => {
         event.preventDefault();
-        
-        const response = await fetch('/api/auctions/create', {
-            method: 'POST',
+
+        const response = await fetch('/api/auctions/edit', {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
             },
@@ -46,7 +50,7 @@ const CreateAuctionPage = () => {
                 categories: selectedCategories
             })
         });
-        
+
         const responseBody = await response.text();
         if (!response.ok) {
             addError(new ErrorCode(responseBody));
@@ -152,4 +156,4 @@ const CreateAuctionPage = () => {
     );
 }
 
-export default CreateAuctionPage;
+export default EditAuctionPage;

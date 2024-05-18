@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 namespace Auction.Services;
 
 [Route("api/profiles")]
-[Authorize]
 public class ProfileController : ControllerBase
 {
 	private readonly UserManager<User> _userManager;
@@ -22,20 +21,7 @@ public class ProfileController : ControllerBase
 		_userManager = userManager;
 		_context = context;
 	}
-	
-	[HttpGet("")]
-	public async Task<IActionResult> GetUserProfileAsync()
-	{
-		var user = await _userManager.GetUserAsync(HttpContext.User);
-		if (user is null)
-			throw new InvalidDataException("Authorized user not found.");
 
-		if (user.ProfileId is null)
-			return ErrorCode(ErrorCodes.NotFound);
-
-		return Json(await _context.Profiles.SingleOrDefaultAsync(p => p.Id == user.ProfileId));
-	}
-	
 	[HttpGet("{userName}")]
 	public async Task<IActionResult> GetUserProfileAsync(string userName)
 	{
@@ -44,10 +30,11 @@ public class ProfileController : ControllerBase
 		if (user?.ProfileId is null)
 			return ErrorCode(ErrorCodes.NotFound);
 
-		return Json(user.Profile);
+		return Json(await _context.Profiles.SingleOrDefaultAsync(p => p.Id == user.ProfileId) ?? throw new InvalidOperationException());
 	}
 	
 	[HttpPut("")]
+	[Authorize]
 	public async Task<IActionResult> EditUserProfileAsync([FromBody] ProfileRequest profileRequest)
 	{
 		var user = await _userManager.GetUserAsync(HttpContext.User);

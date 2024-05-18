@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Auction.Services;
 
@@ -31,46 +32,85 @@ public class AuctionController : ControllerBase
 
 		if (request.Categories is not null && request.Categories.Count != 0)
 		{
-			auctions = _dbContext.AuctionCategories
-				.Where(ac => request.Categories.Contains(ac.CategoryId))
-				.Select(ac => ac.Auction)
-				.Distinct();
+			auctions = auctions.Where(a => a.Categories.Any(ac => request.Categories.Contains(ac.Id)));
 		}
 
-		auctions = auctions.Where(a => a.Status == AuctionStatus.Active).Include(a => a.StudentUser.Profile);
-
-		var result = new AuctionsResponse
+		if (!request.UserName.IsNullOrEmpty())
 		{
-			Auctions = await auctions.ToArrayAsync()
-		};
-		
-		return Json(result);
+			auctions = auctions.Where(a => a.StudentUser.UserName == request.UserName);
+		}
+
+		var result = await auctions
+			.Where(a => a.Status == AuctionStatus.Active)
+			.Select(a => new
+			{
+				a.Id,
+				a.Name,
+				a.Description,
+				a.Status,
+				a.StudentUser,
+				Categories = a.Categories.Select(c => new Category
+				{
+					Id = c.Id,
+					Name = c.Name
+				})
+			})
+			.AsNoTracking()
+			.ToArrayAsync();
+
+		return Json(new AuctionsResponse
+		{
+			Auctions = result
+				.Select(a => new AuctionResponse(
+					a.Id,
+					a.Name,
+					a.Description,
+					a.Status,
+					new UserResponse
+					{
+						UserId = a.StudentUser.Id,
+						UserName = a.StudentUser.UserName!,
+						Profile = a.StudentUser.Profile
+					},
+					a.Categories.ToArray()))
+				.ToArray()
+		});
 	}
 	
 	[HttpGet("{id:int}")]
 	public async Task<IActionResult> GetAuctionsAsync(int id)
 	{
-		var auction = await _dbContext.Auctions.Include(a => a.StudentUser.Profile).SingleOrDefaultAsync(a => a.Id == id);
+		var auction = await _dbContext.Auctions
+			.Select(a => new
+			{
+				a.Id,
+				a.Name,
+				a.Description,
+				a.Status,
+				a.StudentUser,
+				Categories = a.Categories.Select(c => new Category
+				{
+					Id = c.Id,
+					Name = c.Name
+				})
+			})
+			.SingleOrDefaultAsync(a => a.Id == id);
+
 		if (auction is null)
 			return ErrorCode(ErrorCodes.NotFound);
 		
-		return Json(auction);
-	}
-	
-	[HttpGet("user")]
-	[Authorize]
-	public async Task<IActionResult> GetCurrentsAuctionsAsync()
-	{
-		var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-		var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == userId);
-		if (user is null)
-			throw new InvalidDataException($"User with Id={userId} not found.");
-
-		if (user.Role is not Role.Student and not Role.Admin)
-			return Forbid();
-
-		return Json(await _dbContext.Auctions.Where(a => a.StudentUserId == userId).ToArrayAsync());
+		return Json(new AuctionResponse(
+			auction.Id,
+			auction.Name,
+			auction.Description,
+			auction.Status,
+			new UserResponse
+			{
+				UserId = auction.StudentUser.Id,
+				UserName = auction.StudentUser.UserName!,
+				Profile = auction.StudentUser.Profile
+			},
+			auction.Categories.ToArray()));
 	}
 
 	[HttpPost("create")]
@@ -84,36 +124,50 @@ public class AuctionController : ControllerBase
 		if (user.Role is not Role.Student and not Role.Admin)
 			return ErrorCode(ErrorCodes.InvalidRole);
 
-		await using var transaction = await _dbContext.Database.BeginTransactionAsync();
-
+		var categories = await _dbContext.Categories.Where(c => request.Categories.Contains(c.Id)).ToListAsync();
+		
 		var auction = new Model.Auction
 		{
 			Name = request.Title,
 			Description = request.Description,
 			Status = AuctionStatus.Active,
-			StudentUserId = user.Id
+			StudentUserId = user.Id,
+			Categories = categories
 		};
 
-		try
-		{
-			await _dbContext.Auctions.AddAsync(auction);
-			await _dbContext.SaveChangesAsync();
+		await _dbContext.Auctions.AddAsync(auction);
+		await _dbContext.SaveChangesAsync();
 
-			await _dbContext.AuctionCategories.AddRangeAsync(request.Categories.Select(id => 
-				new AuctionCategory
-				{
-					AuctionId = auction.Id,
-					CategoryId = id
-				}));
-			await _dbContext.SaveChangesAsync();
+		return Ok(auction.Id);
+	}
+	
+	[HttpPut("{id:int}")]
+	[Authorize]
+	public async Task<IActionResult> EditAuctionAsync([FromRoute] int id, [FromBody] CreateAuctionRequest request)
+	{
+		var userId = _userManager.GetUserId(HttpContext.User);
+		if (userId is null)
+			throw new InvalidDataException("Authorized user id is null.");
 
-			await transaction.CommitAsync();
-		}
-		catch
+		var auction = await _dbContext.Auctions.SingleOrDefaultAsync(a => a.Id == id);
+		if (auction is null)
+			return ErrorCode(ErrorCodes.NotFound);
+
+		if (auction.StudentUserId != userId)
+			return ErrorCode(ErrorCodes.Forbidden);
+		
+		var categories = await _dbContext.Categories.Where(c => request.Categories.Contains(c.Id)).ToListAsync();
+		
+		var newAuction = new Model.Auction
 		{
-			await transaction.RollbackAsync();
-			throw;
-		}
+			Name = request.Title,
+			Description = request.Description,
+			Status = AuctionStatus.Active,
+			Categories = categories
+		};
+
+		_dbContext.Auctions.Entry(auction).CurrentValues.SetValues(newAuction);
+		await _dbContext.SaveChangesAsync();
 
 		return Ok(auction.Id);
 	}

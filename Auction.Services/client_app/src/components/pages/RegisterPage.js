@@ -21,7 +21,7 @@ const RegisterPage = () => {
     
     if (loading) {
         return (
-            <div className="default-form-container">
+            <div className="default-container">
                 ...Loading
             </div>
         );
@@ -76,7 +76,7 @@ const RegisterPage = () => {
     }
     
     return (
-        <div className="default-form-container">
+        <div className="default-container">
             <div className="tab-bar register-tabs">
                 <div className={enabledTab >= 0 ? 'tab' : 'tab disabled'} onClick={changeTab(0)}>Account</div>
                 <div className={enabledTab >= 1 ? 'tab' : 'tab disabled'} onClick={changeTab(1)}>Role</div>

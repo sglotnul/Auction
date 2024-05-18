@@ -15,7 +15,7 @@ const LoginPage = () => {
 
     if (loading) {
         return (
-            <div className="default-form-container">
+            <div className="default-container">
                 ...Loading
             </div>
         );
@@ -36,7 +36,7 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="default-form-container">
+        <div className="default-container">
             <form onSubmit={handleSubmit}>
                 <div className="default-input-container">
                     <TextField

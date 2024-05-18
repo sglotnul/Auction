@@ -6,13 +6,19 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
+    const [errorCode, setErrorCode] = useState(null);
 
     useEffect(() => {
         const initializeUser = async () => {
             setLoading(true);
-            
-            const fetchedUser = await tryGetUser();
-            setUser(fetchedUser);
+
+            const response = await fetch('/api/user');
+            if (response.ok) {
+                setUser(await response.json());
+            }
+            else {
+                setErrorCode(new ErrorCode(await response.text()));
+            }
 
             setLoading(false);
         };
@@ -31,9 +37,13 @@ export const AuthProvider = ({ children }) => {
 
         if (response.ok) {
             setUser(await response.json());
+            return null;
         }
-        
-        return response.ok ? null : new ErrorCode(await response.text());
+
+        const errorCode = await response.text();
+
+        setErrorCode(new ErrorCode(errorCode));
+        return new ErrorCode(errorCode);
     },[]);
 
     const logout = useCallback(async () => {
@@ -41,9 +51,13 @@ export const AuthProvider = ({ children }) => {
 
         if (response.ok) {
             setUser(null);
+            return null;
         }
 
-        return response.ok ? null : new ErrorCode(await response.text());
+        const errorCode = await response.text();
+
+        setErrorCode(new ErrorCode(errorCode));
+        return new ErrorCode(errorCode);
     },[]);
 
     const register = useCallback(async (username, password, role, profile) => {
@@ -57,24 +71,20 @@ export const AuthProvider = ({ children }) => {
 
         if (response.ok) {
             setUser(await response.json());
+            return null;
         }
 
-        return response.ok ? null : new ErrorCode(await response.text());
+        const errorCode = await response.text();
+        
+        setErrorCode(new ErrorCode(errorCode));
+        return new ErrorCode(errorCode);
     },[]);
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout, register }}>
+        <AuthContext.Provider value={{ user, loading, login, logout, register, errorCode }}>
             {children}
         </AuthContext.Provider>
     );
 };
-
-async function tryGetUser() {
-    const response = await fetch('/api/user');
-    if (response.ok) {
-        return await response.json();
-    }
-    return null;
-}
 
 export default AuthContext;

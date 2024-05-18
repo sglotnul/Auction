@@ -30,6 +30,7 @@ header {
 .wrapper {
   height: 100%;
   width: 1250px;
+  max-width: 100vw;
   margin: 0 auto;
 }
 
@@ -93,6 +94,15 @@ header {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding-left: 20px;
+  box-sizing: border-box;
+  border-left: 1px solid rgb(197, 197, 197);
+}
+
+.auction-default-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .filter-list {
@@ -147,7 +157,7 @@ header {
   height: 30px;
 }
 
-.default-form-container {
+.default-container {
   width: 600px;
   margin: 0 auto;
 }
