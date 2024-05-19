@@ -266,12 +266,9 @@ public class AuctionController : ControllerBase
 	[HttpGet("{id:int}/bids")]
 	public async Task<IActionResult> GetBidsAsync([FromRoute] int id)
 	{
-		var auction = await _dbContext.Auctions.Include(a => a.Bids).ThenInclude(b => b.User.Profile).SingleOrDefaultAsync(a => a.Id == id);
-		
-		if (auction is null)
-			return ErrorCode(ErrorCodes.NotFound);
-
-		var bids = auction.Bids
+		var bids = await _dbContext.Bids
+			.Include(b => b.User.Profile)
+			.Where(b => b.AuctionId == id)
 			.Select(b => new BidResponse
 			{
 				Amount = b.Amount,
@@ -285,12 +282,12 @@ public class AuctionController : ControllerBase
 				},
 				DateTime = b.DateTime
 			})
-			.ToArray();
+			.ToArrayAsync();
 
 		var result = new BidsResponse
 		{
 			Bids = bids,
-			CurrentPrice = bids.MinBy(b => b.Amount)?.Amount ?? auction.InitialPrice
+			CurrentPrice = bids.MinBy(b => b.Amount)?.Amount
 		};
 
 		return Json(result);

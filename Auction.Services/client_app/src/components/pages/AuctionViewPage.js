@@ -139,8 +139,9 @@ const Stepper = ({auction, isOpen, onChange}) => {
         return '...Loading';
     }
     
+    const currentPrice = bids.currentPrice ?? auction.initialPrice - auction.minDecrease;
     return (
-        <NumericStepper maxValue={bids.currentPrice} minValue={0} initialValue={bids.currentPrice} step={10} onChange={onChange} />
+        <NumericStepper maxValue={currentPrice} minValue={0} initialValue={currentPrice} step={auction.minDecrease} onChange={onChange} />
     );
 }
 

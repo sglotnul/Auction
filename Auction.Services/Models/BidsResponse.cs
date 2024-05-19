@@ -3,7 +3,7 @@ namespace Auction.Services;
 public record BidsResponse
 {
     public IReadOnlyCollection<BidResponse> Bids { get; init; } = null!;
-    public decimal CurrentPrice { get; init; }
+    public decimal? CurrentPrice { get; init; }
 }
 
 public record BidResponse

@@ -24,39 +24,28 @@ const NumericStepper = ({ initialValue, minValue, maxValue, step, onChange }) =>
     const incrementDelta = maxValue - value >= step ? step : maxValue - value;
 
     return (
-        <Box
-            sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                backgroundColor: '#f5f5f5',
-                padding: '16px',
-                borderRadius: '8px',
-                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                margin: '0 auto',
-            }}
-        >
-            <Box display="flex" flexDirection="column" alignItems="center">
+        <div className="default-stepper">
+            <div className="stepper-arrow-container">
                 <Button onClick={handleDecrement} disabled={value <= minValue}>
                     <Typography variant="caption">-{decrementDelta.toFixed(2)}</Typography>
                     <KeyboardArrowLeftIcon />
                 </Button>
-            </Box>
+            </div>
             <TextField
                 value={value.toFixed(2)}
                 onChange={handleInputChange}
                 variant="outlined"
                 size="small"
                 inputProps={{ style: { textAlign: 'center' } }}
-                sx={{margin: '0 20px' }}
+                sx={{margin: '0 12px' }}
             />
-            <Box display="flex" flexDirection="column" alignItems="center">
+            <div className="stepper-arrow-container">
                 <Button onClick={handleIncrement} disabled={value >= maxValue}>
                     <KeyboardArrowRightIcon />
                     <Typography variant="caption">+{incrementDelta.toFixed(2)}</Typography>
                 </Button>
-            </Box>
-        </Box>
+            </div>
+        </div>
     );
 };
 
