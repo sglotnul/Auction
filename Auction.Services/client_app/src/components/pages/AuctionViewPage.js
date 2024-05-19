@@ -6,6 +6,7 @@ import {Button, Modal, TextField} from "@mui/material";
 import AuthContext from "../../contexts/AuthContext";
 import ErrorCode from "../../models/ErrorCode";
 import ErrorContext from "../../contexts/ErrorContext";
+import NumericStepper from "../NumericStepper";
 
 const AuctionViewPage = () => {
     const { addError } = useContext(ErrorContext);
@@ -98,6 +99,7 @@ const BidButton = ({auction}) => {
             >
                 <div className="default-modal-container">
                     <form onSubmit={handleSubmit}>
+                        <NumericStepper maxValue={1000} minValue={0} initialValue={100} step={10} onChange={() => {}} />
                         <TextField
                             label="Amount"
                             name="amount"
