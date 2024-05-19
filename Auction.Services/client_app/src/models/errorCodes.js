@@ -3,5 +3,6 @@ export const ERROR_CODE_MESSAGES = {
     InvalidUserNameOrPassword: "Invalid user name or password",
     NotFound: "Not found",
     DuplicateUserName: "User with this name already exists",
-    InvalidBid: "Invalid bid"
+    InvalidBid: "Invalid bid",
+    Forbidden: "Forbidden"
 }

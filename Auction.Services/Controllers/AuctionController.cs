@@ -1,4 +1,5 @@
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using Auction.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -114,7 +115,11 @@ public class AuctionController : ControllerBase
 				Id = a.Id,
 				Title = a.Title,
 				Description = a.Description,
+				MinDecrease = a.MinDecrease,
+				InitialPrice = a.InitialPrice,
 				Status = a.Status,
+				StartAt = a.StartAt,
+				EndAt = a.EndAt,
 				User = new UserResponse
 				{
 					UserId = a.User.Id,
@@ -127,7 +132,7 @@ public class AuctionController : ControllerBase
 						{
 							Id = c.Id,
 							Name = c.Name
-						})	
+						})
 					.ToArray()
 			})
 			.SingleOrDefaultAsync(a => a.Id == id);
@@ -153,9 +158,14 @@ public class AuctionController : ControllerBase
 		
 		var auction = new Model.Auction
 		{
+			Id = 0,
 			Title = request.Title,
 			Description = request.Description,
+			MinDecrease = 100, //TODO: fix
+			InitialPrice = 1000, //TODO: fix
 			Status = AuctionStatus.Active,
+			StartAt = DateTime.UtcNow, //TODO: fix
+			EndAt = DateTime.UtcNow.AddHours(5), //TODO: fix
 			Categories = categories
 		};
 
