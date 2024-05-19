@@ -7,6 +7,8 @@ import AuthContext from "../../contexts/AuthContext";
 import ErrorCode from "../../models/ErrorCode";
 import ErrorContext from "../../contexts/ErrorContext";
 import NumericStepper from "../NumericStepper";
+import useBids from "../../hooks/useBids";
+import {Iso} from "@mui/icons-material";
 
 const AuctionViewPage = () => {
     const { addError } = useContext(ErrorContext);
@@ -90,6 +92,10 @@ const BidButton = ({auction}) => {
         setFormData({ ...formData, [event.target.name]: event.target.value });
     };
     
+    const handleStepperChange = (value) => {
+        setFormData({ ...formData, amount: value });
+    }
+    
     return (
         <Fragment>
             <Button variant="contained" onClick={handleOpen}>Bid</Button>
@@ -99,17 +105,7 @@ const BidButton = ({auction}) => {
             >
                 <div className="default-modal-container">
                     <form onSubmit={handleSubmit}>
-                        <NumericStepper maxValue={1000} minValue={0} initialValue={100} step={10} onChange={() => {}} />
-                        <TextField
-                            label="Amount"
-                            name="amount"
-                            type="number"
-                            value={formData?.amount}
-                            onChange={handleInputChange}
-                            fullWidth
-                            margin="normal"
-                            required
-                        />
+                        <Stepper auction={auction} isOpen={isOpen} onChange={handleStepperChange}/>
                         <TextField
                             label="Comment"
                             name="comment"
@@ -125,6 +121,26 @@ const BidButton = ({auction}) => {
                 </div>
             </Modal>
         </Fragment>
+    );
+}
+
+const Stepper = ({auction, isOpen, onChange}) => {
+    const { addError } = useContext(ErrorContext);
+    
+    const [bids, bidsLoading, errorCode] = useBids(auction.id, isOpen);
+
+    useEffect(() => {
+        if (errorCode) {
+            addError(errorCode);
+        }
+    }, [errorCode]);
+    
+    if (bidsLoading) {
+        return '...Loading';
+    }
+    
+    return (
+        <NumericStepper maxValue={bids.currentPrice} minValue={0} initialValue={bids.currentPrice} step={10} onChange={onChange} />
     );
 }
 

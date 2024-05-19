@@ -1,4 +1,6 @@
-namespace Auction.Model;
+using Auction.Model;
+
+namespace Auction.Services;
 
 public record UserResponse
 {

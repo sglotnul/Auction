@@ -20,6 +20,9 @@ const NumericStepper = ({ initialValue, minValue, maxValue, step, onChange }) =>
         }
     };
 
+    const decrementDelta = value - minValue >= step ? step : value - minValue;
+    const incrementDelta = maxValue - value >= step ? step : maxValue - value;
+
     return (
         <Box
             sx={{
@@ -34,8 +37,8 @@ const NumericStepper = ({ initialValue, minValue, maxValue, step, onChange }) =>
             }}
         >
             <Box display="flex" flexDirection="column" alignItems="center">
-                <Button onClick={handleDecrement}>
-                    <Typography variant="caption">-{step.toFixed(2)}</Typography>
+                <Button onClick={handleDecrement} disabled={value <= minValue}>
+                    <Typography variant="caption">-{decrementDelta.toFixed(2)}</Typography>
                     <KeyboardArrowLeftIcon />
                 </Button>
             </Box>
@@ -48,9 +51,9 @@ const NumericStepper = ({ initialValue, minValue, maxValue, step, onChange }) =>
                 sx={{ margin: '0 16px', width: '80px' }}
             />
             <Box display="flex" flexDirection="column" alignItems="center">
-                <Button onClick={handleIncrement}>
+                <Button onClick={handleIncrement} disabled={value >= maxValue}>
                     <KeyboardArrowRightIcon />
-                    <Typography variant="caption">+{step.toFixed(2)}</Typography>
+                    <Typography variant="caption">+{incrementDelta.toFixed(2)}</Typography>
                 </Button>
             </Box>
         </Box>

@@ -252,4 +252,37 @@ public class AuctionController : ControllerBase
 			throw;
 		}
 	}
+	
+	[HttpGet("{id:int}/bids")]
+	public async Task<IActionResult> GetBidsAsync([FromRoute] int id)
+	{
+		var auction = await _dbContext.Auctions.Include(a => a.Bids).ThenInclude(b => b.User.Profile).SingleOrDefaultAsync(a => a.Id == id);
+		
+		if (auction is null)
+			return ErrorCode(ErrorCodes.NotFound);
+
+		var bids = auction.Bids
+			.Select(b => new BidResponse
+			{
+				Amount = b.Amount,
+				Comment = b.Comment,
+				User = new UserResponse
+				{
+					UserId = b.UserId,
+					UserName = b.User.UserName!,
+					Role = b.User.Role,
+					Profile = b.User.Profile
+				},
+				DateTime = b.DateTime
+			})
+			.ToArray();
+
+		var result = new BidsResponse
+		{
+			Bids = bids,
+			CurrentPrice = bids.MinBy(b => b.Amount)?.Amount ?? auction.InitialPrice
+		};
+
+		return Json(result);
+	}
 }
