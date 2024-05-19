@@ -48,7 +48,7 @@ const NumericStepper = ({ initialValue, minValue, maxValue, step, onChange }) =>
                 variant="outlined"
                 size="small"
                 inputProps={{ style: { textAlign: 'center' } }}
-                sx={{ margin: '0 16px', width: '80px' }}
+                sx={{margin: '0 20px' }}
             />
             <Box display="flex" flexDirection="column" alignItems="center">
                 <Button onClick={handleIncrement} disabled={value >= maxValue}>
