@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useState} from 'react';
 import ErrorCode from "../models/ErrorCode";
 
-const useProfile = (userName = null, enabled) => {
+const useProfile = (userName = null, enabled = true) => {
     const [profile, setProfile] = useState(undefined);
     const [loading, setLoading] = useState(true);
     const [errorCode, setErrorCode] = useState(undefined)

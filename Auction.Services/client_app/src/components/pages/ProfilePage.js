@@ -27,7 +27,15 @@ const ProfilePage = () => {
         );
     }
 
-    if (!userName && !user) {
+    if (!user) {
+        if (userName) {
+            return (
+                <div className="profile-page">
+                   Nothing found
+                </div>
+            )
+        }
+
         navigate('/');
     }
 
@@ -53,7 +61,7 @@ const ProfilePage = () => {
 const UserProfile = ({user, userName}) => {
     const { addError } = useContext(ErrorContext);
     
-    const [initialProfile, loading, errorCode] = useProfile(userName || user?.userName, !!user);
+    const [initialProfile, loading, errorCode] = useProfile(userName || user?.userName);
 
     const [profile, setProfile] = useState(initialProfile);
 
