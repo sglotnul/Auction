@@ -7,7 +7,6 @@ import useUserAuctions from "../../hooks/useUserAuctions";
 import AuctionCard from "../AuctionCard";
 import useProfile from "../../hooks/useProfile";
 import ErrorCode from "../../models/ErrorCode";
-import {ERROR_CODE_MESSAGES} from "../../models/errorCodes";
 
 const ProfilePage = () => {
     const navigate = useNavigate();

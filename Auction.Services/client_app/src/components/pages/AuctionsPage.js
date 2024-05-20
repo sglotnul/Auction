@@ -1,31 +1,20 @@
-import React, {Fragment, useCallback, useContext, useEffect, useMemo, useState} from 'react';
+import React, {Fragment, useCallback, useContext, useEffect, useMemo} from 'react';
 import useAuctions from "../../hooks/useAuctions";
 import AuctionsCategoryFilter from "../AuctionsCategoryFilter";
 import AuctionsFilter from "../../models/AuctionsFilter";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import AuctionCard from "../AuctionCard";
-import AuthContext from "../../contexts/AuthContext";
-import {Button} from "@mui/material";
 import ErrorContext from "../../contexts/ErrorContext";
 
 const AuctionsPage = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
-	
-	const { user } = useContext(AuthContext);
+
 	const { addError } = useContext(ErrorContext);
 	
-	const [filter, setFilter] = useState(AuctionsFilter.fromQueryString(location.search));
+	const filter = useMemo(() => AuctionsFilter.fromQueryString(location.search), [location, navigate]);
 	
 	const [auctions, count, auctionsLoading, errorCode] = useAuctions(filter);
-	
-	useEffect(() => {
-		setFilter(filter.clone());
-	}, [user]);
-
-	useEffect(() => {
-		navigate(`?${filter.getQueryString()}`, { replace: true });
-	}, [filter]);
 	
 	useEffect(() => {
 		if (errorCode) {
@@ -34,8 +23,8 @@ const AuctionsPage = () => {
 	}, [errorCode]);
 	
 	const onCategoryFilterChanged = useCallback(selectedCategories => {
-		setFilter(prev => prev.cloneWithUpdatedCategories(selectedCategories));
-	}, []);
+		navigate(`?${filter.cloneWithUpdatedCategories(selectedCategories).getQueryString()}`, { replace: true });
+	}, [filter]);
 
 	return (
 		<Fragment>
@@ -51,9 +40,7 @@ const AuctionsPage = () => {
 };
 
 const AuctionsList = ({auctions, loading}) => {
-	const { user, loading: userLoading } = useContext(AuthContext);
-	
-	if (loading || userLoading) {
+	if (loading) {
 		return (
 			<div className='auction-list'>
 				Loading...

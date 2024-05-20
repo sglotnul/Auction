@@ -1,14 +1,14 @@
 import React, {Fragment, useCallback, useContext, useEffect, useState} from 'react';
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import useAuction from "../../hooks/useAuction";
-import AuctionCard from "../AuctionCard";
 import {Button, Modal, TextField} from "@mui/material";
 import AuthContext from "../../contexts/AuthContext";
 import ErrorCode from "../../models/ErrorCode";
 import ErrorContext from "../../contexts/ErrorContext";
 import NumericStepper from "../NumericStepper";
 import useBids from "../../hooks/useBids";
-import {Iso} from "@mui/icons-material";
+import {getUserFullName, formatDate} from "../../models/functions";
+import CategoriesView from "../CategoriesView";
 
 const AuctionViewPage = () => {
     const { addError } = useContext(ErrorContext);
@@ -40,12 +40,17 @@ const AuctionViewPage = () => {
     }
 
     return (
-        <div className="default-container">
-            <AuctionCard auction={auction}>
+        <div className="auction-page">
+            <div className="auction-container">
+                <Link to={`/profile/${auction.user.userName}`}><h1>{getUserFullName(auction.user.userName, auction.user.profile)}</h1></Link>
+                <h1>{auction.title}</h1>
+                <span>{formatDate(auction.startAt)}</span>
+                <CategoriesView categories={auction.categories} />
+                <span>{auction.description}</span>
+            </div>
+            <div className="auction-bids">
                 <BidButton auction={auction}/>
-            </AuctionCard>
-            <h2>Description:</h2>
-            <span>{auction.description}</span>
+            </div>
         </div>
     );
 };

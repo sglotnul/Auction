@@ -13,6 +13,10 @@ const AuctionsCategoryFilter = ({initialCategories, onSubmit}) => {
     const onButtonClick = useCallback(e => onSubmit(selectedCategories), [selectedCategories]);
 
     useEffect(() => {
+        setSelectedCategories(initialCategories);
+    }, [initialCategories]);
+
+    useEffect(() => {
         if (errorCode) {
             addError(errorCode);
         }
