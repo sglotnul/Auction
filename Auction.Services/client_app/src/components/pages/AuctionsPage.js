@@ -43,7 +43,7 @@ const AuctionsList = ({auctions, loading}) => {
 	if (loading) {
 		return (
 			<div className='auction-list'>
-				Loading...
+				<div className="loading-layout" style={{ height: '130px' }} />
 			</div>
 		);
 	}
@@ -68,7 +68,7 @@ const AuctionsCountView = ({count, loading}) => {
 	if (loading) {
 		return (
 			<div className="auctions-count-bar">
-				Loading...
+				<div className="loading-layout" style={{ height: '30px' }} />
 			</div>
 		)
 	}

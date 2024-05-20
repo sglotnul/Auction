@@ -22,12 +22,12 @@ const RegisterPage = () => {
     if (loading) {
         return (
             <div className="default-container">
-                ...Loading
+                <div className="loading-layout" style={{height: '130px'}}/>
             </div>
         );
     }
 
-    if (user){
+    if (user) {
         navigate('/');
     }
 

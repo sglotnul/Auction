@@ -22,10 +22,10 @@ a {
 }
 
 header {
+  position: relative;
   height: 60px;
   background-color: #20262b;
   color: #fff;
-  box-shadow: 0 2px 12px rgb(197, 197, 197);
 }
 
 .wrapper {
@@ -45,6 +45,41 @@ header {
 
 .header-container * {
   cursor: pointer;
+}
+
+.profile-icon {
+  overflow: hidden;
+  border-radius: 50%;
+  background-image: url(icons/profile_min.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.profile-icon.header-icon  {
+  width: 30px;
+  height: 30px;
+  background-position: 0 0;
+}
+
+.loading-layout {
+  width: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, transparent, rgb(232, 232, 232));
+  background-size: 400% 400%;
+  animation: gradient 3s ease infinite;
+  transform: translate3d(0, 0, 0);
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
 }
 
 .layout {
@@ -214,14 +249,44 @@ header {
   flex-wrap: wrap;
 }
 
+.auction-owner-view {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+}
+
+.auction-owner-view span {
+  font-size: 20px;
+}
+
+.profile-icon.auction-owner-icon {
+  width: 60px;
+  height: 60px;
+  background-position: -60px 0;
+}
+
 .auction-container {
   width: 900px;
+  padding: 20px;
+  box-sizing: border-box;
   margin-right: 20px;
   max-width: 100%;
+  box-shadow: 0 2px 12px #eef1f7;
+}
+
+.auction-container h2 {
+  color: #1976d2;
 }
 
 .auction-bids {
   flex: 1;
+  padding: 20px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 12px #eef1f7;
+}
+
+.auction-description-row {
+  margin: 20px 0;
 }
 
 .categories-view {

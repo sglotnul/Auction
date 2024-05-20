@@ -24,4 +24,8 @@
       <_ContentIncludedByDefault Remove="Views\Home\Index.cshtml" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="client_app\public\icons\1.jpg" />
+    </ItemGroup>
+
 </Project>

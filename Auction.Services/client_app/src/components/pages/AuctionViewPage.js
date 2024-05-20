@@ -25,12 +25,12 @@ const AuctionViewPage = () => {
     
     if (loading) {
         return (
-            <div className="default-container">
-                ...Loading
+            <div className="auction-page">
+                <div className="loading-layout" style={{height: '130px'}}/>
             </div>
         );
     }
-    
+
     if (!auction) {
         return (
             <div className="default-container">
@@ -42,11 +42,22 @@ const AuctionViewPage = () => {
     return (
         <div className="auction-page">
             <div className="auction-container">
-                <Link to={`/profile/${auction.user.userName}`}><h1>{getUserFullName(auction.user.userName, auction.user.profile)}</h1></Link>
-                <h1>{auction.title}</h1>
-                <span>{formatDate(auction.startAt)}</span>
-                <CategoriesView categories={auction.categories} />
-                <span>{auction.description}</span>
+                <Link to={`/profile/${auction.user.userName}`}>
+                    <div className="auction-owner-view">
+                        <span className="profile-icon auction-owner-icon"/>
+                        <span>{getUserFullName(auction.user.userName, auction.user.profile)}</span>
+                    </div>
+                </Link>
+                <h2>{auction.title}</h2>
+                <div className="auction-description-row">
+                    {formatDate(auction.startAt)}
+                </div>
+                <div className="auction-description-row">
+                    <CategoriesView categories={auction.categories} />
+                </div>
+                <div className="auction-description-row">
+                    {auction.description}
+                </div>
             </div>
             <div className="auction-bids">
                 <BidButton auction={auction}/>
@@ -66,9 +77,11 @@ const BidButton = ({auction}) => {
     const handleClose = useCallback(e => setIsOpen(false), []);
 
     if (loading) {
-        return 'Loading...';
+        return (
+            <div className="loading-layout" style={{height: '40px'}}/>
+        );
     }
-    
+
     if (user?.role !== 2 && user?.role !== 3) {
         return null;
     }
@@ -141,9 +154,11 @@ const Stepper = ({auction, isOpen, onChange}) => {
     }, [errorCode]);
     
     if (bidsLoading) {
-        return '...Loading';
+        return (
+            <div className="loading-layout" style={{height: '72px'}}/>
+        );
     }
-    
+
     const currentPrice = bids.currentPrice ?? auction.initialPrice - auction.minDecrease;
     return (
         <NumericStepper maxValue={currentPrice} minValue={0} initialValue={currentPrice} step={auction.minDecrease} onChange={onChange} />

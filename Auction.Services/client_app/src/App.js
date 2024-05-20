@@ -14,23 +14,23 @@ import ProfilePage from "./components/pages/ProfilePage";
 const App = () => {
   return (
       <ErrorProvider>
-          <AuthProvider>
-              <Router>
-                  <DefaultPageLayout>
-                      <Routes>
-                          <Route path="/login" element={<LoginPage />} />
-                          <Route path="/register" element={<RegisterPage />} />
-                          <Route path="/profile" element={<ProfilePage />} />
-                          <Route path="/profile/:userName" element={<ProfilePage />} /> //TODO: fix
-                          <Route path="/auctions" element={<AuctionsPage />} />
-                          <Route path="/auctions/:auctionId" element={<AuctionViewPage />} />
-                          <Route path="/auctions/:auctionId/edit" element={<AuctionEditPage />} />
-                          <Route path="/auctions/new" element={<AuctionCreatePage />} />
-                          <Route path="" element={<AuctionsPage />} />
-                      </Routes>
-                  </DefaultPageLayout>
-              </Router>
-          </AuthProvider>
+      <AuthProvider>
+          <Router>
+              <DefaultPageLayout>
+                  <Routes>
+                      <Route path="/login" element={<LoginPage />} />
+                      <Route path="/register" element={<RegisterPage />} />
+                      <Route path="/profile" element={<ProfilePage />} />
+                      <Route path="/profile/:userName" element={<ProfilePage />} /> //TODO: fix
+                      <Route path="/auctions" element={<AuctionsPage />} />
+                      <Route path="/auctions/:auctionId" element={<AuctionViewPage />} />
+                      <Route path="/auctions/:auctionId/edit" element={<AuctionEditPage />} />
+                      <Route path="/auctions/new" element={<AuctionCreatePage />} />
+                      <Route path="" element={<AuctionsPage />} />
+                  </Routes>
+              </DefaultPageLayout>
+          </Router>
+      </AuthProvider>
       </ErrorProvider>
   );
 };

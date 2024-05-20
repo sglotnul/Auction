@@ -23,9 +23,11 @@ const AuctionsCategoryFilter = ({initialCategories, onSubmit}) => {
     }, [errorCode]);
     
     if (loading) {
-        return 'Loading...';
+        return (
+            <div className="loading-layout" style={{height: '40px'}}/>
+        );
     }
-    
+
     if (!categories) {
         return 'Error.'
     }

@@ -22,7 +22,7 @@ const ProfilePage = () => {
     if (loading) {
         return (
             <div className="profile-page">
-                ...Loading
+                <div className="loading-layout" style={{height: '130px'}}/>
             </div>
         );
     }
@@ -64,7 +64,7 @@ const UserProfile = ({user, userName}) => {
     if (!!profile !== !!initialProfile || loading) {
         return (
             <div className="default-container">
-                ...Loading
+                <div className="loading-layout" style={{height: '130px'}}/>
             </div>
         );
     }
@@ -195,11 +195,11 @@ const UserAuctions = ({user, userName}) => {
     if (auctionsLoading) {
         return (
             <div className="profile-page-content">
-                ...Loading
+                <div className="loading-layout" style={{height: '130px'}}/>
             </div>
         );
     }
-    
+
     if (errorCode) {
         return (
             <div className="profile-page-content">

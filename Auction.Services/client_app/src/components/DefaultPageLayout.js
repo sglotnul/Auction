@@ -40,7 +40,7 @@ const DefaultPageLayout = ({ children }) => {
             ))}
             <Header/>
             <div className='layout'>
-                <div className='wrapper'>
+                <div className='wrapper content'>
                     {children}
                 </div>
             </div>
@@ -75,9 +75,7 @@ const ProfileIcon = () => {
                 </div>
             )
             : (
-                <div onClick={showDrawer}>
-                    Hello, {user.userName}!
-                </div>
+                <span className="profile-icon header-icon" src={`${process.env.PUBLIC_URL}/icons/profile-icon.svg`} onClick={showDrawer} />
             );
 
     return (

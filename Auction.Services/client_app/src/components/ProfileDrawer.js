@@ -55,10 +55,12 @@ const ProfileDrawer = ({isOpen, onClose}) => {
                     </div>
                 )
                 : (
-                    <div className="profile-drawer">...Loading</div>
+                    <div className="profile-drawer">
+                        <div className="loading-layout" style={{height: '90px'}}/>
+                    </div>
                 )
             }
-            
+
         </Drawer>
     );
 };

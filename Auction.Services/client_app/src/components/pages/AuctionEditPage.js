@@ -40,7 +40,7 @@ const AuctionEditPage = () => {
     if (!!auctionFormData !== !!initialAuction || loading || userLoading || categoriesLoading){
         return (
             <div className="default-container">
-                ...Loading
+                <div className="loading-layout" style={{height: '130px'}}/>
             </div>
         );
     }
