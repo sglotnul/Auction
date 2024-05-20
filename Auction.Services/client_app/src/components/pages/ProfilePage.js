@@ -7,6 +7,7 @@ import useUserAuctions from "../../hooks/useUserAuctions";
 import AuctionCard from "../AuctionCard";
 import useProfile from "../../hooks/useProfile";
 import ErrorCode from "../../models/ErrorCode";
+import {ERROR_CODE_MESSAGES} from "../../models/errorCodes";
 
 const ProfilePage = () => {
     const navigate = useNavigate();
@@ -25,18 +26,6 @@ const ProfilePage = () => {
                 ...Loading
             </div>
         );
-    }
-
-    if (!user) {
-        if (userName) {
-            return (
-                <div className="profile-page">
-                   Nothing found
-                </div>
-            )
-        }
-
-        navigate('/');
     }
 
     const changeTab = (newTab) => (e) => {
@@ -208,6 +197,14 @@ const UserAuctions = ({user, userName}) => {
         return (
             <div className="profile-page-content">
                 ...Loading
+            </div>
+        );
+    }
+    
+    if (errorCode) {
+        return (
+            <div className="profile-page-content">
+                Error.
             </div>
         );
     }

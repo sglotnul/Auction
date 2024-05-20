@@ -73,6 +73,10 @@ public class AuctionController : ControllerBase
 	[HttpGet("user/{userName}")]
 	public async Task<IActionResult> GetAuctionsForListAsync(string userName)
 	{
+		var user = await _userManager.FindByNameAsync(userName);
+		if (user is null)
+			return ErrorCode(ErrorCodes.NotFound);
+		
 		var result = await _dbContext.Auctions
 			.Where(a => a.User.UserName == userName)
 			.Select(a => new AuctionResponse
