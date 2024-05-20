@@ -9,7 +9,7 @@ const AuctionCard = ({auction, children}) => {
     return (
         <div className='auction-card'>
             <span className="auction-card-title">{auction.title}</span>
-            <Link className="auction-card-inner-link auction-card-student" to="/auctions">{getUserFullName(auction.user.userName, profile)}</Link>
+            <Link className="auction-card-inner-link auction-card-student" to={`/profile/${auction.user.userName}`}>{getUserFullName(auction.user.userName, profile)}</Link>
             {children}
         </div>
     )

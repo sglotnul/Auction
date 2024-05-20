@@ -1,8 +1,9 @@
-import React, {Fragment, useContext} from 'react';
-import ProfileBar from "./ProfileBar";
+import React, {Fragment, useCallback, useContext, useState} from 'react';
 import {Link} from "react-router-dom";
 import ErrorSnackbar from "./ErrorSnackbar";
 import ErrorContext from "../contexts/ErrorContext";
+import AuthContext from "../contexts/AuthContext";
+import ProfileDrawer from "./ProfileDrawer";
 
 const Header = () => {
     return (
@@ -10,7 +11,7 @@ const Header = () => {
             <div className="wrapper">
                 <div className="header-container">
                     <Link to="/"><h1>Auction</h1></Link>
-                    <ProfileBar/>
+                    <ProfileIcon/>
                 </div>
             </div>
         </header>
@@ -47,5 +48,44 @@ const DefaultPageLayout = ({ children }) => {
         </Fragment>
     );
 };
+
+const ProfileIcon = () => {
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+    const { loading: userLoading, user } = useContext(AuthContext);
+
+    const toggleDrawer = (open) => (event) => {
+        if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+            return;
+        }
+
+        setIsDrawerOpen(open);
+    };
+
+    const showDrawer = useCallback(toggleDrawer(true), []);
+    const hideDrawer = useCallback(toggleDrawer(false), []);
+
+    const content = userLoading
+        ? null
+        : !user
+            ? (
+                <div style={{display: 'inline'}}>
+                    <Link to='/register'>Sing Up      </Link>
+                    <Link to='/login'>Sing In</Link>
+                </div>
+            )
+            : (
+                <div onClick={showDrawer}>
+                    Hello, {user.userName}!
+                </div>
+            );
+
+    return (
+        <Fragment>
+            {content}
+            <ProfileDrawer isOpen={isDrawerOpen} onClose={hideDrawer}/>
+        </Fragment>
+    )
+}
 
 export default DefaultPageLayout;

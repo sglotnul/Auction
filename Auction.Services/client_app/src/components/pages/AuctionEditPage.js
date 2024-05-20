@@ -7,7 +7,7 @@ import ErrorCode from "../../models/ErrorCode";
 import {Button, Checkbox, InputLabel, ListItemText, MenuItem, Select, TextField} from "@mui/material";
 import useAuction from "../../hooks/useAuction";
 
-const EditAuctionPage = () => {
+const AuctionEditPage = () => {
     const navigate = useNavigate();
     
     const { auctionId } = useParams();
@@ -172,4 +172,4 @@ const EditAuctionPage = () => {
     );
 }
 
-export default EditAuctionPage;
+export default AuctionEditPage;

@@ -25,9 +25,11 @@ public class ProfileController : ControllerBase
 	public async Task<IActionResult> GetUserProfileAsync(string userName)
 	{
 		var user = await _userManager.FindByNameAsync(userName);
-
-		if (user?.ProfileId is null)
+		if (user is null)
 			return ErrorCode(ErrorCodes.NotFound);
+
+		if (user.ProfileId is null)
+			return Json(new {});
 
 		var profile = await _context.Profiles.SingleOrDefaultAsync(p => p.Id == user.ProfileId)
 			?? throw new InvalidOperationException();

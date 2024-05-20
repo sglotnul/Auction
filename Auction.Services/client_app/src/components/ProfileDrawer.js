@@ -32,7 +32,7 @@ const ProfileDrawer = ({isOpen, onClose}) => {
         }
     }, []);
 
-    const newAuctionLink = () => user.role === 1 || user.role === 3 ? <Link to="/auctions/user" onClick={onClose}>My Auctions</Link> : null;
+    const newAuctionLink = () => user.role === 1 || user.role === 3 ? <Link to="/profile?tab=1" onClick={onClose}>My Auctions</Link> : null;
     
     return (
         <Drawer
@@ -46,7 +46,7 @@ const ProfileDrawer = ({isOpen, onClose}) => {
                     <div className="profile-drawer">
                         <div className="profile-drawer-content">
                             <h1>{getUserFullName(user.userName, profile)}</h1>
-                            <Link to="/profile/edit" onClick={onClose} fullWidth>Profile</Link>
+                            <Link to="/profile?tab=0" onClick={onClose} fullWidth>Profile</Link>
                             {newAuctionLink()}
                         </div>
                         <Button onClick={onLogout} variant="contained" fullWidth color="error">

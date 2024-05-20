@@ -6,7 +6,7 @@ import {Button, Checkbox, InputLabel, ListItemText, MenuItem, Select, TextField}
 import useCategories from "../../hooks/useCategories";
 import ErrorCode from "../../models/ErrorCode";
 
-const CreateAuctionPage = () => {
+const AuctionCreatePage = () => {
     const navigate = useNavigate();
 
     const { addError } = useContext(ErrorContext);
@@ -158,4 +158,4 @@ const CreateAuctionPage = () => {
     );
 }
 
-export default CreateAuctionPage;
+export default AuctionCreatePage;
