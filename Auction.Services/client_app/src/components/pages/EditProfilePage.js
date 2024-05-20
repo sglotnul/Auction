@@ -32,7 +32,7 @@ const EditProfilePage = () => {
         );
     }
     
-    if (!profile) {
+    if (errorCode) {
         return (
             <div className="default-container">
                 Error.

@@ -27,7 +27,7 @@ public class ProfileController : ControllerBase
 		var user = await _userManager.FindByNameAsync(userName);
 
 		if (user?.ProfileId is null)
-			return ErrorCode(ErrorCodes.NotFound);
+			return Json(new {});
 
 		var profile = await _context.Profiles.SingleOrDefaultAsync(p => p.Id == user.ProfileId)
 			?? throw new InvalidOperationException();
