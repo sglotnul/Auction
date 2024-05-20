@@ -6,7 +6,7 @@ import {useNavigate} from "react-router-dom";
 import ErrorContext from "../../contexts/ErrorContext";
 import ErrorCode from "../../models/ErrorCode";
 
-const EditProfilePage = () => {
+const ProfileEditPage = () => {
     const navigate = useNavigate();
 
     const { addError } = useContext(ErrorContext);
@@ -137,4 +137,4 @@ function formatDate(dateString) {
     return `${year}-${month}-${day}`;
 }
 
-export default EditProfilePage;
+export default ProfileEditPage;
