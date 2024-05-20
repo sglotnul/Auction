@@ -2,17 +2,20 @@ import React, {Fragment, useCallback, useContext, useEffect, useMemo, useState} 
 import useAuctions from "../../hooks/useAuctions";
 import AuctionsCategoryFilter from "../AuctionsCategoryFilter";
 import AuctionsFilter from "../../models/AuctionsFilter";
-import {Link} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import AuctionCard from "../AuctionCard";
 import AuthContext from "../../contexts/AuthContext";
 import {Button} from "@mui/material";
 import ErrorContext from "../../contexts/ErrorContext";
 
 const AuctionsPage = () => {
+	const location = useLocation();
+	const navigate = useNavigate();
+	
 	const { user } = useContext(AuthContext);
 	const { addError } = useContext(ErrorContext);
 	
-	const [filter, setFilter] = useState(AuctionsFilter.fromQueryString(window.location.search));
+	const [filter, setFilter] = useState(AuctionsFilter.fromQueryString(location.search));
 	
 	const [auctions, count, auctionsLoading, errorCode] = useAuctions(filter);
 	
@@ -21,10 +24,7 @@ const AuctionsPage = () => {
 	}, [user]);
 
 	useEffect(() => {
-		const newUrl = new URL(window.location);
-		newUrl.search = filter.getQueryString();
-
-		window.history.replaceState({}, '', newUrl);
+		navigate(`?${filter.getQueryString()}`, { replace: true });
 	}, [filter]);
 	
 	useEffect(() => {

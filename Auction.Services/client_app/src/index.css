@@ -99,12 +99,6 @@ header {
   border-left: 1px solid rgb(197, 197, 197);
 }
 
-.auction-default-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
 .filter-list {
   display: flex;
   flex-direction: column;
@@ -189,12 +183,12 @@ header {
   cursor: pointer;
 }
 
-.default-tabs .tab+.disabled {
+.default-tabs .tab.disabled {
   color: rgb(197, 197, 197);
   cursor: default;
 }
 
-.default-tabs .tab:last-child {
+.default-tabs .tab {
   border-right: 1px solid rgb(197, 197, 197);
 }
 
@@ -209,4 +203,17 @@ header {
   background-color: #fff;
   padding: 20px;
   box-sizing: border-box;
+}
+
+.profile-page {
+  display: flex;
+}
+
+.profile-bar {
+  width: 300px;
+  padding: 20px;
+  box-shadow: 0 2px 12px #eef1f7;
+  box-sizing: border-box;
+  border-radius: 4px;
+  border: 1px solid transparent;
 }

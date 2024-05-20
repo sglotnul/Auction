@@ -37,7 +37,7 @@ const UserAuctionPage = () => {
     const canEdit = !userName || userName.toLowerCase() === user?.userName.toLowerCase();
     
     return (
-        <div className="auction-default-list">
+        <div className="profile-page-content">
             {auctions.length > 0
                 ? auctions.map(
                     (auction) => (
