@@ -48,6 +48,7 @@ header {
 }
 
 .profile-icon {
+  display: block;
   overflow: hidden;
   border-radius: 50%;
   background-image: url(icons/profile_min.svg);
@@ -250,7 +251,7 @@ header {
 }
 
 .auction-owner-view {
-  display: flex;
+  display: inline-flex;
   gap: 9px;
   align-items: center;
 }
@@ -279,10 +280,55 @@ header {
 }
 
 .auction-bids {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
   flex: 1;
   padding: 20px;
   box-sizing: border-box;
   box-shadow: 0 2px 12px #eef1f7;
+}
+
+.auction-bid-container {
+  padding: 4px;
+  border-radius: 4px;
+  box-shadow: 0 2px 12px #eef1f7;
+  display: flex;
+  gap: 6px;
+}
+
+.auction-bid-content * {
+  display: block;
+}
+
+.auction-bid-amount {
+  font-size: 20px;
+  color: lightgreen;
+}
+
+.auction-bid-comment {
+  color: #9eabb8;
+}
+
+.current-bid-separator {
+  border-top: 1px solid lightgreen;;
+  text-align: center;
+  color: lightgreen;;
+  font-size: 14px;
+  line-height: 20px;
+  text-transform: uppercase;
+}
+
+.no-bids {
+  color: #9eabb8;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.profile-icon.auction-bid-icon {
+  width: 40px;
+  height: 40px;
+  background-position: -40px 0;
 }
 
 .auction-description-row {

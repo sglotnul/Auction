@@ -61,10 +61,51 @@ const AuctionViewPage = () => {
             </div>
             <div className="auction-bids">
                 <BidButton auction={auction}/>
+                <BidList auction={auction}/>
             </div>
         </div>
     );
 };
+
+const BidList = ({auction}) => {
+    const { addError } = useContext(ErrorContext);
+
+    const [bids, bidsLoading, errorCode] = useBids(auction.id);
+
+    useEffect(() => {
+        if (errorCode) {
+            addError(errorCode);
+        }
+    }, [errorCode]);
+
+    if (bidsLoading) {
+        return (
+            <div className="loading-layout" style={{height: '72px'}}/>
+        );
+    }
+    
+    if (bids.bids.length === 0) {
+        return <div className="no-bids">Nothing</div>;
+    }
+    
+    return (
+        <>
+            {bids.bids.map((b, i) => (
+                <>
+                    <div className="auction-bid-container">
+                        <Link to={`/profile/${b.user.userName}`}><span className="profile-icon auction-bid-icon"/></Link>
+                        <div className="auction-bid-content">
+                            <Link to={`/profile/${b.user.userName}`}><span>{b.user.userName}</span></Link>
+                            <span className="auction-bid-amount">{b.amount.toFixed(2)}</span>
+                            <span className="auction-bid-comment">{b.comment}</span>
+                        </div>
+                    </div>
+                    {i === 0 && (<div className="current-bid-separator">Current bid</div>)}
+                </>
+            ))}
+        </>
+    );
+}
 
 const BidButton = ({auction}) => {
     const { user, loading } = useContext(AuthContext);
@@ -82,6 +123,10 @@ const BidButton = ({auction}) => {
         );
     }
 
+    if (auction.user.userId === user?.userId) {
+        return null;
+    }
+    
     if (user?.role !== 2 && user?.role !== 3) {
         return null;
     }
@@ -116,7 +161,7 @@ const BidButton = ({auction}) => {
     
     return (
         <Fragment>
-            <Button variant="contained" onClick={handleOpen}>Bid</Button>
+            <Button variant="contained" onClick={handleOpen} fullWidth>Bid</Button>
             <Modal
                 open={isOpen}
                 onClose={handleClose}

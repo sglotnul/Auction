@@ -32,12 +32,6 @@ public class AuctionController : ControllerBase
 		{
 			auctions = auctions.Where(a => a.Categories.Any(ac => request.Categories.Contains(ac.Id)));
 		}
-
-		var userId = _userManager.GetUserId(HttpContext.User);
-		if (userId is not null)
-		{
-			auctions = auctions.Where(a => a.UserId != userId);
-		}
 		
 		var result = await auctions
 			.Where(a => a.Status == AuctionStatus.Active)
@@ -286,6 +280,7 @@ public class AuctionController : ControllerBase
 				},
 				DateTime = b.DateTime
 			})
+			.OrderBy(b => b.Amount)
 			.ToArrayAsync();
 
 		var result = new BidsResponse
