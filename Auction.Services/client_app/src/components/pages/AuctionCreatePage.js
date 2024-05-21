@@ -16,10 +16,7 @@ const AuctionCreatePage = () => {
 
     const [tab, setTab] = useState(0);
     const [enabledTab, setEnabledTab] = useState(0);
-    const [auctionFormData, setAuctionFormData] = useState({
-        title: undefined,
-        description: undefined
-    });
+    const [auctionFormData, setAuctionFormData] = useState({});
     const [selectedCategories, setSelectedCategories] = useState([]);
 
     useEffect(() => {
@@ -77,6 +74,12 @@ const AuctionCreatePage = () => {
         setAuctionFormData({ ...auctionFormData, [event.target.name]: event.target.value });
     };
 
+    const handleMoneyChange = (event) => {
+        const newValue = parseFloat(event.target.value);
+        if (!isNaN(newValue) && newValue >= 0)
+            setAuctionFormData(prev => { return { ...prev, [event.target.name]: newValue }});
+    };
+
     const handleCheckboxChange = (event) => {
         setSelectedCategories(event.target.value);
     };
@@ -129,6 +132,24 @@ const AuctionCreatePage = () => {
             {tab === 2 && (
                 <form onSubmit={handleSubmit}>
                     <div className="default-input-container">
+                        <TextField
+                            label="Initial Price"
+                            name="initialPrice"
+                            value={(auctionFormData.initialPrice ?? 0).toFixed(2)}
+                            onChange={handleMoneyChange}
+                            margin="normal"
+                            fullWidth
+                            required
+                        />
+                        <TextField
+                            label="Minimum decrease"
+                            name="minDecrease"
+                            value={(auctionFormData.minDecrease ?? 0).toFixed(2)}
+                            onChange={handleMoneyChange}
+                            margin="normal"
+                            fullWidth
+                            required
+                        />
                         <InputLabel id="multiple-checkbox-label">Categories</InputLabel>
                         <Select
                             labelId="multiple-checkbox-label"

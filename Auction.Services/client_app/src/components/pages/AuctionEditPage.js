@@ -23,6 +23,13 @@ const AuctionEditPage = () => {
     const [auctionFormData, setAuctionFormData] = useState(initialAuction);
     const [selectedCategories, setSelectedCategories] = useState([]);
 
+    const timespans = [
+        { value: '1h', label: '1 Hour' },
+        { value: '24h', label: '1 Day' },
+        { value: '1w', label: '1 Week' },
+        { value: '1m', label: '1 Month' },
+    ];
+
     useEffect(() => {
         setSelectedCategories(initialAuction?.categories?.map(c => c.id) ?? []);
         setAuctionFormData(initialAuction);
@@ -142,6 +149,24 @@ const AuctionEditPage = () => {
             {tab === 2 && (
                 <form onSubmit={handleSubmit}>
                     <div className="default-input-container">
+                        <TextField
+                            label="Initial Price"
+                            type="number"
+                            name="initialPrice"
+                            value={auctionFormData?.initialPrice}
+                            onChange={handleInputChange}
+                            margin="normal"
+                            required
+                        />
+                        <TextField
+                            label="Minimum decrease"
+                            type="number"
+                            name="minDecrease"
+                            value={auctionFormData?.minDecrease}
+                            onChange={handleInputChange}
+                            margin="normal"
+                            required
+                        />
                         <InputLabel id="multiple-checkbox-label">Categories</InputLabel>
                         <Select
                             labelId="multiple-checkbox-label"

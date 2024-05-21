@@ -10,4 +10,5 @@ public static class ErrorCodes
     public const string InvalidBid = "InvalidBid";
     public const string AuctionAlreadyStarted = "AuctionAlreadyStarted";
     public const string InvalidLaunchPeriod = "InvalidLaunchPeriod";
+    public const string InvalidInitialPrice = "InvalidInitialPrice";
 }

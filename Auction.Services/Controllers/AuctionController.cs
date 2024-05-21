@@ -159,6 +159,9 @@ public class AuctionController : ControllerBase
 		if (user.Role is not Role.Student and not Role.Admin)
 			return ErrorCode(ErrorCodes.InvalidRole);
 
+		if (request.InitialPrice < 0 || request.InitialPrice < request.MinDecrease)
+			return ErrorCode(ErrorCodes.InvalidInitialPrice);
+
 		var categories = await _dbContext.Categories.Where(c => request.Categories.Contains(c.Id)).ToListAsync();
 		
 		var auction = new Model.Auction
@@ -166,8 +169,8 @@ public class AuctionController : ControllerBase
 			Id = 0,
 			Title = request.Title,
 			Description = request.Description,
-			MinDecrease = 100, //TODO: fix
-			InitialPrice = 1000, //TODO: fix
+			MinDecrease = request.MinDecrease,
+			InitialPrice = request.InitialPrice,
 			Categories = categories
 		};
 

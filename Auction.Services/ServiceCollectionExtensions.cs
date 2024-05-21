@@ -21,6 +21,7 @@ public static class ServiceCollectionExtensions
             resolver.Map(ErrorCodes.InvalidBid, HttpStatusCode.Forbidden);
             resolver.Map(ErrorCodes.AuctionAlreadyStarted, HttpStatusCode.Conflict);
             resolver.Map(ErrorCodes.InvalidLaunchPeriod, HttpStatusCode.BadRequest);
+            resolver.Map(ErrorCodes.InvalidInitialPrice, HttpStatusCode.BadRequest);
             
             resolver.Map(DuplicateUserNameCode, HttpStatusCode.BadRequest);
 
