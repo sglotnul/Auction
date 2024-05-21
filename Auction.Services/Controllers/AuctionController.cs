@@ -33,11 +33,12 @@ public class AuctionController : ControllerBase
 			auctions = auctions.Where(a => a.Categories.Any(ac => request.Categories.Contains(ac.Id)));
 		}
 		
-		var shift = TimeSpan.FromMinutes(3);
+		var shift = TimeSpan.FromMinutes(2);
 		var currentDateTime = DateTime.UtcNow + shift;
 
 		var result = await auctions
 			.Where(a => a.EndAt > currentDateTime)
+			.OrderBy(a => a.EndAt)
 			.Select(a => new AuctionResponse
 			{
 				Id = a.Id,
@@ -76,6 +77,7 @@ public class AuctionController : ControllerBase
 		
 		var result = await _dbContext.Auctions
 			.Where(a => a.User.UserName == userName)
+			.OrderBy(a => a.EndAt)
 			.Select(a => new AuctionResponse
 			{
 				Id = a.Id,
@@ -135,8 +137,12 @@ public class AuctionController : ControllerBase
 			})
 			.AsNoTracking()
 			.SingleOrDefaultAsync(a => a.Id == id);
-
+		
 		if (auction is null)
+			return ErrorCode(ErrorCodes.NotFound);
+		
+		var userId = _userManager.GetUserId(HttpContext.User);
+		if (userId != auction.User.UserId && auction.EndAt <= DateTime.UtcNow)
 			return ErrorCode(ErrorCodes.NotFound);
 		
 		return Json(auction);
