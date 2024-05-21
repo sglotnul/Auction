@@ -9,6 +9,7 @@ import NumericStepper from "../NumericStepper";
 import useBids from "../../hooks/useBids";
 import {getUserFullName, formatDate} from "../../models/functions";
 import CategoriesView from "../CategoriesView";
+import Timer from "../Timer";
 
 const AuctionViewPage = () => {
     const { addError } = useContext(ErrorContext);
@@ -72,8 +73,8 @@ const AuctionView = ({auction, auctionLoading}) => {
 
 const BidList = ({auction, auctionLoading}) => {
     const {addError} = useContext(ErrorContext);
-
     const {user, loading: userLoading} = useContext(AuthContext);
+    
     const [bids, loading, errorCode] = useBids(auction?.id, !!auction);
 
     useEffect(() => {
@@ -105,6 +106,7 @@ const BidList = ({auction, auctionLoading}) => {
 
     return (
         <div className="auction-bids">
+            <Timer endTime={new Date(auction.endAt)} />
             <BidButton auctionId={auction.id} visible={buttonVisible} currentPrice={currentPrice} minDecrease={auction.minDecrease}/>
             {!bids.bids?.length && <div className="no-bids">Nothing</div>}
             {bids.bids?.map((b, i) => (
@@ -113,7 +115,7 @@ const BidList = ({auction, auctionLoading}) => {
                         <Link to={`/profile/${b.user.userName}`}><span
                             className="profile-icon auction-bid-icon"/></Link>
                         <div className="auction-bid-content">
-                            <Link to={`/profile/${b.user.userName}`}><span>{b.user.userName}</span></Link>
+                            <Link to={`/profile/${b.user.userName}`}><span>{b.user.userName}{b.user.userId === user.userId && ' (You)'}</span></Link>
                             <span className="auction-bid-amount">{b.amount.toFixed(2)}</span>
                             <span className="auction-bid-comment">{b.comment}</span>
                         </div>
