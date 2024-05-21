@@ -21,7 +21,7 @@ const ProfilePage = () => {
 
     if (loading) {
         return (
-            <div className="profile-page">
+            <div className="default-container">
                 <div className="loading-layout" style={{height: '130px'}}/>
             </div>
         );
@@ -63,15 +63,17 @@ const UserProfile = ({user, userName}) => {
 
     if (!!profile !== !!initialProfile || loading) {
         return (
-            <div className="default-container">
-                <div className="loading-layout" style={{height: '130px'}}/>
+            <div className="profile-page-content">
+                <div className="loading-layout" style={{height: '60px'}}/>
+                <div className="loading-layout" style={{height: '60px'}}/>
+                <div className="loading-layout" style={{height: '60px'}}/>
             </div>
         );
     }
 
     if (errorCode) {
         return (
-            <div className="default-container">
+            <div className="profile-page-content">
                 Error.
             </div>
         );
@@ -195,6 +197,8 @@ const UserAuctions = ({user, userName}) => {
     if (auctionsLoading) {
         return (
             <div className="profile-page-content">
+                <div className="loading-layout" style={{height: '130px'}}/>
+                <div className="loading-layout" style={{height: '130px'}}/>
                 <div className="loading-layout" style={{height: '130px'}}/>
             </div>
         );

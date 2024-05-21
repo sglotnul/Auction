@@ -381,3 +381,9 @@ header {
   display: block;
   min-width: 50px;
 }
+
+.profile-page-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
