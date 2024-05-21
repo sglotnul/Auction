@@ -230,6 +230,8 @@ public class AuctionController : ControllerBase
 		
 		auction.Title = request.Title;
 		auction.Description = request.Description;
+		auction.InitialPrice = request.InitialPrice;
+		auction.MinDecrease = request.MinDecrease;
 		auction.Categories = categories;
 
 		_dbContext.Update(auction);

@@ -97,6 +97,12 @@ const AuctionEditPage = () => {
         setAuctionFormData({ ...auctionFormData, [event.target.name]: event.target.value });
     };
 
+    const handleMoneyChange = (event) => {
+        const newValue = parseFloat(event.target.value);
+        if (!isNaN(newValue) && newValue >= 0)
+            setAuctionFormData(prev => { return { ...prev, [event.target.name]: newValue }});
+    };
+
     const handleCheckboxChange = (event) => {
         setSelectedCategories(event.target.value);
     };
@@ -151,20 +157,20 @@ const AuctionEditPage = () => {
                     <div className="default-input-container">
                         <TextField
                             label="Initial Price"
-                            type="number"
                             name="initialPrice"
-                            value={auctionFormData?.initialPrice}
-                            onChange={handleInputChange}
+                            value={auctionFormData?.initialPrice.toFixed(2)}
+                            onChange={handleMoneyChange}
                             margin="normal"
+                            fullWidth
                             required
                         />
                         <TextField
                             label="Minimum decrease"
-                            type="number"
                             name="minDecrease"
-                            value={auctionFormData?.minDecrease}
-                            onChange={handleInputChange}
+                            value={auctionFormData?.minDecrease.toFixed(2)}
+                            onChange={handleMoneyChange}
                             margin="normal"
+                            fullWidth
                             required
                         />
                         <InputLabel id="multiple-checkbox-label">Categories</InputLabel>
