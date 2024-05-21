@@ -1,8 +1,7 @@
 namespace Auction.Model;
 
-public enum AuctionStatus
+public enum  AuctionStatus
 {
-	Completed = 1,
-	Active = 2,
-	Canceled = 3
+	Draft = 1,
+	Started = 2
 }

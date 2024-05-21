@@ -8,4 +8,6 @@ public static class ErrorCodes
     public const string InvalidRole = "InvalidRole";
     public const string Forbidden = "Forbidden";
     public const string InvalidBid = "InvalidBid";
+    public const string AuctionAlreadyStarted = "AuctionAlreadyStarted";
+    public const string InvalidLaunchPeriod = "InvalidLaunchPeriod";
 }

@@ -1,5 +1,3 @@
-using Auction.Model;
-
 namespace Auction.Services;
 
 public class AuctionsResponse
@@ -15,9 +13,8 @@ public record AuctionResponse
 	public string Description { get; init; } = null!;
 	public decimal MinDecrease { get; set; }
 	public decimal InitialPrice { get; set; }
-	public AuctionStatus Status { get; set; }
-	public DateTime StartAt { get; set; }
-	public DateTime EndAt { get; set; }
+	public DateTime? StartAt { get; set; }
+	public DateTime? EndAt { get; set; }
 	public UserResponse User { get; init; } = null!;
 	public IEnumerable<CategoryResponse> Categories { get; init; } = null!;
 }

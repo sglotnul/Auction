@@ -66,13 +66,12 @@ const AuctionEditPage = () => {
                 categories: selectedCategories
             })
         });
-
-        const responseBody = await response.text();
+        
         if (!response.ok) {
-            addError(new ErrorCode(responseBody));
+            addError(new ErrorCode( await response.text()));
         }
         else {
-            navigate(`/auctions/${responseBody}`)
+            navigate(`/auctions/${auctionId}`)
         }
     };
 

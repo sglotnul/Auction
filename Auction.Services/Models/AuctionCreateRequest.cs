@@ -1,6 +1,6 @@
 namespace Auction.Services;
 
-public class CreateAuctionRequest
+public class AuctionCreateRequest
 {
     public string Title { get; init; } = null!;
     public string Description { get; init; } = null!;

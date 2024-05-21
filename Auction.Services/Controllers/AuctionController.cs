@@ -33,14 +33,16 @@ public class AuctionController : ControllerBase
 			auctions = auctions.Where(a => a.Categories.Any(ac => request.Categories.Contains(ac.Id)));
 		}
 		
+		var shift = TimeSpan.FromMinutes(3);
+		var currentDateTime = DateTime.UtcNow + shift;
+
 		var result = await auctions
-			.Where(a => a.Status == AuctionStatus.Active)
+			.Where(a => a.EndAt > currentDateTime)
 			.Select(a => new AuctionResponse
 			{
 				Id = a.Id,
 				Title = a.Title,
 				Description = a.Description,
-				Status = a.Status,
 				User = new UserResponse
 				{
 					UserId = a.User.Id,
@@ -66,7 +68,7 @@ public class AuctionController : ControllerBase
 	}
 	
 	[HttpGet("user/{userName}")]
-	public async Task<IActionResult> GetAuctionsForListAsync(string userName)
+	public async Task<IActionResult> GetAuctionsForUserAsync(string userName)
 	{
 		var user = await _userManager.FindByNameAsync(userName);
 		if (user is null)
@@ -79,7 +81,6 @@ public class AuctionController : ControllerBase
 				Id = a.Id,
 				Title = a.Title,
 				Description = a.Description,
-				Status = a.Status,
 				User = new UserResponse
 				{
 					UserId = a.User.Id,
@@ -115,7 +116,6 @@ public class AuctionController : ControllerBase
 				Description = a.Description,
 				MinDecrease = a.MinDecrease,
 				InitialPrice = a.InitialPrice,
-				Status = a.Status,
 				StartAt = a.StartAt,
 				EndAt = a.EndAt,
 				User = new UserResponse
@@ -133,6 +133,7 @@ public class AuctionController : ControllerBase
 						})
 					.ToArray()
 			})
+			.AsNoTracking()
 			.SingleOrDefaultAsync(a => a.Id == id);
 
 		if (auction is null)
@@ -143,7 +144,7 @@ public class AuctionController : ControllerBase
 
 	[HttpPost("create")]
 	[Authorize]
-	public async Task<IActionResult> CreateAuctionAsync([FromBody] CreateAuctionRequest request)
+	public async Task<IActionResult> CreateAuctionAsync([FromBody] AuctionCreateRequest request)
 	{
 		var user = await _userManager.GetUserAsync(HttpContext.User);
 		if (user is null)
@@ -161,9 +162,6 @@ public class AuctionController : ControllerBase
 			Description = request.Description,
 			MinDecrease = 100, //TODO: fix
 			InitialPrice = 1000, //TODO: fix
-			Status = AuctionStatus.Active,
-			StartAt = DateTime.UtcNow, //TODO: fix
-			EndAt = DateTime.UtcNow.AddHours(5), //TODO: fix
 			Categories = categories
 		};
 
@@ -173,9 +171,40 @@ public class AuctionController : ControllerBase
 		return Ok(auction.Id);
 	}
 	
+	[HttpPut("{id:int}/launch")]
+	[Authorize]
+	public async Task<IActionResult> LaunchAuctionAsync([FromRoute] int id, [FromBody] AuctionLaunchRequest request)
+	{
+		var userId = _userManager.GetUserId(HttpContext.User);
+		if (userId is null)
+			throw new InvalidDataException("Authorized user id is null.");
+
+		var auction = await _dbContext.Auctions.Include(a => a.Categories).SingleOrDefaultAsync(a => a.Id == id);
+		if (auction is null)
+			return ErrorCode(ErrorCodes.NotFound);
+
+		if (auction.UserId != userId)
+			return ErrorCode(ErrorCodes.Forbidden);
+
+		if (auction.StartAt is not null)
+			return ErrorCode(ErrorCodes.AuctionAlreadyStarted);
+
+		if (request.Period.Ticks <= 0)
+			return ErrorCode(ErrorCodes.InvalidLaunchPeriod);
+
+		var currentDateTimeUtc = DateTime.UtcNow;
+		auction.StartAt = currentDateTimeUtc;
+		auction.EndAt = currentDateTimeUtc + request.Period;
+		
+		_dbContext.Update(auction);
+		await _dbContext.SaveChangesAsync();
+
+		return Ok();
+	}
+	
 	[HttpPut("{id:int}")]
 	[Authorize]
-	public async Task<IActionResult> EditAuctionAsync([FromRoute] int id, [FromBody] CreateAuctionRequest request)
+	public async Task<IActionResult> EditAuctionAsync([FromRoute] int id, [FromBody] AuctionCreateRequest request)
 	{
 		var userId = _userManager.GetUserId(HttpContext.User);
 		if (userId is null)
@@ -197,7 +226,7 @@ public class AuctionController : ControllerBase
 		_dbContext.Update(auction);
 		await _dbContext.SaveChangesAsync();
 
-		return Ok(auction.Id);
+		return Ok();
 	}
 	
 	[HttpPost("{id:int}/bid")]
@@ -281,6 +310,7 @@ public class AuctionController : ControllerBase
 				DateTime = b.DateTime
 			})
 			.OrderBy(b => b.Amount)
+			.AsNoTracking()
 			.ToArrayAsync();
 
 		var result = new BidsResponse
