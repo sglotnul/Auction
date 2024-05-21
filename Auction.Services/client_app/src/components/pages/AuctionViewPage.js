@@ -22,55 +22,59 @@ const AuctionViewPage = () => {
             addError(errorCode);
         }
     }, [errorCode]);
-    
-    if (loading) {
-        return (
-            <div className="auction-page">
-                <div className="loading-layout" style={{height: '130px'}}/>
-            </div>
-        );
-    }
-
-    if (!auction) {
-        return (
-            <div className="default-container">
-                Error.
-            </div>  
-        );
-    }
 
     return (
         <div className="auction-page">
-            <div className="auction-container">
-                <Link to={`/profile/${auction.user.userName}`}>
-                    <div className="auction-owner-view">
-                        <span className="profile-icon auction-owner-icon"/>
-                        <span>{getUserFullName(auction.user.userName, auction.user.profile)}</span>
-                    </div>
-                </Link>
-                <h2>{auction.title}</h2>
-                <div className="auction-description-row">
-                    {formatDate(auction.startAt)}
-                </div>
-                <div className="auction-description-row">
-                    <CategoriesView categories={auction.categories} />
-                </div>
-                <div className="auction-description-row">
-                    {auction.description}
-                </div>
-            </div>
-            <div className="auction-bids">
-                <BidButton auction={auction}/>
-                <BidList auction={auction}/>
-            </div>
+            <AuctionView auction={auction} auctionLoading={loading} />
+            <BidList auction={auction} auctionLoading={loading}/>
         </div>
     );
 };
 
-const BidList = ({auction}) => {
-    const { addError } = useContext(ErrorContext);
+const AuctionView = ({auction, auctionLoading}) => {
+    if (auctionLoading) {
+        return (
+            <div className="auction-container">
+                <div className="loading-layout" style={{height: '130px'}}/>
+            </div>
+        );
+    }
+    
+    if (!auction) {
+        return (
+            <div className="auction-container">
+                Error.
+            </div>
+        );
+    }
+    
+    return (
+        <div className="auction-container">
+            <Link to={`/profile/${auction.user.userName}`}>
+                <div className="auction-owner-view">
+                    <span className="profile-icon auction-owner-icon"/>
+                    <span>{getUserFullName(auction.user.userName, auction.user.profile)}</span>
+                </div>
+            </Link>
+            <h2>{auction.title}</h2>
+            <div className="auction-description-row">
+                {formatDate(auction.startAt)}
+            </div>
+            <div className="auction-description-row">
+                <CategoriesView categories={auction.categories}/>
+            </div>
+            <div className="auction-description-row">
+                {auction.description}
+            </div>
+        </div>
+    )
+}
 
-    const [bids, bidsLoading, errorCode] = useBids(auction.id);
+const BidList = ({auction, auctionLoading}) => {
+    const {addError} = useContext(ErrorContext);
+
+    const {user, loading: userLoading} = useContext(AuthContext);
+    const [bids, loading, errorCode] = useBids(auction?.id, !!auction);
 
     useEffect(() => {
         if (errorCode) {
@@ -78,22 +82,36 @@ const BidList = ({auction}) => {
         }
     }, [errorCode]);
 
-    if (bidsLoading) {
+    if (!auctionLoading && !auction) {
         return (
-            <div className="loading-layout" style={{height: '72px'}}/>
+            <div className="auction-bids">
+                Error.
+            </div>
         );
     }
-    
-    if (bids.bids.length === 0) {
-        return <div className="no-bids">Nothing</div>;
+
+    if (auctionLoading || loading || userLoading) {
+        return (
+            <div className="auction-bids">
+                <div className="loading-layout" style={{height: '55px'}}/>
+                <div className="loading-layout" style={{height: '55px'}}/>
+                <div className="loading-layout" style={{height: '55px'}}/>
+            </div>
+        );
     }
-    
+
+    const buttonVisible = auction.user.userId !== user?.userId && (user?.role === 2 || user?.role === 3);
+    const currentPrice = (bids.currentPrice ?? auction.initialPrice) - auction.minDecrease;
+
     return (
-        <>
-            {bids.bids.map((b, i) => (
+        <div className="auction-bids">
+            <BidButton auctionId={auction.id} visible={buttonVisible} currentPrice={currentPrice} minDecrease={auction.minDecrease}/>
+            {!bids.bids?.length && <div className="no-bids">Nothing</div>}
+            {bids.bids?.map((b, i) => (
                 <>
                     <div className="auction-bid-container">
-                        <Link to={`/profile/${b.user.userName}`}><span className="profile-icon auction-bid-icon"/></Link>
+                        <Link to={`/profile/${b.user.userName}`}><span
+                            className="profile-icon auction-bid-icon"/></Link>
                         <div className="auction-bid-content">
                             <Link to={`/profile/${b.user.userName}`}><span>{b.user.userName}</span></Link>
                             <span className="auction-bid-amount">{b.amount.toFixed(2)}</span>
@@ -103,12 +121,11 @@ const BidList = ({auction}) => {
                     {i === 0 && (<div className="current-bid-separator">Current bid</div>)}
                 </>
             ))}
-        </>
+        </div>
     );
 }
 
-const BidButton = ({auction}) => {
-    const { user, loading } = useContext(AuthContext);
+const BidButton = ({auctionId, visible, currentPrice, minDecrease}) => {
     const { addError } = useContext(ErrorContext);
     
     const [isOpen, setIsOpen] = useState(false);
@@ -116,25 +133,15 @@ const BidButton = ({auction}) => {
     
     const handleOpen = useCallback(e => setIsOpen(true), []);
     const handleClose = useCallback(e => setIsOpen(false), []);
-
-    if (loading) {
-        return (
-            <div className="loading-layout" style={{height: '40px'}}/>
-        );
-    }
-
-    if (auction.user.userId === user?.userId) {
-        return null;
-    }
     
-    if (user?.role !== 2 && user?.role !== 3) {
+    if (!visible) {
         return null;
     }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const response = await fetch(`/api/auctions/${auction.id}/bid`, {
+        const response = await fetch(`/api/auctions/${auctionId}/bid`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
@@ -158,7 +165,7 @@ const BidButton = ({auction}) => {
     const handleStepperChange = (value) => {
         setFormData({ ...formData, amount: value });
     }
-    
+
     return (
         <Fragment>
             <Button variant="contained" onClick={handleOpen} fullWidth>Bid</Button>
@@ -168,7 +175,7 @@ const BidButton = ({auction}) => {
             >
                 <div className="default-modal-container">
                     <form onSubmit={handleSubmit}>
-                        <Stepper auction={auction} isOpen={isOpen} onChange={handleStepperChange}/>
+                        <NumericStepper maxValue={currentPrice} minValue={0} initialValue={currentPrice} step={minDecrease} onChange={handleStepperChange} />
                         <TextField
                             label="Comment"
                             name="comment"
@@ -184,29 +191,6 @@ const BidButton = ({auction}) => {
                 </div>
             </Modal>
         </Fragment>
-    );
-}
-
-const Stepper = ({auction, isOpen, onChange}) => {
-    const { addError } = useContext(ErrorContext);
-    
-    const [bids, bidsLoading, errorCode] = useBids(auction.id, isOpen);
-
-    useEffect(() => {
-        if (errorCode) {
-            addError(errorCode);
-        }
-    }, [errorCode]);
-    
-    if (bidsLoading) {
-        return (
-            <div className="loading-layout" style={{height: '72px'}}/>
-        );
-    }
-
-    const currentPrice = (bids.currentPrice ?? auction.initialPrice) - auction.minDecrease;
-    return (
-        <NumericStepper maxValue={currentPrice} minValue={0} initialValue={currentPrice} step={auction.minDecrease} onChange={onChange} />
     );
 }
 

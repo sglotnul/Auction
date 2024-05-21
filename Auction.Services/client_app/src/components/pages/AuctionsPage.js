@@ -43,7 +43,9 @@ const AuctionsList = ({auctions, loading}) => {
 	if (loading) {
 		return (
 			<div className='auction-list'>
-				<div className="loading-layout" style={{ height: '130px' }} />
+				<div className="loading-layout" style={{height: '130px'}}/>
+				<div className="loading-layout" style={{height: '130px'}}/>
+				<div className="loading-layout" style={{height: '130px'}}/>
 			</div>
 		);
 	}

@@ -24,7 +24,11 @@ const AuctionsCategoryFilter = ({initialCategories, onSubmit}) => {
     
     if (loading) {
         return (
-            <div className="loading-layout" style={{height: '40px'}}/>
+            <div className="category-filter-container">
+                <div className="loading-layout" style={{height: '40px'}}/>
+                <div className="loading-layout" style={{height: '40px'}}/>
+                <div className="loading-layout" style={{height: '40px'}}/>
+            </div>
         );
     }
 
@@ -43,21 +47,19 @@ const AuctionsCategoryFilter = ({initialCategories, onSubmit}) => {
     };
     
     return (
-        <>
-            <FormGroup>
-                {categories.map(
-                    (category) =>
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={selectedCategories.indexOf(category.id.toString()) > -1}
-                                    onChange={updateSelectedCategories(category.id.toString())}
-                                />}
-                            label={category.name}
-                            key={category.id}
-                        />
-                )}
-            </FormGroup>
+        <div className="category-filter-container">
+            {categories.map(
+                (category) =>
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={selectedCategories.indexOf(category.id.toString()) > -1}
+                                onChange={updateSelectedCategories(category.id.toString())}
+                            />}
+                        label={category.name}
+                        key={category.id}
+                    />
+            )}
             <Button
                 disabled={arraysHaveSameElements(initialCategories, selectedCategories)}
                 variant="contained"
@@ -66,7 +68,7 @@ const AuctionsCategoryFilter = ({initialCategories, onSubmit}) => {
             >
                 Submit
             </Button>
-        </>
+        </div>
     );
 }
 

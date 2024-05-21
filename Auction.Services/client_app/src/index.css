@@ -144,6 +144,12 @@ header {
   box-sizing: border-box;
 }
 
+.category-filter-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .auction-card {
   padding: 20px;
   box-shadow: 0 2px 12px #eef1f7;
