@@ -274,36 +274,42 @@ const UserAuctions = ({user, userName}) => {
 const AuctionStatusFilter = ({drafts, active, completed, onChange}) => {
     return (
         <div className="auction-type-filter-bar">
-            <FormControlLabel
-                control={
-                    <Checkbox
-                        checked={drafts}
-                        onChange={onChange}
-                        name="drafts"
-                    />
-                }
-                label="Drafts"
-            />
-            <FormControlLabel
-                control={
-                    <Checkbox
-                        checked={active}
-                        onChange={onChange}
-                        name="active"
-                    />
-                }
-                label="Active auctions"
-            />
-            <FormControlLabel
-                control={
-                    <Checkbox
-                        checked={completed}
-                        onChange={onChange}
-                        name="completed"
-                    />
-                }
-                label="Completed auctions"
-            />
+            <div className="auction-type-filter-item">
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={drafts}
+                            onChange={onChange}
+                            name="drafts"
+                        />
+                    }
+                    label="Drafts"
+                />
+            </div>
+            <div className="auction-type-filter-item">
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={active}
+                            onChange={onChange}
+                            name="active"
+                        />
+                    }
+                    label="Active"
+                />
+            </div>
+            <div className="auction-type-filter-item">
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={completed}
+                            onChange={onChange}
+                            name="completed"
+                        />
+                    }
+                    label="Completed"
+                />
+            </div>
         </div>
     )
 }

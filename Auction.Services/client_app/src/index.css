@@ -409,10 +409,15 @@ header {
 .auction-type-filter-bar {
   display: flex;
   justify-content: space-between;
-  padding: 0 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 4px;
   margin-bottom: 20px;
+}
+
+.auction-type-filter-item {
+  display: flex;
+  justify-content: center;
+  flex: 1;
 }
 
 .timer-container {
