@@ -317,7 +317,7 @@ header {
 }
 
 .current-bid-separator {
-  border-top: 1px solid lightgreen;;
+  border-top: 1px solid lightgreen;
   text-align: center;
   color: lightgreen;;
   font-size: 14px;
@@ -386,6 +386,33 @@ header {
   display: flex;
   flex-direction: column;
   gap: 15px;
+}
+
+.auction-separator {
+  border-bottom: 1px solid rgb(197, 197, 197);
+  text-align: center;
+  color: rgb(197, 197, 197);
+  font-size: 20px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.auction-separator.active {
+  border-bottom: 1px solid lightgreen;
+  text-align: center;
+  color: lightgreen;
+  font-size: 20px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.auction-type-filter-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  margin-bottom: 20px;
 }
 
 .timer-container {

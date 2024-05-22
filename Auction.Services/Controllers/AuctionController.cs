@@ -84,7 +84,7 @@ public class AuctionController : ControllerBase
 
 		if (user.UserName != currentUserName)
 		{
-			auctions = auctions.Where(a => a.StartAt != null);
+			auctions = auctions.Where(a => a.EndAt > DateTime.UtcNow);
 		}
 		
 		var result = await auctions

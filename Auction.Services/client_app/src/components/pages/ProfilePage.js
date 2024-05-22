@@ -1,12 +1,13 @@
 ﻿import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
-import React, {useContext, useEffect, useState} from "react";
-import {Button, TextField} from "@mui/material";
+import React, {useCallback, useContext, useEffect, useMemo, useState} from "react";
+import {Button, Checkbox, FormControlLabel, MenuItem, Modal, Select, TextField} from "@mui/material";
 import ErrorContext from "../../contexts/ErrorContext";
 import AuthContext from "../../contexts/AuthContext";
 import useUserAuctions from "../../hooks/useUserAuctions";
 import AuctionCard from "../AuctionCard";
 import useProfile from "../../hooks/useProfile";
 import ErrorCode from "../../models/ErrorCode";
+import NumericStepper from "../NumericStepper";
 
 const ProfilePage = () => {
     const navigate = useNavigate();
@@ -188,6 +189,26 @@ const UserAuctions = ({user, userName}) => {
 
     const [auctions, auctionsLoading, errorCode] = useUserAuctions(userName || user?.userName);
 
+    const [checkedItems, setCheckedItems] = useState({
+        drafts: true,
+        active: true,
+        completed: true,
+    });
+    
+    const splittedAuctions = useMemo(() => {
+        return auctions.reduce((acc, item) => {
+            if (!item.startAt) {
+                acc.drafts.push(item);
+            }
+            else if (new Date(item.endAt) > new Date()) {
+                acc.active.push(item);
+            } else {
+                acc.completed.push(item);
+            }
+            return acc;
+        }, { drafts: [], active: [], completed: [] });
+    }, [auctions]);
+
     useEffect(() => {
         if (errorCode) {
             addError(errorCode);
@@ -212,26 +233,178 @@ const UserAuctions = ({user, userName}) => {
         );
     }
 
-    const canEdit = !userName || userName.toLowerCase() === user?.userName.toLowerCase();
+    const handleChange = (event) => {
+        setCheckedItems({
+            ...checkedItems,
+            [event.target.name]: event.target.checked,
+        });
+    };
+    
+    const isOwner = !userName || userName.toLowerCase() === user.userName.toLowerCase();
 
     return (
         <div className="profile-page-content">
-            {auctions.length > 0
-                ? auctions.map(
-                    (auction) => (
-                        <Link key={auction.id} className="auction-card-outer-link" to={`/auctions/${auction.id}`}>
-                            <AuctionCard auction={auction}>
-                                {canEdit
-                                    ? <Link to={`/auctions/${auction.id}/edit`}><Button variant="contained">Edit</Button></Link>
-                                    : null
-                                }
-                            </AuctionCard>
-                        </Link>
-                    )
+            {isOwner && <AuctionStatusFilter drafts={checkedItems.drafts} active={checkedItems.active} completed={checkedItems.completed} onChange={handleChange}/>}
+            {!auctions.length && 'Nothing found'}
+            {checkedItems.drafts && !!splittedAuctions.drafts.length && <div className="auction-separator">Drafts</div>}
+            {checkedItems.drafts && splittedAuctions.drafts.map(
+                (auction) => (
+                    <AuctionCard key={auction.id} auction={auction}>
+                        <Link to={`/auctions/${auction.id}/edit`}><Button variant="contained">Edit</Button></Link>
+                        <LaunchAuctionButton auctionId={auction.id} />
+                    </AuctionCard>
                 )
-                : 'Nothing found'
-            }
+            )}
+            {checkedItems.active && !!splittedAuctions.active.length && <div className="auction-separator active">Active auctions</div>}
+            {checkedItems.active && splittedAuctions.active.map(
+                (auction) => (
+                    <AuctionCard key={auction.id} auction={auction} />
+                )
+            )}
+            {checkedItems.completed && !!splittedAuctions.completed.length && <div className="auction-separator">Completed auctions</div>}
+            {checkedItems.completed && splittedAuctions.completed.map(
+                (auction) => (
+                    <AuctionCard key={auction.id} auction={auction} />
+                )
+            )}
         </div>
+    );
+}
+
+const AuctionStatusFilter = ({drafts, active, completed, onChange}) => {
+    return (
+        <div className="auction-type-filter-bar">
+            <FormControlLabel
+                control={
+                    <Checkbox
+                        checked={drafts}
+                        onChange={onChange}
+                        name="drafts"
+                    />
+                }
+                label="Drafts"
+            />
+            <FormControlLabel
+                control={
+                    <Checkbox
+                        checked={active}
+                        onChange={onChange}
+                        name="active"
+                    />
+                }
+                label="Active auctions"
+            />
+            <FormControlLabel
+                control={
+                    <Checkbox
+                        checked={completed}
+                        onChange={onChange}
+                        name="completed"
+                    />
+                }
+                label="Completed auctions"
+            />
+        </div>
+    )
+}
+
+const LaunchAuctionButton = ({auctionId}) => {
+    const navigate = useNavigate();
+    
+    const {addError} = useContext(ErrorContext);
+
+    const [isOpen, setIsOpen] = useState(false);
+    const [timeInterval, setTimeInterval] = useState({
+        amount: 1,
+        unit: 'hours',
+    });
+
+    const handleOpen = useCallback(e => setIsOpen(true), []);
+    const handleClose = useCallback(e => setIsOpen(false), []);
+
+    const handleChange = useCallback((event) => {
+        const { name, value } = event.target;
+        setTimeInterval({
+            ...timeInterval,
+            [name]: value,
+        });
+    }, [timeInterval]);
+    
+    const handleSubmit = useCallback(async (e) => {
+        e.preventDefault();
+        
+        const { amount, unit } = timeInterval;
+        let timeSpanString = '';
+
+        const amountInt = parseInt(amount, 10);
+
+        switch (unit) {
+            case 'minutes':
+                timeSpanString = `00:${amountInt.toString().padStart(2, '0')}:00`;
+                break;
+            case 'hours':
+                timeSpanString = `${amountInt.toString().padStart(2, '0')}:00:00`;
+                break;
+            case 'days':
+                timeSpanString = `${amountInt}.00:00:00`;
+                break;
+            default:
+                throw new Error("Invalid unit");
+        }
+
+        const response = await fetch(`/api/auctions/${auctionId}/launch`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify({
+                period: timeSpanString
+            })
+        });
+
+        if (!response.ok) {
+            addError(new ErrorCode( await response.text()));
+        }
+        else {
+            navigate(`/auctions/${auctionId}`)
+        }
+    }, []);
+    
+    return (
+        <>
+            <Button variant="contained" color="success" onClick={handleOpen}>Launch</Button>
+            <Modal
+                open={isOpen}
+                onClose={handleClose}
+            >
+                <div className="default-modal-container">
+                    <form onSubmit={handleSubmit}>
+                        <TextField
+                            label="Количество"
+                            name="amount"
+                            type="number"
+                            value={timeInterval.amount}
+                            onChange={handleChange}
+                            fullWidth
+                        />
+                        <Select
+                            name="unit"
+                            value={timeInterval.unit}
+                            onChange={handleChange}
+                            label="Unit"
+                            fullWidth
+                        >
+                            <MenuItem value="minutes">Minutes</MenuItem>
+                            <MenuItem value="hours">Hours</MenuItem>
+                            <MenuItem value="days">Days</MenuItem>
+                        </Select>
+                        <Button type="submit" variant="contained" fullWidth>
+                            Confirm
+                        </Button>
+                    </form>
+                </div>
+            </Modal>
+        </>
     );
 }
 
