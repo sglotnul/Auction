@@ -26,7 +26,7 @@ const useUserAuctions = (userName, enabled = true) => {
         if (enabled) {
             fetchAuctions();
         }
-    }, [enabled]);
+    }, [userName, enabled]);
     
     return [auctions, loading, errorCode];
 }

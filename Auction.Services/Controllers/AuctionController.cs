@@ -44,6 +44,8 @@ public class AuctionController : ControllerBase
 				Id = a.Id,
 				Title = a.Title,
 				Description = a.Description,
+				StartAt = a.StartAt,
+				EndAt = a.EndAt,
 				User = new UserResponse
 				{
 					UserId = a.User.Id,
@@ -71,18 +73,29 @@ public class AuctionController : ControllerBase
 	[HttpGet("user/{userName}")]
 	public async Task<IActionResult> GetAuctionsForUserAsync(string userName)
 	{
+		var currentUserName = _userManager.GetUserName(HttpContext.User);
+		
 		var user = await _userManager.FindByNameAsync(userName);
 		if (user is null)
 			return ErrorCode(ErrorCodes.NotFound);
+
+		var auctions = _dbContext.Auctions
+			.Where(a => a.User.UserName == userName);
+
+		if (user.UserName != currentUserName)
+		{
+			auctions = auctions.Where(a => a.StartAt != null);
+		}
 		
-		var result = await _dbContext.Auctions
-			.Where(a => a.User.UserName == userName)
+		var result = await auctions
 			.OrderBy(a => a.EndAt)
 			.Select(a => new AuctionResponse
 			{
 				Id = a.Id,
 				Title = a.Title,
 				Description = a.Description,
+				StartAt = a.StartAt,
+				EndAt = a.EndAt,
 				User = new UserResponse
 				{
 					UserId = a.User.Id,
