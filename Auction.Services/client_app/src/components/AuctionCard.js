@@ -1,7 +1,5 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import {Link} from "react-router-dom";
-import {Button} from "@mui/material";
-import AuthContext from "../contexts/AuthContext";
 import CategoriesView from "./CategoriesView";
 
 const AuctionCard = ({auction, children}) => {
