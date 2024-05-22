@@ -6,8 +6,7 @@ import AuthContext from "../../contexts/AuthContext";
 import useUserAuctions from "../../hooks/useUserAuctions";
 import AuctionCard from "../AuctionCard";
 import useProfile from "../../hooks/useProfile";
-import ErrorCode from "../../models/ErrorCode";
-import NumericStepper from "../NumericStepper";
+import ErrorCode from "../../models/ErrorCode";;
 
 const ProfilePage = () => {
     const navigate = useNavigate();
@@ -23,7 +22,7 @@ const ProfilePage = () => {
     if (loading) {
         return (
             <div className="default-container">
-                <div className="loading-layout" style={{height: '130px'}}/>
+                <div className="loading-layout" style={{height: '60px'}}/>
             </div>
         );
     }
@@ -53,6 +52,7 @@ const UserProfile = ({user, userName}) => {
     const [initialProfile, loading, errorCode] = useProfile(userName || user?.userName);
 
     const [profile, setProfile] = useState(initialProfile);
+    const [edit, setEdit] = useState(false);
 
     useEffect(() => setProfile(initialProfile), [initialProfile]);
 
@@ -65,9 +65,11 @@ const UserProfile = ({user, userName}) => {
     if (!!profile !== !!initialProfile || loading) {
         return (
             <div className="profile-page-content">
-                <div className="loading-layout" style={{height: '60px'}}/>
-                <div className="loading-layout" style={{height: '60px'}}/>
-                <div className="loading-layout" style={{height: '60px'}}/>
+                <div className="profile-data-container">
+                    <div className="loading-layout" style={{height: '180px', width: '180px', margin: '0 auto'}}/>
+                    <div className="loading-layout" style={{height: '60px'}}/>
+                    <div className="loading-layout" style={{height: '60px'}}/>
+                </div>
             </div>
         );
     }
@@ -75,28 +77,34 @@ const UserProfile = ({user, userName}) => {
     if (errorCode) {
         return (
             <div className="profile-page-content">
-                Error.
+                <div className="profile-data-container">
+                    Error.
+                </div>
             </div>
         );
     }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        
+        if (edit) {
+            const response = await fetch('/api/profiles', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify(profile)
+            });
 
-        const response = await fetch('/api/profiles', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8'
-            },
-            body: JSON.stringify(profile)
-        });
+            if (response.ok) {
+                setProfile(await response.json());
+            }
+            else {
+                addError(new ErrorCode(await response.text()));
+            }
+        }
 
-        if (response.ok) {
-            setProfile(await response.json());
-        }
-        else {
-            addError(new ErrorCode(await response.text()));
-        }
+        setEdit(prev => !prev);
     };
 
     const handleProfileInputChange = (event) => {
@@ -123,65 +131,87 @@ const UserProfile = ({user, userName}) => {
 
     return (
         <div className="profile-page-content">
-            <form onSubmit={handleSubmit}>
-                <TextField
-                    label="First name"
-                    name="firstName"
-                    value={profile?.firstName}
-                    onChange={handleProfileInputChange}
-                    disabled={!canEdit}
-                    fullWidth
-                    margin="normal"
-                />
-                <TextField
-                    label="Last name"
-                    name="lastName"
-                    value={profile?.lastName}
-                    onChange={handleProfileInputChange}
-                    disabled={!canEdit}
-                    fullWidth
-                    margin="normal"
-                />
-                <TextField
-                    InputLabelProps={{ shrink: true }}
-                    label="Birth date"
-                    name="birthDate"
-                    type="date"
-                    value={formatDate(profile?.birthDate)}
-                    onChange={handleProfileInputChange}
-                    margin="normal"
-                    disabled={!canEdit}
-                />
-                <TextField
-                    label="Education"
-                    name="education"
-                    value={profile?.education}
-                    onChange={handleProfileInputChange}
-                    fullWidth
-                    margin="normal"
-                    disabled={!canEdit}
-                />
-                <TextField
-                    label="Biography"
-                    name="biography"
-                    multiline
-                    rows={4}
-                    value={profile?.biography}
-                    onChange={handleProfileInputChange}
-                    fullWidth
-                    margin="normal"
-                    disabled={!canEdit}
-                />
+            <span className="profile-icon" style={{width: '180px', height: '180px', backgroundPosition: '-180px 0'}} />
+            <form className="profile-data-container" onSubmit={handleSubmit}>
+                <div className="profile-data-container">
+                    <ProfileField
+                        editable={edit}
+                        label="First name"
+                        name="firstName"
+                        value={profile?.firstName}
+                        onChange={handleProfileInputChange}
+                        disabled={!canEdit}
+                        fullWidth
+                    />
+                    <ProfileField
+                        editable={edit}
+                        label="Last name"
+                        name="lastName"
+                        value={profile?.lastName}
+                        onChange={handleProfileInputChange}
+                        disabled={!canEdit}
+                        fullWidth
+                    />
+                    <ProfileField
+                        editable={edit}
+                        label="Birth date"
+                        name="birthDate"
+                        type="date"
+                        value={formatDate(profile?.birthDate)}
+                        onChange={handleProfileInputChange}
+                        disabled={!canEdit}
+                        fullWidth
+                        InputLabelProps={{ shrink: true }}
+                    />
+                    <ProfileField
+                        editable={edit}
+                        label="Education"
+                        name="education"
+                        value={profile?.education}
+                        onChange={handleProfileInputChange}
+                        fullWidth
+                        disabled={!canEdit}
+                    />
+                    <ProfileField
+                        editable={edit}
+                        label="Biography"
+                        name="biography"
+                        multiline
+                        value={profile?.biography}
+                        onChange={handleProfileInputChange}
+                        fullWidth
+                        disabled={!canEdit}
+                    />
+                </div>
                 {
                     canEdit && (
                         <Button type="submit" variant="contained" fullWidth>
-                            Confirm
+                            { edit ? 'Confirm' : 'Edit'}
                         </Button>
                     )
                 }
             </form>
         </div>
     );
+}
+
+const ProfileField = ({label, value, editable, ...props}) => {
+    if (!editable) {
+        return (
+            <div className="profile-data-text-field">
+                <span className="profile-data-text-label">{label}:</span>
+                <span>{value}</span>
+            </div>
+        );
+    }
+
+    return (
+        <TextField
+            {...props}
+            value={value}
+            label={label}
+        />
+    )
 }
 
 const UserAuctions = ({user, userName}) => {
@@ -218,9 +248,11 @@ const UserAuctions = ({user, userName}) => {
     if (auctionsLoading) {
         return (
             <div className="profile-page-content">
-                <div className="loading-layout" style={{height: '130px'}}/>
-                <div className="loading-layout" style={{height: '130px'}}/>
-                <div className="loading-layout" style={{height: '130px'}}/>
+                <div className="profile-auctions-container">
+                    <div className="loading-layout" style={{height: '130px'}}/>
+                    <div className="loading-layout" style={{height: '130px'}}/>
+                    <div className="loading-layout" style={{height: '130px'}}/>
+                </div>
             </div>
         );
     }
@@ -228,7 +260,9 @@ const UserAuctions = ({user, userName}) => {
     if (errorCode) {
         return (
             <div className="profile-page-content">
-                Error.
+                <div className="profile-auctions-container">
+                    Error.
+                </div>
             </div>
         );
     }
@@ -244,29 +278,32 @@ const UserAuctions = ({user, userName}) => {
 
     return (
         <div className="profile-page-content">
-            {isOwner && <AuctionStatusFilter drafts={checkedItems.drafts} active={checkedItems.active} completed={checkedItems.completed} onChange={handleChange}/>}
-            {!auctions.length && 'Nothing found'}
-            {checkedItems.drafts && !!splittedAuctions.drafts.length && <div className="auction-separator">Drafts</div>}
-            {checkedItems.drafts && splittedAuctions.drafts.map(
-                (auction) => (
-                    <AuctionCard key={auction.id} auction={auction}>
-                        <Link to={`/auctions/${auction.id}/edit`}><Button variant="contained">Edit</Button></Link>
-                        <LaunchAuctionButton auctionId={auction.id} />
-                    </AuctionCard>
-                )
-            )}
-            {checkedItems.active && !!splittedAuctions.active.length && <div className="auction-separator active">Active auctions</div>}
-            {checkedItems.active && splittedAuctions.active.map(
-                (auction) => (
-                    <AuctionCard key={auction.id} auction={auction} />
-                )
-            )}
-            {checkedItems.completed && !!splittedAuctions.completed.length && <div className="auction-separator">Completed auctions</div>}
-            {checkedItems.completed && splittedAuctions.completed.map(
-                (auction) => (
-                    <AuctionCard key={auction.id} auction={auction} />
-                )
-            )}
+            <div className="profile-auctions-container">
+                {isOwner && <Link to="/auctions/new"><Button variant="contained" color="success" fullWidth>New</Button></Link>}
+                {isOwner && <AuctionStatusFilter drafts={checkedItems.drafts} active={checkedItems.active} completed={checkedItems.completed} onChange={handleChange}/>}
+                {!auctions.length && 'Nothing found'}
+                {checkedItems.drafts && !!splittedAuctions.drafts.length && <div className="auction-separator">Drafts</div>}
+                {checkedItems.drafts && splittedAuctions.drafts.map(
+                    (auction) => (
+                        <AuctionCard key={auction.id} auction={auction}>
+                            <Link to={`/auctions/${auction.id}/edit`}><Button variant="contained">Edit</Button></Link>
+                            <LaunchAuctionButton auctionId={auction.id} />
+                        </AuctionCard>
+                    )
+                )}
+                {checkedItems.active && !!splittedAuctions.active.length && <div className="auction-separator active">Active auctions</div>}
+                {checkedItems.active && splittedAuctions.active.map(
+                    (auction) => (
+                        <AuctionCard key={auction.id} auction={auction} />
+                    )
+                )}
+                {checkedItems.completed && !!splittedAuctions.completed.length && <div className="auction-separator">Completed auctions</div>}
+                {checkedItems.completed && splittedAuctions.completed.map(
+                    (auction) => (
+                        <AuctionCard key={auction.id} auction={auction} />
+                    )
+                )}
+            </div>
         </div>
     );
 }

@@ -55,7 +55,7 @@ const AuctionCreatePage = () => {
             addError(new ErrorCode(responseBody));
         }
         else {
-            navigate(`/auctions/${responseBody}`)
+            navigate('/profile?tab=1');
         }
     };
 

@@ -62,6 +62,12 @@ public class Startup
     
     public void Configure(IApplicationBuilder app)
     {
+        app.Use(async (c, n) =>
+        {
+            await Task.Delay(1500);
+            await n.Invoke();
+        });
+        
         app.UseExceptionHandler(new ExceptionHandlerOptions
         {
             ExceptionHandler = context =>

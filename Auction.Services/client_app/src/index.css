@@ -371,8 +371,6 @@ header {
 }
 
 .stepper-arrow-container {
-  display: flex;
-  flex-direction: column;
   align-items: center;
   width: 100px;
 }
@@ -385,7 +383,7 @@ header {
 .profile-page-content {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  align-items: center;
 }
 
 .auction-separator {
@@ -434,4 +432,36 @@ header {
 
 .timer-text {
   font-size: 1.5rem;
+}
+
+.profile-data-container {
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.profile-data-text-field {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 56px;
+  padding: 16px 14px;
+  box-sizing: border-box;
+}
+
+.profile-data-text-field:not(:last-child) {
+  border-bottom: 1px solid rgb(192, 192, 192);
+}
+
+.profile-data-text-label {
+  color: rgba(0, 0, 0, 0.6);
+  user-select: none;
+}
+
+.profile-auctions-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
