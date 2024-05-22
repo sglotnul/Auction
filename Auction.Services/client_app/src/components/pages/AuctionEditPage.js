@@ -78,7 +78,7 @@ const AuctionEditPage = () => {
             addError(new ErrorCode( await response.text()));
         }
         else {
-            navigate(`/auctions/${auctionId}`)
+            navigate('/profile?tab=1');
         }
     };
 
