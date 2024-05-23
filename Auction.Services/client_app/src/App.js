@@ -10,6 +10,7 @@ import DefaultPageLayout from "./components/DefaultPageLayout";
 import AuctionCreatePage from "./components/pages/AuctionCreatePage";
 import AuctionEditPage from "./components/pages/AuctionEditPage";
 import ProfilePage from "./components/pages/ProfilePage";
+import AdminPage from "./components/admin/AdminPage";
 
 const App = () => {
   return (
@@ -18,10 +19,11 @@ const App = () => {
           <Router>
               <DefaultPageLayout>
                   <Routes>
+                      <Route path="/admin/*" element={<AdminPage />} />
                       <Route path="/login" element={<LoginPage />} />
                       <Route path="/register" element={<RegisterPage />} />
                       <Route path="/profile" element={<ProfilePage />} />
-                      <Route path="/profile/:userName" element={<ProfilePage />} /> //TODO: fix
+                      <Route path="/profile/:userName" element={<ProfilePage />} />
                       <Route path="/auctions" element={<AuctionsPage />} />
                       <Route path="/auctions/:auctionId" element={<AuctionViewPage />} />
                       <Route path="/auctions/:auctionId/edit" element={<AuctionEditPage />} />
