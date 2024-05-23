@@ -9,6 +9,7 @@ public static class ErrorCodes
     public const string Forbidden = "Forbidden";
     public const string InvalidBid = "InvalidBid";
     public const string AuctionAlreadyStarted = "AuctionAlreadyStarted";
+    public const string InvalidAuctionState = "InvalidAuctionState";
     public const string InvalidLaunchPeriod = "InvalidLaunchPeriod";
     public const string InvalidInitialPrice = "InvalidInitialPrice";
 }

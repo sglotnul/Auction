@@ -239,6 +239,9 @@ public class AuctionController : ControllerBase
 		if (auction.UserId != userId)
 			return ErrorCode(ErrorCodes.Forbidden);
 		
+		if (auction.StartAt is not null)
+			return ErrorCode(ErrorCodes.AuctionAlreadyStarted);
+		
 		var categories = await _dbContext.Categories.Where(c => request.Categories.Contains(c.Id)).Distinct().ToListAsync();
 		
 		auction.Title = request.Title;
@@ -275,6 +278,9 @@ public class AuctionController : ControllerBase
 		
 		if (user.Id == auction.UserId)
 			return ErrorCode(ErrorCodes.Forbidden);
+		
+		if (!(auction.EndAt < DateTime.UtcNow))
+			return ErrorCode(ErrorCodes.InvalidAuctionState);
 
 		await using var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.Serializable);
 
@@ -317,8 +323,17 @@ public class AuctionController : ControllerBase
 	[HttpGet("{id:int}/bids")]
 	public async Task<IActionResult> GetBidsAsync([FromRoute] int id)
 	{
-		var bids = await _dbContext.Bids
-			.Include(b => b.User.Profile)
+		var auction = await _dbContext.Auctions.Include(b => b.Bids).ThenInclude(b => b.User.Profile)
+			.SingleOrDefaultAsync(a => a.Id == id);
+		
+		if (auction is null)
+			return ErrorCode(ErrorCodes.NotFound);
+		
+		var userId = _userManager.GetUserId(HttpContext.User);
+		if (userId != auction.UserId && auction.EndAt <= DateTime.UtcNow)
+			return ErrorCode(ErrorCodes.NotFound);
+
+		var bids = auction.Bids
 			.Where(b => b.AuctionId == id)
 			.Select(b => new BidResponse
 			{
@@ -334,8 +349,7 @@ public class AuctionController : ControllerBase
 				DateTime = b.DateTime
 			})
 			.OrderBy(b => b.Amount)
-			.AsNoTracking()
-			.ToArrayAsync();
+			.ToArray();
 
 		var result = new BidsResponse
 		{
