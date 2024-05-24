@@ -61,7 +61,22 @@ public class AuctionController : ControllerBase
 							Id = c.Id,
 							Name = c.Name
 						})	
-					.ToArray()
+					.ToArray(),
+				CurrentBid = a.Bids
+					.Select(b => new BidResponse
+					{
+						Amount = b.Amount,
+						Comment = b.Comment,
+						User = new UserResponse
+						{
+							UserId = b.UserId,
+							UserName = b.User.UserName!,
+							Profile = b.User.Profile
+						},
+						DateTime = b.DateTime
+					})
+					.OrderBy(b => b.Amount)
+					.FirstOrDefault()
 			})
 			.AsNoTracking()
 			.ToArrayAsync();
@@ -112,7 +127,22 @@ public class AuctionController : ControllerBase
 							Id = c.Id,
 							Name = c.Name
 						})	
-					.ToArray()
+					.ToArray(),
+				CurrentBid = a.Bids
+					.Select(b => new BidResponse
+					{
+						Amount = b.Amount,
+						Comment = b.Comment,
+						User = new UserResponse
+						{
+							UserId = b.UserId,
+							UserName = b.User.UserName!,
+							Profile = b.User.Profile
+						},
+						DateTime = b.DateTime
+					})
+					.OrderBy(b => b.Amount)
+					.FirstOrDefault()
 			})
 			.AsNoTracking()
 			.ToArrayAsync();
@@ -321,7 +351,7 @@ public class AuctionController : ControllerBase
 			
 			await transaction.CommitAsync();
 
-			return Ok();
+			return Ok(bid.Id);
 		}
 		catch
 		{
@@ -353,7 +383,6 @@ public class AuctionController : ControllerBase
 				{
 					UserId = b.UserId,
 					UserName = b.User.UserName!,
-					Role = b.User.Role,
 					Profile = b.User.Profile
 				},
 				DateTime = b.DateTime
@@ -368,6 +397,53 @@ public class AuctionController : ControllerBase
 		};
 
 		return Json(result);
+	}
+	
+	[HttpPost("{id:int}/confirm")]
+	public async Task<IActionResult> StartConsultationAsync([FromRoute] int id)
+	{
+		var auction = await _dbContext.Auctions.SingleOrDefaultAsync(a => a.Id == id);
+		
+		if (auction is null)
+			return ErrorCode(ErrorCodes.NotFound);
+		
+		var userId = _userManager.GetUserId(HttpContext.User);
+		if (userId != auction.UserId)
+			return ErrorCode(ErrorCodes.Forbidden);
+		
+		if (!AuctionCompleted())
+			return ErrorCode(ErrorCodes.InvalidAuctionState);
+
+		var currentBid = await _dbContext.Bids
+			.Where(b => b.AuctionId == auction.Id)
+			.OrderBy(b => b.Amount)
+			.FirstOrDefaultAsync();
+		
+		if (currentBid is null)
+			return ErrorCode(ErrorCodes.InvalidAuctionState);
+
+		var consultation = new Consultation
+		{
+			Id = 0,
+			StartAt = DateTime.UtcNow,
+			Status = ConsultationStatus.Started,
+			ConsultantId = currentBid.UserId,
+			StudentId = auction.UserId,
+			AuctionId = auction.Id,
+			BidId = currentBid.Id
+		};
+		
+		await _dbContext.Consultations.AddAsync(consultation);
+
+		auction.Status = AuctionStatus.ConsultationStarted;
+		_dbContext.Auctions.Update(auction);
+
+		await _dbContext.SaveChangesAsync();
+
+		return Ok(consultation.Id);
+
+		bool AuctionCompleted()
+			=> auction.Status == AuctionStatus.Started && auction.EndAt <= DateTime.UtcNow;
 	}
 	
 	private static Expression<Func<Model.Auction, bool>> GetAuctionRunningExpression(DateTime currentDateTime)

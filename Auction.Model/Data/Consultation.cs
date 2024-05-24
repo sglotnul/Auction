@@ -15,4 +15,7 @@ public class Consultation
 	
 	public int AuctionId { get; set; }
 	public Auction Auction { get; set; } = null!;
+	
+	public int BidId { get; set; }
+	public Bid Bid { get; set; } = null!;
 }

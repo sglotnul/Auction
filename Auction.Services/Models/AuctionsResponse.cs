@@ -20,4 +20,5 @@ public record AuctionResponse
 	public DateTime? EndAt { get; init; }
 	public UserResponse User { get; init; } = null!;
 	public IEnumerable<CategoryResponse> Categories { get; init; } = null!;
+	public BidResponse? CurrentBid { get; init; }
 }

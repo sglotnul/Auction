@@ -83,10 +83,14 @@ public class AppDbContext : IdentityDbContext<User>
 		modelBuilder.Entity<Consultation>(entity =>
 		{
 			entity.HasKey(e => e.Id);
-
+			
 			entity.HasOne(e => e.Auction)
 				.WithMany()
 				.HasForeignKey(e => e.AuctionId);
+
+			entity.HasOne(e => e.Bid)
+				.WithMany()
+				.HasForeignKey(e => e.BidId);
 				
 			entity.HasOne(e => e.Consultant)
 				.WithMany()
