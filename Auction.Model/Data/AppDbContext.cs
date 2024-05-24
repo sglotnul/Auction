@@ -49,7 +49,7 @@ public class AppDbContext : IdentityDbContext<User>
 			entity.HasKey(e => e.Id);
 			
 			entity.HasOne(e => e.User)
-				.WithMany(e => e.Auctions)
+				.WithMany()
 				.HasForeignKey(e => e.UserId);
 			
 			entity.HasMany(s => s.Categories)
@@ -76,7 +76,7 @@ public class AppDbContext : IdentityDbContext<User>
 				.HasForeignKey(e => e.AuctionId);
 			
 			entity.HasOne(e => e.User)
-				.WithMany(e => e.Bids)
+				.WithMany()
 				.HasForeignKey(e => e.UserId);
 		});
 

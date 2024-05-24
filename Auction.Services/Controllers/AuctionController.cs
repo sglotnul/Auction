@@ -187,6 +187,7 @@ public class AuctionController : ControllerBase
 		var auction = new Model.Auction
 		{
 			Id = 0,
+			UserId = user.Id,
 			Title = request.Title,
 			Description = request.Description,
 			Status = AuctionStatus.Draft,
@@ -195,7 +196,7 @@ public class AuctionController : ControllerBase
 			Categories = categories
 		};
 
-		user.Auctions.Add(auction);
+		await _dbContext.Auctions.AddAsync(auction);
 		await _dbContext.SaveChangesAsync();
 
 		return Ok(auction.Id);

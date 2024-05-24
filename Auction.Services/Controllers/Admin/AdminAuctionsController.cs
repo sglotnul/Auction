@@ -31,6 +31,7 @@ public class AdminAuctionsController : Controller
             .OrderByDescending(a => a.Id)
             .Skip((page - 1) * perPage)
             .Take(perPage)
+            .AsNoTracking()
             .ToListAsync();
 
         var totalCount = await _context.Auctions.CountAsync();
@@ -42,7 +43,7 @@ public class AdminAuctionsController : Controller
     [HttpGet("{id}")]
     public async Task<ActionResult<Model.Auction>> Get(int id)
     {
-        var auction = await _context.Auctions.FindAsync(id);
+        var auction = await _context.Auctions.AsNoTracking().SingleOrDefaultAsync(a => a.Id == id);
 
         if (auction == null)
         {
