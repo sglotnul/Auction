@@ -14,6 +14,7 @@ public class AppDbContext : IdentityDbContext<User>
 	public DbSet<Category> Categories { get; set; } = null!;
 	public DbSet<Auction> Auctions { get; set; } = null!;
 	public DbSet<Bid> Bids { get; set; } = null!;
+	public DbSet<Consultation> Consultations { get; set; } = null!;
 
 	public AppDbContext(DbContextOptions<AppDbContext> options)
 		: base(options)
@@ -77,6 +78,23 @@ public class AppDbContext : IdentityDbContext<User>
 			entity.HasOne(e => e.User)
 				.WithMany(e => e.Bids)
 				.HasForeignKey(e => e.UserId);
+		});
+
+		modelBuilder.Entity<Consultation>(entity =>
+		{
+			entity.HasKey(e => e.Id);
+
+			entity.HasOne(e => e.Auction)
+				.WithMany()
+				.HasForeignKey(e => e.AuctionId);
+				
+			entity.HasOne(e => e.Consultant)
+				.WithMany()
+				.HasForeignKey(e => e.ConsultantId);
+			
+			entity.HasOne(e => e.Student)
+				.WithMany()
+				.HasForeignKey(e => e.StudentId);
 		});
 	}
 

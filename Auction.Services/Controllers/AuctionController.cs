@@ -1,5 +1,6 @@
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
+
 using Auction.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -37,13 +38,14 @@ public class AuctionController : ControllerBase
 		var currentDateTime = DateTime.UtcNow + shift;
 
 		var result = await auctions
-			.Where(a => a.EndAt > currentDateTime)
+			.Where(GetAuctionRunningExpression(currentDateTime))
 			.OrderBy(a => a.EndAt)
 			.Select(a => new AuctionResponse
 			{
 				Id = a.Id,
 				Title = a.Title,
 				Description = a.Description,
+				Status = a.Status,
 				StartAt = a.StartAt,
 				EndAt = a.EndAt,
 				User = new UserResponse
@@ -84,7 +86,7 @@ public class AuctionController : ControllerBase
 
 		if (user.UserName != currentUserName)
 		{
-			auctions = auctions.Where(a => a.EndAt > DateTime.UtcNow);
+			auctions = auctions.Where(GetAuctionRunningExpression());
 		}
 		
 		var result = await auctions
@@ -94,6 +96,7 @@ public class AuctionController : ControllerBase
 				Id = a.Id,
 				Title = a.Title,
 				Description = a.Description,
+				Status = a.Status,
 				StartAt = a.StartAt,
 				EndAt = a.EndAt,
 				User = new UserResponse
@@ -131,6 +134,7 @@ public class AuctionController : ControllerBase
 				Description = a.Description,
 				MinDecrease = a.MinDecrease,
 				InitialPrice = a.InitialPrice,
+				Status = a.Status,
 				StartAt = a.StartAt,
 				EndAt = a.EndAt,
 				User = new UserResponse
@@ -155,10 +159,13 @@ public class AuctionController : ControllerBase
 			return ErrorCode(ErrorCodes.NotFound);
 		
 		var userId = _userManager.GetUserId(HttpContext.User);
-		if (userId != auction.User.UserId && auction.EndAt <= DateTime.UtcNow)
+		if (userId != auction.User.UserId && !AuctionRunning())
 			return ErrorCode(ErrorCodes.NotFound);
 		
 		return Json(auction);
+
+		bool AuctionRunning()
+			=> auction.Status == AuctionStatus.Started && auction.EndAt > DateTime.UtcNow;
 	}
 
 	[HttpPost("create")]
@@ -182,6 +189,7 @@ public class AuctionController : ControllerBase
 			Id = 0,
 			Title = request.Title,
 			Description = request.Description,
+			Status = AuctionStatus.Draft,
 			MinDecrease = request.MinDecrease,
 			InitialPrice = request.InitialPrice,
 			Categories = categories
@@ -208,13 +216,14 @@ public class AuctionController : ControllerBase
 		if (auction.UserId != userId)
 			return ErrorCode(ErrorCodes.Forbidden);
 
-		if (auction.StartAt is not null)
+		if (auction.Status != AuctionStatus.Draft)
 			return ErrorCode(ErrorCodes.AuctionAlreadyStarted);
 
 		if (request.Period.Ticks <= 0)
 			return ErrorCode(ErrorCodes.InvalidLaunchPeriod);
 
 		var currentDateTimeUtc = DateTime.UtcNow;
+		auction.Status = AuctionStatus.Started;
 		auction.StartAt = currentDateTimeUtc;
 		auction.EndAt = currentDateTimeUtc + request.Period;
 		
@@ -239,7 +248,7 @@ public class AuctionController : ControllerBase
 		if (auction.UserId != userId)
 			return ErrorCode(ErrorCodes.Forbidden);
 		
-		if (auction.StartAt is not null)
+		if (auction.Status != AuctionStatus.Draft)
 			return ErrorCode(ErrorCodes.AuctionAlreadyStarted);
 		
 		var categories = await _dbContext.Categories.Where(c => request.Categories.Contains(c.Id)).Distinct().ToListAsync();
@@ -279,7 +288,7 @@ public class AuctionController : ControllerBase
 		if (user.Id == auction.UserId)
 			return ErrorCode(ErrorCodes.Forbidden);
 		
-		if (!(auction.EndAt < DateTime.UtcNow))
+		if (!GetAuctionRunningExpression().Compile().Invoke(auction))
 			return ErrorCode(ErrorCodes.InvalidAuctionState);
 
 		await using var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.Serializable);
@@ -330,7 +339,7 @@ public class AuctionController : ControllerBase
 			return ErrorCode(ErrorCodes.NotFound);
 		
 		var userId = _userManager.GetUserId(HttpContext.User);
-		if (userId != auction.UserId && auction.EndAt <= DateTime.UtcNow)
+		if (userId != auction.UserId && !GetAuctionRunningExpression().Compile().Invoke(auction))
 			return ErrorCode(ErrorCodes.NotFound);
 
 		var bids = auction.Bids
@@ -359,4 +368,10 @@ public class AuctionController : ControllerBase
 
 		return Json(result);
 	}
+	
+	private static Expression<Func<Model.Auction, bool>> GetAuctionRunningExpression(DateTime currentDateTime)
+		=> auction => auction.Status == AuctionStatus.Started && auction.EndAt > currentDateTime;
+	
+	private static Expression<Func<Model.Auction, bool>> GetAuctionRunningExpression()
+		=> GetAuctionRunningExpression(DateTime.UtcNow);
 }

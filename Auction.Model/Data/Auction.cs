@@ -11,6 +11,7 @@ public class Auction
 
 	public DateTime? StartAt { get; set; }
 	public DateTime? EndAt { get; set; }
+	public AuctionStatus Status { get; set; }
 
 	public string UserId { get; set; } = null!;
 	public User User { get; set; } = null!;
