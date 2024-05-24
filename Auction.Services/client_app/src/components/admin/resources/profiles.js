@@ -9,6 +9,7 @@ export const ProfileList = (props) => (
     <List filters={postFilters} {...props}>
         <Datagrid rowClick="edit">
             <TextField sortable={false} source="id" />
+            <TextField sortable={false} source="userId" />
             <TextField sortable={false} source="firstName" />
             <TextField sortable={false} source="lastName" />
             <DateField sortable={false} source="birthDate" />
@@ -22,6 +23,7 @@ export const ProfileList = (props) => (
 export const ProfileEdit = (props) => (
     <Edit {...props}>
         <SimpleForm>
+            <TextInput source="userId" name="userId" />
             <TextInput source="firstName" name="firstName" />
             <TextInput source="lastName" name="lastName" />
             <DateInput source="birthDate" name="birthDate" />
@@ -34,6 +36,7 @@ export const ProfileEdit = (props) => (
 export const ProfileCreate = (props) => (
     <Create {...props}>
         <SimpleForm>
+            <TextInput source="userId" name="userId" />
             <TextInput source="firstName" name="firstName" />
             <TextInput source="lastName" name="lastName" />
             <DateInput source="birthDate" name="birthDate" />

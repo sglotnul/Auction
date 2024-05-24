@@ -24,6 +24,7 @@ export const AuctionList = (props) => (
             <TextField sortable={false} source="id" />
             <TextField sortable={false} source="title" />
             <TextField sortable={false} source="description" />
+            <TextField sortable={false} source="status" />
             <DateField sortable={false} source="startAt" />
             <DateField sortable={false} source="endAt" />
             <NumberField sortable={false} source="initialPrice" />
@@ -39,6 +40,7 @@ export const AuctionEdit = (props) => (
         <SimpleForm>
             <TextInput required source="title" name="title"/>
             <TextInput required source="description" name="description"/>
+            <NumberInput required source="status" name="status"/>
             <DateInput  source="startAt" name="startAt"/>
             <DateInput source="endAt" name="endAt" />
             <NumberInput required source="initialPrice" name="initialPrice" />
@@ -53,6 +55,7 @@ export const AuctionCreate = (props) => (
         <SimpleForm>
             <TextInput required source="title" name="title" />
             <TextInput required source="description" name="description" />
+            <NumberInput required source="status" name="status"/>
             <DateInput source="startAt" name="startAt" />
             <DateInput source="endAt" name="endAt" />
             <NumberInput required source="initialPrice" name="initialPrice" />
