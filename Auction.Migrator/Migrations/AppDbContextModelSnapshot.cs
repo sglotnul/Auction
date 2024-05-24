@@ -161,7 +161,8 @@ namespace Migrator.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuctionId");
+                    b.HasIndex("AuctionId")
+                        .IsUnique();
 
                     b.HasIndex("BidId");
 
@@ -195,7 +196,14 @@ namespace Migrator.Migrations
                     b.Property<string>("LastName")
                         .HasColumnType("text");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Profiles");
                 });
@@ -242,9 +250,6 @@ namespace Migrator.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
 
-                    b.Property<int?>("ProfileId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("Role")
                         .HasColumnType("integer");
 
@@ -267,8 +272,6 @@ namespace Migrator.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.HasIndex("ProfileId");
-
                     b.ToTable("AspNetUsers", (string)null);
 
                     b.HasData(
@@ -276,14 +279,14 @@ namespace Migrator.Migrations
                         {
                             Id = "26214742-0a8b-40ea-ab76-ec78aeee3429",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ca66d41b-f561-4afb-8b66-8a2cf835521d",
+                            ConcurrencyStamp = "56861123-37e7-42f7-b745-fbb9eeb3415f",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGDTRihc8tIiyBA+aZlYSacHLxFNPwkZZP2kaIDXRMGkAj1luWUynqJTcIJtX+3oDA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHxS9x7CP4drnt8TjfRFJIosmVpHbtwUL3MSZpygFU53g7G0kD2KAsxpo45DMjEgKg==",
                             PhoneNumberConfirmed = false,
                             Role = 3,
-                            SecurityStamp = "5af680a0-6b65-4853-a42a-01b77141215c",
+                            SecurityStamp = "f6d25822-46f6-4de9-9d33-8fbd7d8e2d68",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -469,8 +472,8 @@ namespace Migrator.Migrations
             modelBuilder.Entity("Auction.Model.Consultation", b =>
                 {
                     b.HasOne("Auction.Model.Auction", "Auction")
-                        .WithMany()
-                        .HasForeignKey("AuctionId")
+                        .WithOne("Consultation")
+                        .HasForeignKey("Auction.Model.Consultation", "AuctionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -501,13 +504,15 @@ namespace Migrator.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("Auction.Model.User", b =>
+            modelBuilder.Entity("Auction.Model.Profile", b =>
                 {
-                    b.HasOne("Auction.Model.Profile", "Profile")
-                        .WithMany()
-                        .HasForeignKey("ProfileId");
+                    b.HasOne("Auction.Model.User", "User")
+                        .WithOne("Profile")
+                        .HasForeignKey("Auction.Model.Profile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Profile");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("AuctionCategory", b =>
@@ -579,6 +584,13 @@ namespace Migrator.Migrations
             modelBuilder.Entity("Auction.Model.Auction", b =>
                 {
                     b.Navigation("Bids");
+
+                    b.Navigation("Consultation");
+                });
+
+            modelBuilder.Entity("Auction.Model.User", b =>
+                {
+                    b.Navigation("Profile");
                 });
 #pragma warning restore 612, 618
         }

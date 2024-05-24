@@ -28,11 +28,10 @@ public class ProfileController : ControllerBase
 		if (user is null)
 			return ErrorCode(ErrorCodes.NotFound);
 
-		if (user.ProfileId is null)
-			return Json(new {});
+		var profile = await _context.Profiles.SingleOrDefaultAsync(p => p.UserId == user.Id);
 
-		var profile = await _context.Profiles.SingleOrDefaultAsync(p => p.Id == user.ProfileId)
-			?? throw new InvalidOperationException();
+		if (profile is null)
+			return Json(new {});
 
 		var result = new ProfileResponse
 		{
@@ -57,38 +56,29 @@ public class ProfileController : ControllerBase
 
 		var newProfile = new Profile
 		{
-			Id = user.ProfileId ?? default,
+			UserId = user.Id,
 			FirstName = profileRequest.FirstName?.Trim(),
 			LastName = profileRequest.LastName?.Trim(),
 			BirthDate = profileRequest.BirthDate?.Date,
 			Biography = profileRequest.Biography?.Trim(),
 			Education = profileRequest.Education?.Trim()
 		};
-
-		await using var transaction = await _context.Database.BeginTransactionAsync();
-		try
+		
+		var profile = await _context.AddOrUpdateAsync(
+			c => c.Profiles,
+			p => p.UserId == user.Id,
+			newProfile);
+		
+		var result = new ProfileResponse
 		{
-			await _context.AddOrUpdateAsync(
-				c => c.Profiles,
-				p => p.Id == user.ProfileId,
-				newProfile);
-
-			user.ProfileId = newProfile.Id;
-			var result = await _userManager.UpdateAsync(user);
-			
-			if (!result.Succeeded)
-			{
-				await transaction.RollbackAsync();
-				return ErrorCode(result.Errors.FirstOrDefault()?.Code ?? throw new InvalidOperationException());
-			}
-
-			await transaction.CommitAsync();
-			return Json(await _context.Profiles.SingleOrDefaultAsync(p => p.Id == user.ProfileId));
-		}
-		catch
-		{
-			await transaction.RollbackAsync();
-			throw; 
-		}
+			Id = profile.Id,
+			FirstName = profile.FirstName,
+			LastName = profile.LastName,
+			BirthDate = profile.BirthDate,
+			Biography = profile.Biography,
+			Education = profile.Education
+		};
+		
+		return Json(result);
 	}
 }

@@ -32,5 +32,9 @@
     <ItemGroup>
       <ProjectReference Include="..\Auction.Model\Auction.Model.csproj" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="Migrations\" />
+    </ItemGroup>
 
 </Project>

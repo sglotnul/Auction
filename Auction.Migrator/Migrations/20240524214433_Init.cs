@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Migrator.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -29,6 +29,32 @@ namespace Migrator.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    Role = table.Column<int>(type: "integer", nullable: false),
+                    UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    PasswordHash = table.Column<string>(type: "text", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "text", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
@@ -39,24 +65,6 @@ namespace Migrator.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Categories", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Profiles",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    FirstName = table.Column<string>(type: "text", nullable: false),
-                    LastName = table.Column<string>(type: "text", nullable: true),
-                    Sex = table.Column<int>(type: "integer", nullable: true),
-                    Age = table.Column<int>(type: "integer", nullable: true),
-                    Biography = table.Column<string>(type: "text", nullable: true),
-                    Education = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Profiles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -78,38 +86,6 @@ namespace Migrator.Migrations
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUsers",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    Role = table.Column<int>(type: "integer", nullable: false),
-                    ProfileId = table.Column<int>(type: "integer", nullable: true),
-                    UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
-                    PasswordHash = table.Column<string>(type: "text", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "text", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "boolean", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetUsers_Profiles_ProfileId",
-                        column: x => x.ProfileId,
-                        principalTable: "Profiles",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -203,24 +179,52 @@ namespace Migrator.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
+                    Title = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
+                    MinDecrease = table.Column<decimal>(type: "numeric", nullable: false),
+                    InitialPrice = table.Column<decimal>(type: "numeric", nullable: false),
+                    StartAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    EndAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Status = table.Column<int>(type: "integer", nullable: false),
-                    StudentUserId = table.Column<string>(type: "text", nullable: false)
+                    UserId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Auctions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Auctions_AspNetUsers_StudentUserId",
-                        column: x => x.StudentUserId,
+                        name: "FK_Auctions_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AuctionCategories",
+                name: "Profiles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    FirstName = table.Column<string>(type: "text", nullable: true),
+                    LastName = table.Column<string>(type: "text", nullable: true),
+                    BirthDate = table.Column<DateTime>(type: "date", nullable: true),
+                    Biography = table.Column<string>(type: "text", nullable: true),
+                    Education = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Profiles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Profiles_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AuctionCategory",
                 columns: table => new
                 {
                     AuctionId = table.Column<int>(type: "integer", nullable: false),
@@ -228,15 +232,15 @@ namespace Migrator.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AuctionCategories", x => new { x.AuctionId, x.CategoryId });
+                    table.PrimaryKey("PK_AuctionCategory", x => new { x.AuctionId, x.CategoryId });
                     table.ForeignKey(
-                        name: "FK_AuctionCategories_Auctions_AuctionId",
+                        name: "FK_AuctionCategory_Auctions_AuctionId",
                         column: x => x.AuctionId,
                         principalTable: "Auctions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AuctionCategories_Categories_CategoryId",
+                        name: "FK_AuctionCategory_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id",
@@ -244,25 +248,28 @@ namespace Migrator.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ConsultantBids",
+                name: "Bids",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    Comment = table.Column<string>(type: "text", nullable: true),
                     AuctionId = table.Column<int>(type: "integer", nullable: false),
-                    ConsultantUserId = table.Column<string>(type: "text", nullable: false)
+                    UserId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ConsultantBids", x => x.Id);
+                    table.PrimaryKey("PK_Bids", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ConsultantBids_AspNetUsers_ConsultantUserId",
-                        column: x => x.ConsultantUserId,
+                        name: "FK_Bids_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ConsultantBids_Auctions_AuctionId",
+                        name: "FK_Bids_Auctions_AuctionId",
                         column: x => x.AuctionId,
                         principalTable: "Auctions",
                         principalColumn: "Id",
@@ -270,42 +277,51 @@ namespace Migrator.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ConsultationSessions",
+                name: "Consultations",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    StartAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    ConsultantId = table.Column<string>(type: "text", nullable: false),
+                    StudentId = table.Column<string>(type: "text", nullable: false),
                     AuctionId = table.Column<int>(type: "integer", nullable: false),
-                    ConsultantUserId = table.Column<string>(type: "text", nullable: false),
-                    StudentUserId = table.Column<string>(type: "text", nullable: false)
+                    BidId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ConsultationSessions", x => x.Id);
+                    table.PrimaryKey("PK_Consultations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ConsultationSessions_AspNetUsers_ConsultantUserId",
-                        column: x => x.ConsultantUserId,
+                        name: "FK_Consultations_AspNetUsers_ConsultantId",
+                        column: x => x.ConsultantId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ConsultationSessions_AspNetUsers_StudentUserId",
-                        column: x => x.StudentUserId,
+                        name: "FK_Consultations_AspNetUsers_StudentId",
+                        column: x => x.StudentId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ConsultationSessions_Auctions_AuctionId",
+                        name: "FK_Consultations_Auctions_AuctionId",
                         column: x => x.AuctionId,
                         principalTable: "Auctions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Consultations_Bids_BidId",
+                        column: x => x.BidId,
+                        principalTable: "Bids",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "ProfileId", "Role", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "26214742-0a8b-40ea-ab76-ec78aeee3429", 0, "2211c2ad-7453-4f94-9b4a-3fdca5686f32", null, false, false, null, null, "ADMIN", "AQAAAAIAAYagAAAAEOoRsA1iWgs3JMRnOf4BxMH9oYIAp4KCFPPHVUJ9+rsL8Y9MwYMXVng61fMuTc56EA==", null, false, null, 0, "e1379f28-1af0-4fdd-b155-069077e1facd", false, "admin" });
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "Role", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "26214742-0a8b-40ea-ab76-ec78aeee3429", 0, "56861123-37e7-42f7-b745-fbb9eeb3415f", null, false, false, null, null, "ADMIN", "AQAAAAIAAYagAAAAEHxS9x7CP4drnt8TjfRFJIosmVpHbtwUL3MSZpygFU53g7G0kD2KAsxpo45DMjEgKg==", null, false, 3, "f6d25822-46f6-4de9-9d33-8fbd7d8e2d68", false, "admin" });
 
             migrationBuilder.InsertData(
                 table: "Categories",
@@ -349,50 +365,57 @@ namespace Migrator.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_ProfileId",
-                table: "AspNetUsers",
-                column: "ProfileId");
-
-            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AuctionCategories_CategoryId",
-                table: "AuctionCategories",
+                name: "IX_AuctionCategory_CategoryId",
+                table: "AuctionCategory",
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Auctions_StudentUserId",
+                name: "IX_Auctions_UserId",
                 table: "Auctions",
-                column: "StudentUserId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ConsultantBids_AuctionId",
-                table: "ConsultantBids",
+                name: "IX_Bids_AuctionId",
+                table: "Bids",
                 column: "AuctionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ConsultantBids_ConsultantUserId",
-                table: "ConsultantBids",
-                column: "ConsultantUserId");
+                name: "IX_Bids_UserId",
+                table: "Bids",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ConsultationSessions_AuctionId",
-                table: "ConsultationSessions",
-                column: "AuctionId");
+                name: "IX_Consultations_AuctionId",
+                table: "Consultations",
+                column: "AuctionId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ConsultationSessions_ConsultantUserId",
-                table: "ConsultationSessions",
-                column: "ConsultantUserId");
+                name: "IX_Consultations_BidId",
+                table: "Consultations",
+                column: "BidId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ConsultationSessions_StudentUserId",
-                table: "ConsultationSessions",
-                column: "StudentUserId");
+                name: "IX_Consultations_ConsultantId",
+                table: "Consultations",
+                column: "ConsultantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Consultations_StudentId",
+                table: "Consultations",
+                column: "StudentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Profiles_UserId",
+                table: "Profiles",
+                column: "UserId",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -414,13 +437,13 @@ namespace Migrator.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "AuctionCategories");
+                name: "AuctionCategory");
 
             migrationBuilder.DropTable(
-                name: "ConsultantBids");
+                name: "Consultations");
 
             migrationBuilder.DropTable(
-                name: "ConsultationSessions");
+                name: "Profiles");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -429,13 +452,13 @@ namespace Migrator.Migrations
                 name: "Categories");
 
             migrationBuilder.DropTable(
+                name: "Bids");
+
+            migrationBuilder.DropTable(
                 name: "Auctions");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "Profiles");
         }
     }
 }

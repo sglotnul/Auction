@@ -41,7 +41,7 @@ public class UserController : ControllerBase
                 Education = request.Profile.Education?.Trim()
             };
 
-        var user = new User { UserName = request.UserName.Trim(), Role = request.Role, ProfileId = profile?.Id };
+        var user = new User { UserName = request.UserName.Trim(), Role = request.Role };
         var result = profile is not null
             ? await CreateUserWithProfileAsync(user, request.Password.Trim(), profile)
             : await CreateUserAsync(user, request.Password.Trim());
@@ -128,14 +128,15 @@ public class UserController : ControllerBase
 
         try
         {
-            await _context.Profiles.AddAsync(profile);
-            await _context.SaveChangesAsync();
-
-            user.ProfileId = profile.Id;
             var result = await CreateUserAsync(user, password);
 
             if (result.Succeeded)
             {
+                profile.UserId = user.Id;
+
+                await _context.Profiles.AddAsync(profile);
+                await _context.SaveChangesAsync();
+                
                 await transaction.CommitAsync();
             }
             else

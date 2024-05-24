@@ -9,4 +9,7 @@ public class Profile
 	public DateTime? BirthDate { get; set; }
 	public string? Biography { get; set; }
 	public string? Education { get; set; }
+	
+	public string UserId { get; set; }
+	public User User { get; set; } = null!;
 }

@@ -227,16 +227,22 @@ const UserAuctions = ({user, userName}) => {
     
     const splittedAuctions = useMemo(() => {
         return auctions.reduce((acc, item) => {
-            if (!item.startAt) {
+            if (item.status === 1) {
                 acc.drafts.push(item);
             }
-            else if (new Date(item.endAt) > new Date()) {
-                acc.active.push(item);
-            } else {
-                acc.completed.push(item);
+            else if (item.status === 2) {
+                if (new Date(item.endAt) > new Date()) {
+                    acc.active.push(item);
+                }
+                else if (!!item.currentBid) {
+                    acc.confirmation.push(item);
+                }
+            }
+            else {
+                acc.completed.push(item)
             }
             return acc;
-        }, { drafts: [], active: [], completed: [] });
+        }, { confirmation: [], drafts: [], active: [], completed: [] });
     }, [auctions]);
 
     useEffect(() => {
@@ -282,6 +288,14 @@ const UserAuctions = ({user, userName}) => {
                 {isOwner && <Link to="/auctions/new"><Button variant="contained" color="success" fullWidth>New</Button></Link>}
                 {isOwner && <AuctionStatusFilter drafts={checkedItems.drafts} active={checkedItems.active} completed={checkedItems.completed} onChange={handleChange}/>}
                 {!auctions.length && 'Nothing found'}
+                {!!splittedAuctions.confirmation.length && <div className="auction-separator active">Waiting for confirmation</div>}
+                {splittedAuctions.confirmation.map(
+                    (auction) => (
+                        <AuctionCard key={auction.id} auction={auction}>
+                            <ConfirmButton auctionId={auction.id} />
+                        </AuctionCard>
+                    )
+                )}
                 {checkedItems.drafts && !!splittedAuctions.drafts.length && <div className="auction-separator">Drafts</div>}
                 {checkedItems.drafts && splittedAuctions.drafts.map(
                     (auction) => (
@@ -350,6 +364,25 @@ const AuctionStatusFilter = ({drafts, active, completed, onChange}) => {
         </div>
     )
 }
+
+const ConfirmButton = ({auctionId}) => {
+    const {addError} = useContext(ErrorContext);
+    
+    const handleClick = useCallback(async (e) => {
+        const response = await fetch(`/api/auctions/${auctionId}/confirm`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            }
+        });
+
+        if (!response.ok) {
+            addError(new ErrorCode( await response.text()));
+        }
+    }, []);
+
+    return (<Button variant="contained" color="success" onClick={handleClick}>Confirm</Button>);
+};
 
 const LaunchAuctionButton = ({auctionId}) => {
     const navigate = useNavigate();

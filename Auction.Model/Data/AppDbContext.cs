@@ -29,10 +29,6 @@ public class AppDbContext : IdentityDbContext<User>
 		{
 			entity.HasKey(e => e.Id);
 			
-			entity.HasOne(e => e.Profile)
-				.WithMany()
-				.HasForeignKey(e => e.ProfileId);
-			
 			entity.HasData(CreateInitialUser());
 		});
 		
@@ -42,6 +38,10 @@ public class AppDbContext : IdentityDbContext<User>
 
 			entity.Property(e => e.BirthDate)
 				.HasColumnType("date");
+
+			entity.HasOne(e => e.User)
+				.WithOne(e => e.Profile)
+				.HasForeignKey<Profile>(e => e.UserId);
 		});
 		
 		modelBuilder.Entity<Auction>(entity =>
@@ -85,8 +85,8 @@ public class AppDbContext : IdentityDbContext<User>
 			entity.HasKey(e => e.Id);
 			
 			entity.HasOne(e => e.Auction)
-				.WithMany()
-				.HasForeignKey(e => e.AuctionId);
+				.WithOne(e => e.Consultation)
+				.HasForeignKey<Consultation>(e => e.AuctionId);
 
 			entity.HasOne(e => e.Bid)
 				.WithMany()
