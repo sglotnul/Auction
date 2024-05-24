@@ -31,6 +31,7 @@ public class AdminProfilesController : Controller
             .OrderByDescending(a => a.Id)
             .Skip((page - 1) * perPage)
             .Take(perPage)
+            .AsNoTracking()
             .ToListAsync();
 
         var totalCount = await _context.Profiles.CountAsync();
@@ -42,7 +43,7 @@ public class AdminProfilesController : Controller
     [HttpGet("{id}")]
     public async Task<ActionResult<Model.Profile>> Get(int id)
     {
-        var profile = await _context.Profiles.FindAsync(id);
+        var profile = await _context.Profiles.AsNoTracking().SingleOrDefaultAsync(p => p.Id == id);
 
         if (profile == null)
         {

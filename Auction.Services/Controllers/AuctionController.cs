@@ -37,47 +37,10 @@ public class AuctionController : ControllerBase
 		var shift = TimeSpan.FromMinutes(2);
 		var currentDateTime = DateTime.UtcNow + shift;
 
-		var result = await auctions
-			.Where(GetAuctionRunningExpression(currentDateTime))
-			.OrderBy(a => a.EndAt)
-			.Select(a => new AuctionResponse
-			{
-				Id = a.Id,
-				Title = a.Title,
-				Description = a.Description,
-				Status = a.Status,
-				StartAt = a.StartAt,
-				EndAt = a.EndAt,
-				User = new UserResponse
-				{
-					UserId = a.User.Id,
-					UserName = a.User.UserName!,
-					Profile = a.User.Profile
-				},
-				Categories = a.Categories
-					.Select(
-						c => new CategoryResponse
-						{
-							Id = c.Id,
-							Name = c.Name
-						})	
-					.ToArray(),
-				CurrentBid = a.Bids
-					.Select(b => new BidResponse
-					{
-						Amount = b.Amount,
-						Comment = b.Comment,
-						User = new UserResponse
-						{
-							UserId = b.UserId,
-							UserName = b.User.UserName!,
-							Profile = b.User.Profile
-						},
-						DateTime = b.DateTime
-					})
-					.OrderBy(b => b.Amount)
-					.FirstOrDefault()
-			})
+		var result = await GetAuctions(
+				auctions
+					.Where(GetAuctionRunningExpression(currentDateTime))
+					.OrderBy(a => a.EndAt))
 			.AsNoTracking()
 			.ToArrayAsync();
 
@@ -104,46 +67,9 @@ public class AuctionController : ControllerBase
 			auctions = auctions.Where(GetAuctionRunningExpression());
 		}
 		
-		var result = await auctions
-			.OrderBy(a => a.EndAt)
-			.Select(a => new AuctionResponse
-			{
-				Id = a.Id,
-				Title = a.Title,
-				Description = a.Description,
-				Status = a.Status,
-				StartAt = a.StartAt,
-				EndAt = a.EndAt,
-				User = new UserResponse
-				{
-					UserId = a.User.Id,
-					UserName = a.User.UserName!,
-					Profile = a.User.Profile
-				},
-				Categories = a.Categories
-					.Select(
-						c => new CategoryResponse
-						{
-							Id = c.Id,
-							Name = c.Name
-						})	
-					.ToArray(),
-				CurrentBid = a.Bids
-					.Select(b => new BidResponse
-					{
-						Amount = b.Amount,
-						Comment = b.Comment,
-						User = new UserResponse
-						{
-							UserId = b.UserId,
-							UserName = b.User.UserName!,
-							Profile = b.User.Profile
-						},
-						DateTime = b.DateTime
-					})
-					.OrderBy(b => b.Amount)
-					.FirstOrDefault()
-			})
+		var result = await GetAuctions(
+				auctions
+					.OrderBy(a => a.EndAt))
 			.AsNoTracking()
 			.ToArrayAsync();
 
@@ -156,32 +82,7 @@ public class AuctionController : ControllerBase
 	[HttpGet("{id:int}")]
 	public async Task<IActionResult> GetAuctionAsync(int id)
 	{
-		var auction = await _dbContext.Auctions
-			.Select(a => new AuctionResponse
-			{
-				Id = a.Id,
-				Title = a.Title,
-				Description = a.Description,
-				MinDecrease = a.MinDecrease,
-				InitialPrice = a.InitialPrice,
-				Status = a.Status,
-				StartAt = a.StartAt,
-				EndAt = a.EndAt,
-				User = new UserResponse
-				{
-					UserId = a.User.Id,
-					UserName = a.User.UserName!,
-					Profile = a.User.Profile
-				},
-				Categories = a.Categories
-					.Select(
-						c => new CategoryResponse
-						{
-							Id = c.Id,
-							Name = c.Name
-						})
-					.ToArray()
-			})
+		var auction = await GetAuctions(_dbContext.Auctions)
 			.AsNoTracking()
 			.SingleOrDefaultAsync(a => a.Id == id);
 		
@@ -383,7 +284,17 @@ public class AuctionController : ControllerBase
 				{
 					UserId = b.UserId,
 					UserName = b.User.UserName!,
-					Profile = b.User.Profile
+					Profile = b.User.Profile != null
+						? new ProfileResponse
+						{
+							Id = b.User.Profile.Id,
+							FirstName = b.User.Profile.FirstName,
+							LastName = b.User.Profile.LastName,
+							BirthDate = b.User.Profile.BirthDate,
+							Biography = b.User.Profile.Biography,
+							Education = b.User.Profile.Education
+						}
+						: null
 				},
 				DateTime = b.DateTime
 			})
@@ -444,6 +355,68 @@ public class AuctionController : ControllerBase
 
 		bool AuctionCompleted()
 			=> auction.Status == AuctionStatus.Started && auction.EndAt <= DateTime.UtcNow;
+	}
+
+	private IQueryable<AuctionResponse> GetAuctions(IQueryable<Model.Auction> query)
+	{
+		return query.Select(a => new AuctionResponse
+		{
+			Id = a.Id,
+			Title = a.Title,
+			Description = a.Description,
+			Status = a.Status,
+			StartAt = a.StartAt,
+			EndAt = a.EndAt,
+			User = new UserResponse
+			{
+				UserId = a.User.Id,
+				UserName = a.User.UserName!,
+				Profile = a.User.Profile != null
+					? new ProfileResponse
+					{
+						Id = a.User.Profile.Id,
+						FirstName = a.User.Profile.FirstName,
+						LastName = a.User.Profile.LastName,
+						BirthDate = a.User.Profile.BirthDate,
+						Biography = a.User.Profile.Biography,
+						Education = a.User.Profile.Education
+					}
+					: null
+			},
+			Categories = a.Categories
+				.Select(
+					c => new CategoryResponse
+					{
+						Id = c.Id,
+						Name = c.Name
+					})
+				.ToArray(),
+			CurrentBid = a.Bids
+				.Select(b => new BidResponse
+				{
+					Amount = b.Amount,
+					Comment = b.Comment,
+					User = new UserResponse
+					{
+						UserId = b.UserId,
+						UserName = b.User.UserName!,
+						Profile = b.User.Profile != null
+							? new ProfileResponse
+							{
+								Id = b.User.Profile.Id,
+								FirstName = b.User.Profile.FirstName,
+								LastName = b.User.Profile.LastName,
+								BirthDate = b.User.Profile.BirthDate,
+								Biography = b.User.Profile.Biography,
+								Education = b.User.Profile.Education
+							}
+							: null
+					},
+					DateTime = b.DateTime
+				})
+				.OrderBy(b => b.Amount)
+				.FirstOrDefault()
+		});
 	}
 	
 	private static Expression<Func<Model.Auction, bool>> GetAuctionRunningExpression(DateTime currentDateTime)
