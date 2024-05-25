@@ -10,6 +10,7 @@ import { UserList, UserEdit, UserCreate } from "./resources/users";
 import {useContext, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import AuthContext from "../../contexts/AuthContext";
+import {ConsultationCreate, ConsultationEdit, ConsultationList} from "./resources/consultations";
 
 const dataProvider = simpleRestProvider("/api/admin");
 
@@ -38,6 +39,7 @@ const AdminPage = () => {
             <Resource name="categories" list={CategoryList} edit={CategoryEdit} create={CategoryCreate}/>
             <Resource name="profiles" list={ProfileList} edit={ProfileEdit} create={ProfileCreate}/>
             <Resource name="users" list={UserList} edit={UserEdit} create={UserCreate}/>
+            <Resource name="consultations" list={ConsultationList} edit={ConsultationEdit} create={ConsultationCreate}/>
         </Admin>
     );
 }

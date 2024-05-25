@@ -3,13 +3,12 @@ import {
     List,
     Datagrid,
     TextField,
-    DateField,
     NumberField,
     EditButton,
     Edit,
     SimpleForm,
     TextInput,
-    DateInput,
+    DateTimeInput,
     NumberInput,
     Create
 } from "react-admin";
@@ -25,8 +24,8 @@ export const AuctionList = (props) => (
             <TextField sortable={false} source="title" />
             <TextField sortable={false} source="description" />
             <TextField sortable={false} source="status" />
-            <DateField sortable={false} source="startAt" />
-            <DateField sortable={false} source="endAt" />
+            <TextField sortable={false} source="startAt" />
+            <TextField sortable={false} source="endAt" />
             <NumberField sortable={false} source="initialPrice" />
             <NumberField sortable={false} source="minDecrease" />
             <TextField sortable={false} source="userId" />
@@ -41,8 +40,8 @@ export const AuctionEdit = (props) => (
             <TextInput required source="title" name="title"/>
             <TextInput required source="description" name="description"/>
             <NumberInput required source="status" name="status"/>
-            <DateInput  source="startAt" name="startAt"/>
-            <DateInput source="endAt" name="endAt" />
+            <DateTimeInput  source="startAt" name="startAt"/>
+            <DateTimeInput source="endAt" name="endAt" />
             <NumberInput required source="initialPrice" name="initialPrice" />
             <NumberInput required source="minDecrease" name="minDecrease" />
             <TextInput required source="userId" name="userId" />
@@ -56,8 +55,8 @@ export const AuctionCreate = (props) => (
             <TextInput required source="title" name="title" />
             <TextInput required source="description" name="description" />
             <NumberInput required source="status" name="status"/>
-            <DateInput source="startAt" name="startAt" />
-            <DateInput source="endAt" name="endAt" />
+            <DateTimeInput source="startAt" name="startAt" />
+            <DateTimeInput source="endAt" name="endAt" />
             <NumberInput required source="initialPrice" name="initialPrice" />
             <NumberInput required source="minDecrease" name="minDecrease" />
             <TextInput required source="userId" name="userId" />

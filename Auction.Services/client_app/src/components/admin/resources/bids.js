@@ -9,10 +9,9 @@ import {
     Edit,
     SimpleForm,
     TextInput,
-    DateInput,
+    DateTimeInput,
     NumberInput,
     Create,
-    ReferenceInput
 } from "react-admin";
 
 const postFilters = [
@@ -25,7 +24,7 @@ export const BidList = (props) => (
             <TextField sortable={false} source="id" />
             <NumberField sortable={false} source="amount" />
             <TextField sortable={false} source="comment" />
-            <DateField sortable={false} source="dateTime" />
+            <TextField sortable={false} source="dateTime" />
             <TextField sortable={false} source="auctionId" />
             <TextField sortable={false} source="userId" />
             <EditButton />
@@ -38,7 +37,7 @@ export const BidEdit = (props) => (
         <SimpleForm>
             <NumberInput required source="amount" name="amount"/>
             <TextInput source="comment" name="comment" />
-            <DateInput required source="dateTime" name="dateTime" />
+            <DateTimeInput required source="dateTime" name="dateTime" />
             <NumberInput required source="auctionId" name="auctionId" />
             <TextInput required source="userId" name="userId" />
         </SimpleForm>
@@ -50,7 +49,7 @@ export const BidCreate = (props) => (
         <SimpleForm>
             <NumberInput required source="amount" name="amount"/>
             <TextInput source="comment" name="comment" />
-            <DateInput required source="dateTime" name="dateTime" />
+            <DateTimeInput required source="dateTime" name="dateTime" />
             <NumberInput required source="auctionId" name="auctionId" />
             <TextInput required source="userId" name="userId" />
         </SimpleForm>

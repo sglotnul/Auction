@@ -3,6 +3,8 @@ import {Button, TextField, InputLabel, Select, MenuItem} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import AuthContext from "../../contexts/AuthContext";
 import ErrorContext from "../../contexts/ErrorContext";
+import ErrorCode from "../../models/ErrorCode";
+import {ERROR_CODE_MESSAGES} from "../../models/errorCodes";
 
 const RegisterPage = () => {
     const navigate = useNavigate();
@@ -15,6 +17,7 @@ const RegisterPage = () => {
     const [userFormData, setUserFormData] = useState({
         username: undefined,
         password: undefined,
+        confirmPassword: undefined,
         role: 1
     });
     const [profileFormData, setProfileFormData] = useState(undefined);
@@ -43,6 +46,11 @@ const RegisterPage = () => {
 
     const changeTab = (newTab, enableNext = false) => (e) => {
         e.preventDefault();
+        
+        if (userFormData.password !== userFormData.confirmPassword) {
+            addError(new ErrorCode('PasswordConfirmationFailed'));
+            return;
+        }
         
         if (!enableNext && enabledTab < newTab) {
             return;
@@ -99,6 +107,16 @@ const RegisterPage = () => {
                             name="password"
                             type="password"
                             value={userFormData.password}
+                            onChange={handleInputChange}
+                            fullWidth
+                            margin="normal"
+                            required
+                        />
+                        <TextField
+                            label="Confirm password"
+                            name="confirmPassword"
+                            type="password"
+                            value={userFormData.confirmPassword}
                             onChange={handleInputChange}
                             fullWidth
                             margin="normal"

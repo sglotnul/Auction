@@ -33,6 +33,9 @@ public static class ServiceCollectionExtensions
             resolver.Map(ErrorCodes.BiographyTooLong, HttpStatusCode.BadRequest);
             
             resolver.Map(DuplicateUserNameCode, HttpStatusCode.BadRequest);
+            resolver.Map(PasswordTooShort, HttpStatusCode.BadRequest);
+            resolver.Map(PasswordRequiresNonAlphanumeric, HttpStatusCode.BadRequest);
+            resolver.Map(PasswordRequiresUpper, HttpStatusCode.BadRequest);
 
             return resolver;
         });
@@ -41,4 +44,7 @@ public static class ServiceCollectionExtensions
     }
 
     private static string DuplicateUserNameCode => _identityErrorDescriber.DuplicateUserName(string.Empty).Code;
+    private static string PasswordTooShort => _identityErrorDescriber.PasswordTooShort(6).Code;
+    private static string PasswordRequiresNonAlphanumeric => _identityErrorDescriber.PasswordRequiresNonAlphanumeric().Code;
+    private static string PasswordRequiresUpper => _identityErrorDescriber.PasswordRequiresUpper().Code;
 }
