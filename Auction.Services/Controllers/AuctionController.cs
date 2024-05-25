@@ -211,6 +211,33 @@ public class AuctionController : ControllerBase
 		return Ok();
 	}
 
+	[HttpPut("{id:int}/cancel")]
+	[Authorize]
+	public async Task<IActionResult> CancelAuctionAsync([FromRoute] int id)
+	{
+		var userId = _userManager.GetUserId(HttpContext.User);
+		if (userId is null)
+			throw new InvalidDataException("Authorized user id is null.");
+
+		var auction = await _dbContext.Auctions.Include(a => a.Categories).SingleOrDefaultAsync(a => a.Id == id);
+		if (auction is null)
+			return ErrorCode(ErrorCodes.NotFound);
+
+		if (auction.UserId != userId)
+			return ErrorCode(ErrorCodes.Forbidden);
+
+		if (auction.Status != AuctionStatus.Started)
+			return ErrorCode(ErrorCodes.InvalidAuctionState);
+
+		var currentDateTimeUtc = DateTime.UtcNow;
+		auction.Status = AuctionStatus.Canceled;
+		auction.EndAt = currentDateTimeUtc;
+		
+		_dbContext.Update(auction);
+		await _dbContext.SaveChangesAsync();
+
+		return Ok();
+	}
 	
 	[HttpPost("{id:int}/bid")]
 	[Authorize]

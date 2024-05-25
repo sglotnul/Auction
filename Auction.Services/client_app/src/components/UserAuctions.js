@@ -9,7 +9,7 @@ import ErrorCode from "../models/ErrorCode";
 const UserAuctions = ({user, userName}) => {
     const {addError} = useContext(ErrorContext);
 
-    const [auctions, auctionsLoading, errorCode] = useUserAuctions(userName || user?.userName);
+    const [auctions, auctionsLoading, errorCode, reload] = useUserAuctions(userName || user?.userName);
 
     const [checkedItems, setCheckedItems] = useState({
         drafts: true,
@@ -18,12 +18,12 @@ const UserAuctions = ({user, userName}) => {
     });
 
     const splittedAuctions = useMemo(() => {
-        return auctions.reduce((acc, item) => {
+        return auctions.reduce((acc, item, index) => {
             if (item.status === 1) {
                 acc.drafts.push(item);
             }
             else if (item.status === 2) {
-                if (new Date(item.endAt) > new Date(new Date().toUTCString())) {
+                if (new Date(item.endAt) > new Date()) {
                     acc.active.push(item);
                 }
                 else if (!!item.currentBid) {
@@ -36,6 +36,16 @@ const UserAuctions = ({user, userName}) => {
             else {
                 acc.completed.push(item)
             }
+            
+            if (index === auctions.length - 1) {
+                const sortFunction = (a, b) => b.id - a.id ;
+                
+                acc.confirmation = acc.confirmation.sort(sortFunction);
+                acc.drafts = acc.drafts.sort(sortFunction);
+                acc.active = acc.active.sort(sortFunction);
+                acc.completed = acc.completed.sort(sortFunction);
+            }
+
             return acc;
         }, { confirmation: [], drafts: [], active: [], completed: [] });
     }, [auctions]);
@@ -89,6 +99,7 @@ const UserAuctions = ({user, userName}) => {
                         <AuctionCard key={auction.id} auction={auction}>
                             <div className="auction-card-button-row">
                                 <ConfirmButton auctionId={auction.id}/>
+                                <CancelButton auctionId={auction.id} onAction={reload} />
                             </div>
                         </AuctionCard>
                     )
@@ -107,9 +118,13 @@ const UserAuctions = ({user, userName}) => {
                 {checkedItems.active && !!splittedAuctions.active.length && <div className="auction-separator active">Active auctions</div>}
                 {checkedItems.active && splittedAuctions.active.map(
                     (auction) => (
-                        <AuctionCard key={auction.id} auction={auction} />
+                        <AuctionCard key={auction.id} auction={auction}>
+                            <div className="auction-card-button-row">
+                                {isOwner && <CancelButton auctionId={auction.id} onAction={reload}/>}
+                            </div>  
+                        </AuctionCard>
                     )
-                )}
+                    )}
                 {checkedItems.completed && !!splittedAuctions.completed.length && <div className="auction-separator">Completed auctions</div>}
                 {checkedItems.completed && splittedAuctions.completed.map(
                     (auction) => (
@@ -164,6 +179,28 @@ const AuctionStatusFilter = ({drafts, active, completed, onChange}) => {
     )
 }
 
+const CancelButton = ({auctionId, onAction}) => {
+    const {addError} = useContext(ErrorContext);
+
+    const handleClick = useCallback(async (e) => {
+        const response = await fetch(`/api/auctions/${auctionId}/cancel`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            }
+        });
+
+        if (!response.ok) {
+            addError(new ErrorCode( await response.text()));
+        }
+        else {
+            onAction();
+        }
+    }, []);
+
+    return (<Button variant="contained" color="error" onClick={handleClick}>Cancel</Button>);
+};
+
 const ConfirmButton = ({auctionId}) => {
     const navigate = useNavigate();
     
@@ -185,7 +222,7 @@ const ConfirmButton = ({auctionId}) => {
         }
     }, []);
 
-    return (<Button variant="contained" color="success" onClick={handleClick}>Confirm</Button>);
+    return (<Button variant="contained" color="success" onClick={handleClick}>Start consultation</Button>);
 };
 
 const LaunchAuctionButton = ({auctionId}) => {

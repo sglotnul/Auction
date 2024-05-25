@@ -73,7 +73,7 @@ const BidList = ({auction, auctionLoading}) => {
     const {addError} = useContext(ErrorContext);
     const {user, loading: userLoading} = useContext(AuthContext);
     
-    const [bids, loading, errorCode] = useBids(auction?.id, !!auction);
+    const [bids, loading, errorCode, reload] = useBids(auction?.id, !!auction);
     
     const [buttonVisible, setButtonVisible] = useState(false);
 
@@ -109,33 +109,35 @@ const BidList = ({auction, auctionLoading}) => {
             </div>
         );
     }
-
+    
     const currentPrice = bids.currentPrice ?? auction.initialPrice;
+    const endTime = new Date(auction.endAt);
+    const showTimer = new Date() < endTime
 
     return (
         <div className="auction-bids">
-            <Timer endTime={new Date(auction.endAt)} onEnd={onTimeEnd} />
-            <BidButton auctionId={auction.id} visible={buttonVisible} currentPrice={currentPrice} minDecrease={auction.minDecrease}/>
-            {!bids.bids?.length && <div className="no-bids">Nothing</div>}
+            {showTimer && <Timer endTime={endTime} onEnd={onTimeEnd} />}
+            <BidButton auctionId={auction.id} visible={buttonVisible} currentPrice={currentPrice} minDecrease={auction.minDecrease} onAction={reload}/>
+            {!bids.bids?.length && <div className="no-bids">no bids</div>}
             {bids.bids?.map((b, i) => (
-                <>
+                <Fragment key={b.id}>
                     <div className="auction-bid-container">
                         <Link to={`/profile/${b.user.userName}`}><span
                             className="profile-icon auction-bid-icon"/></Link>
                         <div className="auction-bid-content">
-                            <Link to={`/profile/${b.user.userName}`}><span>{b.user.userName}{b.user.userId === user.userId && ' (You)'}</span></Link>
+                            <Link to={`/profile/${b.user.userName}`}><span>{b.user.userName}{b.user.userId === user?.userId && ' (You)'}</span></Link>
                             <span className="auction-bid-amount">{b.amount.toFixed(2)}</span>
                             <span className="auction-bid-comment">{b.comment}</span>
                         </div>
                     </div>
                     {i === 0 && (<div className="current-bid-separator">Current bid</div>)}
-                </>
+                </Fragment>
             ))}
         </div>
     );
 }
 
-const BidButton = ({auctionId, visible, currentPrice, minDecrease}) => {
+const BidButton = ({auctionId, visible, currentPrice, minDecrease, onAction}) => {
     const { addError } = useContext(ErrorContext);
     
     const [isOpen, setIsOpen] = useState(false);
@@ -164,6 +166,7 @@ const BidButton = ({auctionId, visible, currentPrice, minDecrease}) => {
             addError(new ErrorCode(responseBody));
         }
         else {
+            onAction();
             handleClose(null);
         }
     };

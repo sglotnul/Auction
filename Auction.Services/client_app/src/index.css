@@ -160,6 +160,7 @@ footer {
 
 .auction-card {
   position: relative;
+  min-height: 140px;
   padding: 20px;
   box-shadow: 0 2px 12px #eef1f7;
   box-sizing: border-box;
@@ -193,7 +194,7 @@ footer {
   text-decoration: underline;
 }
 
-.auction-card-bid-view {
+.auction-card-status-view {
   position: absolute;
   right: 20px;
   top: 20px;
@@ -203,6 +204,14 @@ footer {
 .auction-card-button-row {
   display: flex;
   gap: 6px;
+}
+
+.auction-card-remaining-time {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  text-align: end;
+  color: rgb(143, 143, 143);
 }
 
 .bid-button {

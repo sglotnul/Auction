@@ -1,5 +1,5 @@
-import React, {Fragment, useCallback, useContext, useState} from 'react';
-import {Link} from "react-router-dom";
+import React, {Fragment, useCallback, useContext, useEffect, useState} from 'react';
+import {Link, useLocation} from "react-router-dom";
 import ErrorSnackbar from "./ErrorSnackbar";
 import ErrorContext from "../contexts/ErrorContext";
 import AuthContext from "../contexts/AuthContext";
@@ -29,11 +29,17 @@ const Footer = () => {
 };
 
 const DefaultPageLayout = ({ children }) => {
+    const { pathname } = useLocation();
+    
     const {errorCodes, removeError} = useContext(ErrorContext);
 
     const handleClose = (id) => () => {
         removeError(id);
     };
+
+    useEffect(() => {
+        window.scrollTo({ top: 0 });
+    }, [pathname]);
     
     return (
         <Fragment>
