@@ -33,13 +33,10 @@ public class AuctionController : ControllerBase
 		{
 			auctions = auctions.Where(a => a.Categories.Any(ac => request.Categories.Contains(ac.Id)));
 		}
-		
-		var shift = TimeSpan.FromMinutes(2);
-		var currentDateTime = DateTime.UtcNow + shift;
 
 		var result = await GetAuctions(
 				auctions
-					.Where(GetAuctionRunningExpression(currentDateTime))
+					.Where(GetAuctionRunningExpression())
 					.OrderBy(a => a.EndAt))
 			.AsNoTracking()
 			.ToArrayAsync();
@@ -141,6 +138,47 @@ public class AuctionController : ControllerBase
 		return Ok(auction.Id);
 	}
 	
+	[HttpPut("{id:int}")]
+	[Authorize]
+	public async Task<IActionResult> EditAuctionAsync([FromRoute] int id, [FromBody] AuctionCreateRequest request)
+	{
+		var userId = _userManager.GetUserId(HttpContext.User);
+		if (userId is null)
+			throw new InvalidDataException("Authorized user id is null.");
+
+		var auction = await _dbContext.Auctions.Include(a => a.Categories).SingleOrDefaultAsync(a => a.Id == id);
+		if (auction is null)
+			return ErrorCode(ErrorCodes.NotFound);
+
+		if (auction.UserId != userId)
+			return ErrorCode(ErrorCodes.Forbidden);
+		
+		if (auction.Status != AuctionStatus.Draft)
+			return ErrorCode(ErrorCodes.AuctionAlreadyStarted);
+		
+		if (request.InitialPrice < 1 || request.InitialPrice < request.MinDecrease)
+			return ErrorCode(ErrorCodes.InvalidInitialPrice);
+		
+		if (request.Title.Length > 70)
+			return ErrorCode(ErrorCodes.TitleTooLong);
+		
+		if (request.Description.Length > 512)
+			return ErrorCode(ErrorCodes.DescriptionTooLong);
+		
+		var categories = await _dbContext.Categories.Where(c => request.Categories.Contains(c.Id)).Distinct().ToListAsync();
+		
+		auction.Title = request.Title;
+		auction.Description = request.Description;
+		auction.InitialPrice = request.InitialPrice;
+		auction.MinDecrease = request.MinDecrease;
+		auction.Categories = categories;
+
+		_dbContext.Update(auction);
+		await _dbContext.SaveChangesAsync();
+
+		return Ok();
+	}
+	
 	[HttpPut("{id:int}/launch")]
 	[Authorize]
 	public async Task<IActionResult> LaunchAuctionAsync([FromRoute] int id, [FromBody] AuctionLaunchRequest request)
@@ -172,44 +210,7 @@ public class AuctionController : ControllerBase
 
 		return Ok();
 	}
-	
-	[HttpPut("{id:int}")]
-	[Authorize]
-	public async Task<IActionResult> EditAuctionAsync([FromRoute] int id, [FromBody] AuctionCreateRequest request)
-	{
-		var userId = _userManager.GetUserId(HttpContext.User);
-		if (userId is null)
-			throw new InvalidDataException("Authorized user id is null.");
 
-		var auction = await _dbContext.Auctions.Include(a => a.Categories).SingleOrDefaultAsync(a => a.Id == id);
-		if (auction is null)
-			return ErrorCode(ErrorCodes.NotFound);
-
-		if (auction.UserId != userId)
-			return ErrorCode(ErrorCodes.Forbidden);
-		
-		if (auction.Status != AuctionStatus.Draft)
-			return ErrorCode(ErrorCodes.AuctionAlreadyStarted);
-		
-		if (request.Title.Length > 70)
-			return ErrorCode(ErrorCodes.TitleTooLong);
-		
-		if (request.Description.Length > 512)
-			return ErrorCode(ErrorCodes.DescriptionTooLong);
-		
-		var categories = await _dbContext.Categories.Where(c => request.Categories.Contains(c.Id)).Distinct().ToListAsync();
-		
-		auction.Title = request.Title;
-		auction.Description = request.Description;
-		auction.InitialPrice = request.InitialPrice;
-		auction.MinDecrease = request.MinDecrease;
-		auction.Categories = categories;
-
-		_dbContext.Update(auction);
-		await _dbContext.SaveChangesAsync();
-
-		return Ok();
-	}
 	
 	[HttpPost("{id:int}/bid")]
 	[Authorize]
@@ -218,7 +219,7 @@ public class AuctionController : ControllerBase
 		if (request.Amount < 0)
 			return ErrorCode(ErrorCodes.InvalidBid);
 		
-		if (request.Comment.Length > 70)
+		if (request.Comment?.Length > 70)
 			return ErrorCode(ErrorCodes.BidCommentTooLong);
 		
 		var user = await _userManager.GetUserAsync(HttpContext.User);
@@ -380,6 +381,8 @@ public class AuctionController : ControllerBase
 			Id = a.Id,
 			Title = a.Title,
 			Description = a.Description,
+			MinDecrease = a.MinDecrease,
+			InitialPrice = a.InitialPrice,
 			Status = a.Status,
 			StartAt = a.StartAt,
 			EndAt = a.EndAt,

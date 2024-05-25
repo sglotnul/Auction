@@ -23,13 +23,6 @@ const AuctionEditPage = () => {
     const [auctionFormData, setAuctionFormData] = useState(initialAuction);
     const [selectedCategories, setSelectedCategories] = useState([]);
 
-    const timespans = [
-        { value: '1h', label: '1 Hour' },
-        { value: '24h', label: '1 Day' },
-        { value: '1w', label: '1 Week' },
-        { value: '1m', label: '1 Month' },
-    ];
-
     useEffect(() => {
         setSelectedCategories(initialAuction?.categories?.map(c => c.id) ?? []);
         setAuctionFormData(initialAuction);
@@ -102,7 +95,7 @@ const AuctionEditPage = () => {
 
     const handleMoneyChange = (event) => {
         const newValue = parseFloat(event.target.value);
-        if (!isNaN(newValue) && newValue >= 0)
+        if (!isNaN(newValue) && newValue >= 1)
             setAuctionFormData(prev => { return { ...prev, [event.target.name]: newValue }});
     };
 

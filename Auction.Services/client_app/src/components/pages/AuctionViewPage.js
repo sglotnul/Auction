@@ -1,5 +1,5 @@
 import React, {Fragment, useCallback, useContext, useEffect, useState} from 'react';
-import {Link, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import useAuction from "../../hooks/useAuction";
 import {Button, Modal, TextField} from "@mui/material";
 import AuthContext from "../../contexts/AuthContext";
@@ -70,6 +70,8 @@ const AuctionView = ({auction, auctionLoading}) => {
 }
 
 const BidList = ({auction, auctionLoading}) => {
+    const navigate = useNavigate();
+    
     const {addError} = useContext(ErrorContext);
     const {user, loading: userLoading} = useContext(AuthContext);
     
@@ -80,6 +82,10 @@ const BidList = ({auction, auctionLoading}) => {
             addError(errorCode);
         }
     }, [errorCode]);
+    
+    const onTimeEnd = useCallback(() => {
+        navigate('/');
+    }, []);
 
     if (!auctionLoading && !auction) {
         return (
@@ -100,11 +106,11 @@ const BidList = ({auction, auctionLoading}) => {
     }
 
     const buttonVisible = auction.user.userId !== user?.userId && (user?.role === 2 || user?.role === 3);
-    const currentPrice = (bids.currentPrice ?? auction.initialPrice) - auction.minDecrease;
+    const currentPrice = bids.currentPrice ?? auction.initialPrice;
 
     return (
         <div className="auction-bids">
-            <Timer endTime={new Date(auction.endAt)} />
+            <Timer endTime={new Date(auction.endAt)} onEnd={onTimeEnd} />
             <BidButton auctionId={auction.id} visible={buttonVisible} currentPrice={currentPrice} minDecrease={auction.minDecrease}/>
             {!bids.bids?.length && <div className="no-bids">Nothing</div>}
             {bids.bids?.map((b, i) => (
@@ -168,14 +174,14 @@ const BidButton = ({auctionId, visible, currentPrice, minDecrease}) => {
 
     return (
         <Fragment>
-            <Button variant="contained" onClick={handleOpen} fullWidth>Bid</Button>
+            <Button disabled={currentPrice === 0} variant="contained" onClick={handleOpen} fullWidth>{currentPrice === 0 ? 'Unable to bid' : 'Bid'}</Button>
             <Modal
                 open={isOpen}
                 onClose={handleClose}
             >
                 <div className="default-modal-container">
                     <form onSubmit={handleSubmit}>
-                        <NumericStepper maxValue={currentPrice} minValue={0} initialValue={currentPrice} step={minDecrease} onChange={handleStepperChange} />
+                        <NumericStepper maxValue={currentPrice - minDecrease} minValue={0} initialValue={currentPrice - minDecrease} step={minDecrease} onChange={handleStepperChange} />
                         <TextField
                             label="Comment"
                             name="comment"

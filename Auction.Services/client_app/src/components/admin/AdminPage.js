@@ -7,7 +7,7 @@ import { BidList, BidEdit, BidCreate } from "./resources/bids";
 import { CategoryList, CategoryEdit, CategoryCreate } from "./resources/categories";
 import { ProfileList, ProfileEdit, ProfileCreate } from "./resources/profiles";
 import { UserList, UserEdit, UserCreate } from "./resources/users";
-import {useContext} from "react";
+import {useContext, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import AuthContext from "../../contexts/AuthContext";
 

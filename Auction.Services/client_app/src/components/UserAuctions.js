@@ -23,11 +23,14 @@ const UserAuctions = ({user, userName}) => {
                 acc.drafts.push(item);
             }
             else if (item.status === 2) {
-                if (new Date(item.endAt) > new Date()) {
+                if (new Date(item.endAt) > new Date(new Date().toUTCString())) {
                     acc.active.push(item);
                 }
                 else if (!!item.currentBid) {
                     acc.confirmation.push(item);
+                }
+                else {
+                    acc.completed.push(item);
                 }
             }
             else {
@@ -72,7 +75,7 @@ const UserAuctions = ({user, userName}) => {
         });
     };
 
-    const isOwner = !userName || userName.toLowerCase() === user.userName.toLowerCase();
+    const isOwner = !userName || userName?.toLowerCase() === user?.userName.toLowerCase();
 
     return (
         <div className="profile-page-content">

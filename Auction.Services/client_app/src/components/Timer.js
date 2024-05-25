@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 
-const Timer = ({ endTime }) => {
+const Timer = ({ endTime, onEnd }) => {
     const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
 
     useEffect(() => {
@@ -10,6 +10,12 @@ const Timer = ({ endTime }) => {
 
         return () => clearInterval(interval);
     }, [endTime]);
+    
+    useEffect(() => {
+        if (timeLeft.hours + timeLeft.minutes + timeLeft.seconds <= 0) {
+            onEnd();
+        }
+    }, [timeLeft]);
 
     function calculateTimeLeft() {
         const now = new Date();

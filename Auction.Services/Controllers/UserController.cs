@@ -129,6 +129,21 @@ public class UserController : ControllerBase
             });
     }
     
+    [HttpGet("user/{userName}")]
+    public async Task<IActionResult> GetUserAsync([FromRoute] string userName)
+    {
+        var user = await _userManager.FindByNameAsync(userName);
+        if (user is null)
+            return ErrorCode(ErrorCodes.NotFound);
+        
+        return Json(
+            new UserResponse
+            {
+                UserName = user.UserName!,
+                Role = user.Role
+            });
+    }
+    
     private Task<IdentityResult> CreateUserAsync(User user, string password)
     {
         return _userManager.CreateAsync(user, password);
