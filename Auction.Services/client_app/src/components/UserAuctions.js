@@ -14,7 +14,7 @@ const UserAuctions = ({user, userName}) => {
     const [checkedItems, setCheckedItems] = useState({
         drafts: true,
         active: true,
-        completed: true,
+        completed: false,
     });
 
     const splittedAuctions = useMemo(() => {

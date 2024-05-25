@@ -107,12 +107,13 @@ footer {
   position: relative;
   width: 320px;
   height: 100%;
-  padding: 10px;
+  padding: 0 20px;
   box-sizing: border-box;
 }
 
 .profile-drawer-content {
   flex: 1;
+  font-s
 }
 
 .auctions-page {
@@ -511,9 +512,36 @@ footer {
 }
 
 .consultation-card {
+  position: relative;
   padding: 20px;
   box-shadow: 0 2px 12px #eef1f7;
   box-sizing: border-box;
   border-radius: 4px;
   border: 1px solid transparent;
+}
+
+.consultation-card-price {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  text-align: end;
+  color: lightgreen;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.consultation-member {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.consultation-member-name:hover {
+  text-decoration: underline;
+}
+
+.consultation-member-role {
+  margin-left: 14px;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.6);
 }

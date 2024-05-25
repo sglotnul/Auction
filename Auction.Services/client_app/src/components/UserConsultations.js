@@ -13,7 +13,7 @@ const UserConsultations = ({user, userName}) => {
 
     const [checkedItems, setCheckedItems] = useState({
         started: true,
-        completed: true,
+        completed: false,
     });
 
     const splittedConsultations = useMemo(() => {
@@ -107,10 +107,34 @@ const ConsultationCard = ({consultation, user, children}) => {
     
     return (
         <div className="consultation-card">
-            <Link to={`/auctions/${consultation.auction.id}`}><h2>{consultation.auction.title}</h2></Link>
-            <Link to={`/profile/${consultation.consultant.userName}`}>{getFullName(consultation.consultant)} --- </Link>
-            <Link to={`/profile/${consultation.student.userName}`}>{getFullName(consultation.student)}</Link>
-            <h1>{consultation.bid.amount}</h1>
+            <div className="auction-card-row">
+                <Link className="auction-card-inner-link" to={`/auctions/${consultation.auction.id}`}>
+                    <span className="auction-card-title">
+                        {consultation.auction.title}
+                    </span>
+                </Link>
+            </div>
+            <div className="consultation-member">
+                <Link to={`/profile/${consultation.consultant.userName}`}>
+                    <span className="profile-icon auction-bid-icon" src="/icons/profile-icon.svg"></span>
+                </Link>
+                <Link to={`/profile/${consultation.consultant.userName}`}>
+                    <span className="consultation-member-name">{getFullName(consultation.consultant)}</span>
+                    <span className="consultation-member-role">consultant</span>
+                </Link>
+            </div>
+            <div className="consultation-member">
+                <Link to={`/profile/${consultation.student.userName}`}>
+                    <span className="profile-icon auction-bid-icon" src="/icons/profile-icon.svg"></span>
+                </Link>
+                <Link to={`/profile/${consultation.student.userName}`}>
+                    <span className="consultation-member-name">{getFullName(consultation.student)}</span>
+                    <span className="consultation-member-role">student</span>
+                </Link>
+            </div>
+            <div className="consultation-card-price">
+                <span>{consultation.bid.amount.toFixed(2)}</span>
+            </div>
             {children}
         </div>
     )
@@ -128,9 +152,8 @@ const CancelButton = ({consultationId, onAction}) => {
         });
 
         if (!response.ok) {
-            addError(new ErrorCode( await response.text()));
-        }
-        else {
+            addError(new ErrorCode(await response.text()));
+        } else {
             onAction();
         }
     }, []);
