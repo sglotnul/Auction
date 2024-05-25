@@ -64,9 +64,7 @@ const AuctionView = ({auction, auctionLoading}) => {
             <div className="auction-description-row">
                 <CategoriesView categories={auction.categories}/>
             </div>
-            <div className="auction-description-row">
-                {auction.description}
-            </div>
+            <Description description={auction.description} />
         </div>
     )
 }
@@ -195,5 +193,17 @@ const BidButton = ({auctionId, visible, currentPrice, minDecrease}) => {
         </Fragment>
     );
 }
+
+const Description = ({ description }) => {
+    const lines = description.split('\n');
+
+    return (
+        <div className="auction-description-row">
+            {lines.map((line, index) => (
+                <span style={{display: 'block'}} key={index}>{line}</span>
+            ))}
+        </div>
+    );
+};
 
 export default AuctionViewPage;

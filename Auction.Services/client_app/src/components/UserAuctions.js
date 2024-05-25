@@ -158,6 +158,8 @@ const AuctionStatusFilter = ({drafts, active, completed, onChange}) => {
 }
 
 const ConfirmButton = ({auctionId}) => {
+    const navigate = useNavigate();
+    
     const {addError} = useContext(ErrorContext);
 
     const handleClick = useCallback(async (e) => {
@@ -170,6 +172,9 @@ const ConfirmButton = ({auctionId}) => {
 
         if (!response.ok) {
             addError(new ErrorCode( await response.text()));
+        }
+        else {
+            navigate('/profile?tab=2');
         }
     }, []);
 

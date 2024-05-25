@@ -159,7 +159,7 @@ public class AuctionController : ControllerBase
 		if (auction.Status != AuctionStatus.Draft)
 			return ErrorCode(ErrorCodes.AuctionAlreadyStarted);
 
-		if (request.Period.Minutes <= 0)
+		if (request.Period < TimeSpan.FromMinutes(1))
 			return ErrorCode(ErrorCodes.InvalidLaunchPeriod);
 
 		var currentDateTimeUtc = DateTime.UtcNow;
@@ -191,6 +191,12 @@ public class AuctionController : ControllerBase
 		if (auction.Status != AuctionStatus.Draft)
 			return ErrorCode(ErrorCodes.AuctionAlreadyStarted);
 		
+		if (request.Title.Length > 70)
+			return ErrorCode(ErrorCodes.TitleTooLong);
+		
+		if (request.Description.Length > 512)
+			return ErrorCode(ErrorCodes.DescriptionTooLong);
+		
 		var categories = await _dbContext.Categories.Where(c => request.Categories.Contains(c.Id)).Distinct().ToListAsync();
 		
 		auction.Title = request.Title;
@@ -211,6 +217,9 @@ public class AuctionController : ControllerBase
 	{
 		if (request.Amount < 0)
 			return ErrorCode(ErrorCodes.InvalidBid);
+		
+		if (request.Comment.Length > 70)
+			return ErrorCode(ErrorCodes.BidCommentTooLong);
 		
 		var user = await _userManager.GetUserAsync(HttpContext.User);
 		if (user is null)

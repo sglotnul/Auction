@@ -15,4 +15,9 @@ public static class ErrorCodes
     public const string CategoriesEmpty = "CategoriesEmpty";
     public const string TitleTooLong = "TitleTooLong";
     public const string DescriptionTooLong = "DescriptionTooLong";
+    public const string BidCommentTooLong = "BidCommentTooLong";
+    public const string FirstNameTooLong = "FirstNameTooLong";
+    public const string LastNameTooLong = "LastNameTooLong";
+    public const string EducationTooLong = "EducationTooLong";
+    public const string BiographyTooLong = "BiographyTooLong";
 }

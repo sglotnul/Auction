@@ -25,7 +25,12 @@ public static class ServiceCollectionExtensions
             resolver.Map(ErrorCodes.InvalidInitialPrice, HttpStatusCode.BadRequest);
             resolver.Map(ErrorCodes.CategoriesEmpty, HttpStatusCode.BadRequest);
             resolver.Map(ErrorCodes.TitleTooLong, HttpStatusCode.BadRequest);
-            resolver.Map(ErrorCodes.DescriptionTooLong, HttpStatusCode.BadRequest);
+            resolver.Map(ErrorCodes.DescriptionTooLong, HttpStatusCode.BadRequest); 
+            resolver.Map(ErrorCodes.BidCommentTooLong, HttpStatusCode.BadRequest);
+            resolver.Map(ErrorCodes.FirstNameTooLong, HttpStatusCode.BadRequest);
+            resolver.Map(ErrorCodes.LastNameTooLong, HttpStatusCode.BadRequest);
+            resolver.Map(ErrorCodes.EducationTooLong, HttpStatusCode.BadRequest);
+            resolver.Map(ErrorCodes.BiographyTooLong, HttpStatusCode.BadRequest);
             
             resolver.Map(DuplicateUserNameCode, HttpStatusCode.BadRequest);
 

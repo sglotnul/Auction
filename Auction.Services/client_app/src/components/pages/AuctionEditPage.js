@@ -76,6 +76,9 @@ const AuctionEditPage = () => {
         
         if (!response.ok) {
             addError(new ErrorCode( await response.text()));
+
+            setSelectedCategories(initialAuction?.categories?.map(c => c.id) ?? []);
+            setAuctionFormData(initialAuction);
         }
         else {
             navigate('/profile?tab=1');

@@ -58,6 +58,7 @@ const UserProfile = ({user, userName}) => {
                 setProfile(await response.json());
             }
             else {
+                setProfile(initialProfile);
                 addError(new ErrorCode(await response.text()));
             }
         }

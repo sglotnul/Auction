@@ -11,5 +11,10 @@ export const ERROR_CODE_MESSAGES = {
     CategoriesEmpty: "Choose from 1 to 10 categories",
     TitleTooLong: "Title too long. Maximum length: 70 chars",
     DescriptionTooLong: "Description too long. Maximum length: 512 chars",
+    BidCommentTooLong: "Comment too long. Maximum length: 70 chars",
+    FirstNameTooLong: "First name too long. Maximum value: 32 chars",
+    LastNameTooLong: "Last name too long. Maximum value: 32 chars",
+    EducationTooLong: "Education too long. Maximum value: 32 chars",
+    BiographyTooLong: "Biography too long. Maximum value: 32 chars",
     DuplicateUserName: "User with this name already exists",
 }

@@ -53,6 +53,18 @@ public class ProfileController : ControllerBase
 		var user = await _userManager.GetUserAsync(HttpContext.User);
 		if (user is null)
 			throw new InvalidDataException("Authorized user not found.");
+		
+		if (profileRequest.FirstName?.Length > 32)
+			return ErrorCode(ErrorCodes.FirstNameTooLong);
+		
+		if (profileRequest.LastName?.Length > 32)
+			return ErrorCode(ErrorCodes.LastNameTooLong);
+		
+		if (profileRequest.Education?.Length > 64)
+			return ErrorCode(ErrorCodes.EducationTooLong);
+
+		if (profileRequest.Biography?.Length > 512)
+			return ErrorCode(ErrorCodes.BiographyTooLong);
 
 		var newProfile = new Profile
 		{

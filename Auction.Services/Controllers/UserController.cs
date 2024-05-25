@@ -40,6 +40,18 @@ public class UserController : ControllerBase
                 Biography = request.Profile.Biography?.Trim(),
                 Education = request.Profile.Education?.Trim()
             };
+        
+        if (request.Profile?.FirstName?.Length > 32)
+            return ErrorCode(ErrorCodes.FirstNameTooLong);
+		
+        if (request.Profile?.LastName?.Length > 32)
+            return ErrorCode(ErrorCodes.LastNameTooLong);
+		
+        if (request.Profile?.Education?.Length > 64)
+            return ErrorCode(ErrorCodes.EducationTooLong);
+
+        if (request.Profile?.Biography?.Length > 512)
+            return ErrorCode(ErrorCodes.BiographyTooLong);
 
         var user = new User { UserName = request.UserName.Trim(), Role = request.Role };
         var result = profile is not null

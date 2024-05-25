@@ -42,6 +42,11 @@ public class AppDbContext : IdentityDbContext<User>
 			entity.HasOne(e => e.User)
 				.WithOne(e => e.Profile)
 				.HasForeignKey<Profile>(e => e.UserId);
+			
+			entity.Property(e => e.FirstName).HasMaxLength(32);
+			entity.Property(e => e.LastName).HasMaxLength(32);
+			entity.Property(e => e.Education).HasMaxLength(64);
+			entity.Property(e => e.Biography).HasMaxLength(512);
 		});
 		
 		modelBuilder.Entity<Auction>(entity =>
@@ -58,6 +63,9 @@ public class AppDbContext : IdentityDbContext<User>
 					"AuctionCategory",
 					j => j.HasOne<Category>().WithMany().HasForeignKey("CategoryId"),
 					j => j.HasOne<Auction>().WithMany().HasForeignKey("AuctionId"));
+
+			entity.Property(e => e.Title).HasMaxLength(70);
+			entity.Property(e => e.Description).HasMaxLength(512);
 		});
 		
 		modelBuilder.Entity<Category>(entity =>
@@ -78,6 +86,8 @@ public class AppDbContext : IdentityDbContext<User>
 			entity.HasOne(e => e.User)
 				.WithMany()
 				.HasForeignKey(e => e.UserId);
+			
+			entity.Property(e => e.Comment).HasMaxLength(70);
 		});
 
 		modelBuilder.Entity<Consultation>(entity =>
