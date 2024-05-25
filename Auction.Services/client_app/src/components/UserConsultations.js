@@ -81,7 +81,7 @@ const UserConsultations = ({user, userName}) => {
                     (c) => (
                         <ConsultationCard key={c.id} consultation={c} user={user}>
                             <div className="auction-card-button-row">
-                                <CompleteButton consultationId={c.id} onAction={reload}/>
+                                {user.userId === c.student.userId && <CompleteButton consultationId={c.id} onAction={reload}/>}
                                 <CancelButton consultationId={c.id} onAction={reload}/>
                             </div>
                         </ConsultationCard>

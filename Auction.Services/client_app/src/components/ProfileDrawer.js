@@ -5,6 +5,7 @@ import {Button} from "@mui/material";
 import AuthContext from "../contexts/AuthContext";
 import useProfile from "../hooks/useProfile";
 import ErrorContext from "../contexts/ErrorContext";
+import {getUserFullName} from "../models/functions";
 
 const ProfileDrawer = ({isOpen, onClose}) => {
     const navigate = useNavigate();
@@ -67,18 +68,8 @@ const ProfileDrawer = ({isOpen, onClose}) => {
                         </div>
                     )
             }
-
         </Drawer>
     );
 };
-
-function getUserFullName(userName, profile){
-    if (!profile?.firstName && !profile?.lastName) {
-        return userName;
-    }
-
-    return `${profile?.firstName} ${profile?.lastName}`.trim();
-}
-
 
 export default ProfileDrawer;
