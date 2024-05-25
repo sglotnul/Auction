@@ -95,15 +95,31 @@ footer {
   margin-top: 25px;
 }
 
-.navigation-bar {
+.sing-in-bar {
   display: flex;
-  gap: 20px;
+  gap: 8px;
+  align-items: center;
+}
+
+.sing-in-link {
+  padding: 0 6px;
+  border: 1px solid rgb(197, 197, 197);
+  border-radius: 4px;
+  line-height: 2em;
+}
+
+.sing-up-link {
+  line-height: 2em;
+  border-bottom: 1px solid transparent;
+}
+
+.sing-up-link:hover {
+  border-bottom: 1px solid rgb(197, 197, 197);
 }
 
 .profile-drawer {
   display: flex;
   flex-direction: column;
-  gap: 16px;
   position: relative;
   width: 320px;
   height: 100%;
@@ -112,8 +128,30 @@ footer {
 }
 
 .profile-drawer-content {
+  display: flex;
+  flex-direction: column;
   flex: 1;
-  font-s
+  gap: 18px;
+}
+
+.profile-drawer-user-name {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 24px;
+  line-height: 2em;
+}
+
+.profile-drawer-link {
+  display: flex;
+  border-radius: 4px;
+  line-height: 2em;
+  padding: 0 12px;
+  font-size: 18px;
+}
+
+.profile-drawer-link:hover {
+  background-color: #ececec;
 }
 
 .auctions-page {

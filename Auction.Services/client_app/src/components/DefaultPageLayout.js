@@ -77,9 +77,9 @@ const ProfileIcon = () => {
         ? null
         : !user
             ? (
-                <div style={{display: 'inline'}}>
-                    <Link to='/register'>Sing Up      </Link>
-                    <Link to='/login'>Sing In</Link>
+                <div className="sing-in-bar">
+                    <Link className="sing-up-link" to='/register'>Sing Up</Link>
+                    <Link className="sing-in-link" to='/login'>Sing In</Link>
                 </div>
             )
             : (
