@@ -31,7 +31,7 @@ public class ConsultationController : ControllerBase
 			throw new InvalidDataException("Authorized user id is null.");
 
 		var consultations = await _dbContext.Consultations
-			.Where(c => c.StudentId == userId || c.StudentId == userId)
+			.Where(c => c.ConsultantId == userId || c.StudentId == userId)
 			.Select(c => new ConsultationResponse
 			{
 				Id = c.Id,

@@ -87,16 +87,20 @@ const UserAuctions = ({user, userName}) => {
                 {splittedAuctions.confirmation.map(
                     (auction) => (
                         <AuctionCard key={auction.id} auction={auction}>
-                            <ConfirmButton auctionId={auction.id} />
+                            <div className="auction-card-button-row">
+                                <ConfirmButton auctionId={auction.id}/>
+                            </div>
                         </AuctionCard>
                     )
-                )}
+                    )}
                 {checkedItems.drafts && !!splittedAuctions.drafts.length && <div className="auction-separator">Drafts</div>}
                 {checkedItems.drafts && splittedAuctions.drafts.map(
                     (auction) => (
                         <AuctionCard key={auction.id} auction={auction}>
-                            <Link to={`/auctions/${auction.id}/edit`}><Button variant="contained">Edit</Button></Link>
-                            <LaunchAuctionButton auctionId={auction.id} />
+                            <div className="auction-card-button-row">
+                                <LaunchAuctionButton auctionId={auction.id} />
+                                <Link to={`/auctions/${auction.id}/edit`}><Button variant="contained">Edit</Button></Link>
+                            </div>
                         </AuctionCard>
                     )
                 )}

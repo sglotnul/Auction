@@ -1,4 +1,4 @@
-import React, {Fragment, useCallback, useContext, useEffect, useState} from 'react';
+import React, {Fragment, useCallback, useContext, useEffect, useMemo, useState} from 'react';
 import {Link, useNavigate, useParams} from "react-router-dom";
 import useAuction from "../../hooks/useAuction";
 import {Button, Modal, TextField} from "@mui/material";
@@ -70,21 +70,26 @@ const AuctionView = ({auction, auctionLoading}) => {
 }
 
 const BidList = ({auction, auctionLoading}) => {
-    const navigate = useNavigate();
-    
     const {addError} = useContext(ErrorContext);
     const {user, loading: userLoading} = useContext(AuthContext);
     
     const [bids, loading, errorCode] = useBids(auction?.id, !!auction);
+    
+    const [buttonVisible, setButtonVisible] = useState(false);
 
     useEffect(() => {
         if (errorCode) {
             addError(errorCode);
         }
     }, [errorCode]);
+
+    useEffect(() => {
+        if (!auctionLoading)
+            setButtonVisible(auction.user.userId !== user?.userId && (user?.role === 2 || user?.role === 3));
+    }, [auction, user]);
     
     const onTimeEnd = useCallback(() => {
-        navigate('/');
+        setButtonVisible(false);
     }, []);
 
     if (!auctionLoading && !auction) {
@@ -105,7 +110,6 @@ const BidList = ({auction, auctionLoading}) => {
         );
     }
 
-    const buttonVisible = auction.user.userId !== user?.userId && (user?.role === 2 || user?.role === 3);
     const currentPrice = bids.currentPrice ?? auction.initialPrice;
 
     return (

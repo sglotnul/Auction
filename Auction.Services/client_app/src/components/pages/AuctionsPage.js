@@ -55,9 +55,7 @@ const AuctionsList = ({auctions, loading}) => {
 			{auctions.length > 0
 				? auctions.map(
 					(auction) => (
-						<Link key={auction.id} className="auction-card-outer-link" to={`/auctions/${auction.id}`}>
-							<AuctionCard auction={auction} />
-						</Link>
+						<AuctionCard key={auction.id} auction={auction} />
 					)
 				)
 				: 'Nothing found'

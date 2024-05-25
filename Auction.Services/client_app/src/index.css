@@ -103,6 +103,7 @@ footer {
 .profile-drawer {
   display: flex;
   flex-direction: column;
+  gap: 16px;
   position: relative;
   width: 320px;
   height: 100%;
@@ -158,6 +159,7 @@ footer {
 }
 
 .auction-card {
+  position: relative;
   padding: 20px;
   box-shadow: 0 2px 12px #eef1f7;
   box-sizing: border-box;
@@ -165,10 +167,14 @@ footer {
   border: 1px solid transparent;
 }
 
+.auction-card-row {
+  margin-bottom: 6px;
+}
+
 .auction-card-title { 
-  display: block;
   color: #468ffd;
-  font-size: 18px;
+  line-height: 1.5em;
+  font-size: 21px;
   font-weight: 700;
   margin-bottom: 12px;
 }
@@ -181,6 +187,22 @@ footer {
 .auction-card-inner-link {
   position: relative;
   z-index: 2;
+}
+
+.auction-card-student:hover {
+  text-decoration: underline;
+}
+
+.auction-card-bid-view {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  width: 240px;
+}
+
+.auction-card-button-row {
+  display: flex;
+  gap: 6px;
 }
 
 .bid-button {
@@ -307,7 +329,7 @@ footer {
   border-radius: 4px;
   box-shadow: 0 2px 12px #eef1f7;
   display: flex;
-  gap: 6px;
+  gap: 6px
 }
 
 .auction-bid-content * {
@@ -364,6 +386,12 @@ footer {
   text-decoration: none;
   white-space: nowrap;
   font-size: 13px;
+}
+
+.category-view:hover {
+  color: #fff;
+  background-color: #9eabb8;
+  border: 1px solid transparent;
 }
 
 .default-stepper {
