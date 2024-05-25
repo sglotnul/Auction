@@ -21,7 +21,9 @@ const Header = () => {
 const Footer = () => {
     return (
         <footer>
-            {/* Содержимое футера */}
+            <div className="wrapper">
+                <Link to="/"><h1>Auction</h1></Link>
+            </div>
         </footer>
     );
 };

@@ -3,7 +3,7 @@
         return userName;
     }
 
-    return `${profile?.firstName} ${profile?.lastName}`.trim();
+    return `${profile?.firstName} ${profile?.lastName ?? ''}`.trim();
 }
 
 export function formatDate(utcDateString) {

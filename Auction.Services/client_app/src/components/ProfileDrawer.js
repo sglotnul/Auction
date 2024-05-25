@@ -32,8 +32,8 @@ const ProfileDrawer = ({isOpen, onClose}) => {
         }
     }, []);
 
-    const auctionLink = () => user.role === 1 || user.role === 3 ? <Link to="/profile?tab=1" onClick={onClose}>My Auctions</Link> : null;
-    const adminLink = () => user.role === 3 ? <Link to="/admin" onClick={onClose}>Admin</Link> : null;
+    const auctionLink = () => user.role === 1 || user.role === 3 ? <Link to="/profile?tab=1" onClick={onClose}><h3>My Auctions</h3></Link> : null;
+    const adminLink = () => user.role === 3 ? <Link target="_blank" to="/admin" onClick={onClose}><h3>Administration</h3></Link> : null;
     
     return (
         <Drawer
@@ -47,7 +47,8 @@ const ProfileDrawer = ({isOpen, onClose}) => {
                     <div className="profile-drawer">
                         <div className="profile-drawer-content">
                             <h1>{getUserFullName(user.userName, profile)}</h1>
-                            <Link to="/profile?tab=0" onClick={onClose} fullWidth>Profile</Link>
+                            <Link to="/profile?tab=0" onClick={onClose}><h3>Profile</h3></Link>
+                            <Link to="/profile?tab=2" onClick={onClose}><h3>My Consultations</h3></Link>
                             {auctionLink()}
                             {adminLink()}
                         </div>

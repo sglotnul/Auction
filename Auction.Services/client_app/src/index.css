@@ -28,6 +28,13 @@ header {
   color: #fff;
 }
 
+footer {
+  position: relative;
+  height: 180px;
+  background-color: #20262b;
+  color: #fff;
+}
+
 .wrapper {
   height: 100%;
   width: 1250px;
@@ -464,4 +471,12 @@ header {
   display: flex;
   flex-direction: column;
   gap: 15px;
+}
+
+.consultation-card {
+  padding: 20px;
+  box-shadow: 0 2px 12px #eef1f7;
+  box-sizing: border-box;
+  border-radius: 4px;
+  border: 1px solid transparent;
 }

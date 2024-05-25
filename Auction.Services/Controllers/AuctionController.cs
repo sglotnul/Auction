@@ -205,7 +205,6 @@ public class AuctionController : ControllerBase
 			return ErrorCode(ErrorCodes.InvalidBid);
 		
 		var user = await _userManager.GetUserAsync(HttpContext.User);
-		
 		if (user is null)
 			throw new InvalidDataException("Authorized user id is null.");
 
