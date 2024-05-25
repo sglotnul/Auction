@@ -37,7 +37,7 @@ const UserConsultations = ({user, userName}) => {
     if (loading) {
         return (
             <div className="profile-page-content">
-                <div className="profile-data-container">
+                <div className="profile-auctions-container">
                     <div className="loading-layout" style={{height: '130px'}}/>
                     <div className="loading-layout" style={{height: '130px'}}/>
                     <div className="loading-layout" style={{height: '130px'}}/>
@@ -49,7 +49,7 @@ const UserConsultations = ({user, userName}) => {
     if (errorCode) {
         return (
             <div className="profile-page-content">
-                <div className="profile-data-container">
+                <div className="profile-auctions-container">
                     Error.
                 </div>
             </div>
@@ -65,7 +65,7 @@ const UserConsultations = ({user, userName}) => {
 
     return (
         <div className="profile-page-content">
-            <div className="profile-data-container">
+            <div className="profile-auctions-container">
                 <ConsultationStatusFilter started={checkedItems.started} completed={checkedItems.completed} onChange={handleChange}/>
                 {!consultations.length && 'Nothing found'}
                 {checkedItems.started && !!splittedConsultations.started.length && <div className="auction-separator active">Active consultations</div>}
