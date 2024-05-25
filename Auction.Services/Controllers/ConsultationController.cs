@@ -81,4 +81,50 @@ public class ConsultationController : ControllerBase
 
 		return Json(result);
 	}
+	
+	[HttpPut("{id:int}/complete")]
+	[Authorize]
+	public async Task<IActionResult> CompleteConsultationAsync([FromRoute] int id)
+	{
+		var userId = _userManager.GetUserId(HttpContext.User);
+		if (userId is null)
+			throw new InvalidDataException("Authorized user id is null.");
+
+		var consultation = await _dbContext.Consultations.SingleOrDefaultAsync(c => c.Id == id);
+		if (consultation is null)
+			return ErrorCode(ErrorCodes.NotFound);
+		
+		if (consultation.StudentId != userId)
+			return ErrorCode(ErrorCodes.Forbidden);
+
+		consultation.Status = ConsultationStatus.Completed;
+		
+		_dbContext.Update(consultation);
+		await _dbContext.SaveChangesAsync();
+
+		return Ok();
+	}
+	
+	[HttpPut("{id:int}/cancel")]
+	[Authorize]
+	public async Task<IActionResult> CancelConsultationAsync([FromRoute] int id)
+	{
+		var userId = _userManager.GetUserId(HttpContext.User);
+		if (userId is null)
+			throw new InvalidDataException("Authorized user id is null.");
+
+		var consultation = await _dbContext.Consultations.SingleOrDefaultAsync(c => c.Id == id);
+		if (consultation is null)
+			return ErrorCode(ErrorCodes.NotFound);
+		
+		if (consultation.StudentId != userId && consultation.ConsultantId != userId)
+			return ErrorCode(ErrorCodes.Forbidden);
+
+		consultation.Status = ConsultationStatus.Canceled;
+
+		_dbContext.Update(consultation);
+		await _dbContext.SaveChangesAsync();
+
+		return Ok();
+	}
 }

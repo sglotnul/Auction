@@ -1,14 +1,15 @@
 ﻿import useConsultations from "../hooks/useConsultations";
-import React, {useContext, useEffect, useMemo, useState} from "react";
+import React, {useCallback, useContext, useEffect, useMemo, useState} from "react";
 import ErrorContext from "../contexts/ErrorContext";
-import {Checkbox, FormControlLabel} from "@mui/material";
+import {Button, Checkbox, FormControlLabel} from "@mui/material";
 import {Link} from "react-router-dom";
 import {getUserFullName} from "../models/functions";
+import ErrorCode from "../models/ErrorCode";
 
 const UserConsultations = ({user, userName}) => {
     const {addError} = useContext(ErrorContext);
     
-    const [consultations, loading, errorCode] = useConsultations();
+    const [consultations, loading, errorCode, reload] = useConsultations();
 
     const [checkedItems, setCheckedItems] = useState({
         started: true,
@@ -16,13 +17,21 @@ const UserConsultations = ({user, userName}) => {
     });
 
     const splittedConsultations = useMemo(() => {
-        return consultations.reduce((acc, item) => {
+        return consultations.reduce((acc, item, index) => {
             if (item.status === 1) {
                 acc.started.push(item);
             }
-            else if (item.status === 2) {
+            else {
                 acc.completed.push(item);
             }
+
+            if (index === consultations.length - 1) {
+                const sortFunction = (a, b) => b.id - a.id ;
+
+                acc.started = acc.started.sort(sortFunction);
+                acc.completed = acc.completed.sort(sortFunction);
+            }
+            
             return acc;
         }, { started: [], completed: [] });
     }, [consultations]);
@@ -70,10 +79,16 @@ const UserConsultations = ({user, userName}) => {
                 {checkedItems.started && !!splittedConsultations.started.length && <div className="auction-separator active">Active consultations</div>}
                 {checkedItems.started && splittedConsultations.started.map(
                     (c) => (
-                        <ConsultationCard key={c.id} consultation={c} user={user} />
+                        <ConsultationCard key={c.id} consultation={c} user={user}>
+                            <div className="auction-card-button-row">
+                                <CompleteButton consultationId={c.id} onAction={reload}/>
+                                <CancelButton consultationId={c.id} onAction={reload}/>
+                            </div>
+                        </ConsultationCard>
                     )
                 )}
-                {checkedItems.completed && !!splittedConsultations.completed.length && <div className="auction-separator">Completed consultations</div>}
+                {checkedItems.completed && !!splittedConsultations.completed.length &&
+                    <div className="auction-separator">Completed consultations</div>}
                 {checkedItems.completed && splittedConsultations.completed.map(
                     (c) => (
                         <ConsultationCard key={c.id} consultation={c} user={user} />
@@ -84,7 +99,7 @@ const UserConsultations = ({user, userName}) => {
     );
 }
 
-const ConsultationCard = ({consultation, user}) => {
+const ConsultationCard = ({consultation, user, children}) => {
     
     const getFullName = (u) => {
         return `${getUserFullName(u.userName, u.profile)}${u.userId === user.userId ? ' (You)' : ''}`
@@ -96,9 +111,54 @@ const ConsultationCard = ({consultation, user}) => {
             <Link to={`/profile/${consultation.consultant.userName}`}>{getFullName(consultation.consultant)} --- </Link>
             <Link to={`/profile/${consultation.student.userName}`}>{getFullName(consultation.student)}</Link>
             <h1>{consultation.bid.amount}</h1>
+            {children}
         </div>
     )
 }
+
+const CancelButton = ({consultationId, onAction}) => {
+    const {addError} = useContext(ErrorContext);
+
+    const handleClick = useCallback(async (e) => {
+        const response = await fetch(`/api/consultations/${consultationId}/cancel`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            }
+        });
+
+        if (!response.ok) {
+            addError(new ErrorCode( await response.text()));
+        }
+        else {
+            onAction();
+        }
+    }, []);
+
+    return (<Button variant="contained" color="error" onClick={handleClick}>Cancel</Button>);
+};
+
+const CompleteButton = ({consultationId, onAction}) => {
+    const {addError} = useContext(ErrorContext);
+
+    const handleClick = useCallback(async (e) => {
+        const response = await fetch(`/api/consultations/${consultationId}/complete`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            }
+        });
+
+        if (!response.ok) {
+            addError(new ErrorCode( await response.text()));
+        }
+        else {
+            onAction();
+        }
+    }, []);
+
+    return (<Button variant="contained" color="success" onClick={handleClick}>Complete</Button>);
+};
 
 const ConsultationStatusFilter = ({started, completed, onChange}) => {
     return (
