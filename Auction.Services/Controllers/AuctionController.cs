@@ -110,11 +110,19 @@ public class AuctionController : ControllerBase
 		if (user.Role is not Role.Student and not Role.Admin)
 			return ErrorCode(ErrorCodes.InvalidRole);
 
-		if (request.InitialPrice < 0 || request.InitialPrice < request.MinDecrease)
+		if (request.InitialPrice < 1 || request.InitialPrice < request.MinDecrease)
 			return ErrorCode(ErrorCodes.InvalidInitialPrice);
 
-		var categories = await _dbContext.Categories.Where(c => request.Categories.Contains(c.Id)).ToListAsync();
+		if (request.Title.Length > 70)
+			return ErrorCode(ErrorCodes.TitleTooLong);
 		
+		if (request.Description.Length > 512)
+			return ErrorCode(ErrorCodes.DescriptionTooLong);
+
+		var categories = await _dbContext.Categories.Where(c => request.Categories.Contains(c.Id)).ToListAsync();
+		if (categories.Count is 0 or > 10)
+			return ErrorCode(ErrorCodes.CategoriesEmpty);
+
 		var auction = new Model.Auction
 		{
 			Id = 0,
@@ -151,7 +159,7 @@ public class AuctionController : ControllerBase
 		if (auction.Status != AuctionStatus.Draft)
 			return ErrorCode(ErrorCodes.AuctionAlreadyStarted);
 
-		if (request.Period.Ticks <= 0)
+		if (request.Period.Minutes <= 0)
 			return ErrorCode(ErrorCodes.InvalidLaunchPeriod);
 
 		var currentDateTimeUtc = DateTime.UtcNow;

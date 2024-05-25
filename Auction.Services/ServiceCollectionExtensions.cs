@@ -23,6 +23,9 @@ public static class ServiceCollectionExtensions
             resolver.Map(ErrorCodes.InvalidAuctionState, HttpStatusCode.Conflict);
             resolver.Map(ErrorCodes.InvalidLaunchPeriod, HttpStatusCode.BadRequest);
             resolver.Map(ErrorCodes.InvalidInitialPrice, HttpStatusCode.BadRequest);
+            resolver.Map(ErrorCodes.CategoriesEmpty, HttpStatusCode.BadRequest);
+            resolver.Map(ErrorCodes.TitleTooLong, HttpStatusCode.BadRequest);
+            resolver.Map(ErrorCodes.DescriptionTooLong, HttpStatusCode.BadRequest);
             
             resolver.Map(DuplicateUserNameCode, HttpStatusCode.BadRequest);
 

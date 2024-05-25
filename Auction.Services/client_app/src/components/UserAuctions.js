@@ -182,26 +182,23 @@ const LaunchAuctionButton = ({auctionId}) => {
     const {addError} = useContext(ErrorContext);
 
     const [isOpen, setIsOpen] = useState(false);
-    const [timeInterval, setTimeInterval] = useState({
-        amount: 1,
-        unit: 'hours',
-    });
+    const [amount, setAmount] = useState(1);
+    const [unit, setUnit] = useState('hours');
 
     const handleOpen = useCallback(e => setIsOpen(true), []);
     const handleClose = useCallback(e => setIsOpen(false), []);
 
-    const handleChange = useCallback((event) => {
-        const { name, value } = event.target;
-        setTimeInterval({
-            ...timeInterval,
-            [name]: value,
-        });
-    }, [timeInterval]);
+    const handleAmountChange = useCallback((event) => {
+        setAmount(prev => event.target.value >= 1 ? event.target.value : prev);
+    }, []);
+
+    const handleUnitChange = useCallback((event) => {
+        setUnit(event.target.value);
+    }, []);
 
     const handleSubmit = useCallback(async (e) => {
         e.preventDefault();
 
-        const { amount, unit } = timeInterval;
         let timeSpanString = '';
 
         const amountInt = parseInt(amount, 10);
@@ -236,7 +233,7 @@ const LaunchAuctionButton = ({auctionId}) => {
         else {
             navigate(`/auctions/${auctionId}`)
         }
-    }, []);
+    }, [amount, unit]);
 
     return (
         <>
@@ -251,14 +248,14 @@ const LaunchAuctionButton = ({auctionId}) => {
                             label="Количество"
                             name="amount"
                             type="number"
-                            value={timeInterval.amount}
-                            onChange={handleChange}
+                            value={amount}
+                            onChange={handleAmountChange}
                             fullWidth
                         />
                         <Select
                             name="unit"
-                            value={timeInterval.unit}
-                            onChange={handleChange}
+                            value={unit}
+                            onChange={handleUnitChange}
                             label="Unit"
                             fullWidth
                         >

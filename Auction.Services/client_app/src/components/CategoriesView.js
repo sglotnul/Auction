@@ -5,7 +5,7 @@ const CategoriesView = ({categories}) => {
     return (
         <div className="categories-view">
             {categories.map(c => (
-                <Link id={c.id} to={`/auctions?${getQueryString(c.id)}`}>
+                <Link key={c.id} to={`/auctions?${getQueryString(c.id)}`}>
                     <div className="category-view">{c.name}</div>
                 </Link>
             ))}

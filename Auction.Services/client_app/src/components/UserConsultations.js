@@ -2,7 +2,6 @@
 import React, {useContext, useEffect, useMemo, useState} from "react";
 import ErrorContext from "../contexts/ErrorContext";
 import {Checkbox, FormControlLabel} from "@mui/material";
-import AuctionCard from "./AuctionCard";
 import {Link} from "react-router-dom";
 import {getUserFullName} from "../models/functions";
 
@@ -71,13 +70,13 @@ const UserConsultations = ({user, userName}) => {
                 {checkedItems.started && !!splittedConsultations.started.length && <div className="auction-separator active">Active consultations</div>}
                 {checkedItems.started && splittedConsultations.started.map(
                     (c) => (
-                        <ConsultationCard consultation={c} user={user} />
+                        <ConsultationCard key={c.id} consultation={c} user={user} />
                     )
                 )}
                 {checkedItems.completed && !!splittedConsultations.completed.length && <div className="auction-separator">Completed consultations</div>}
                 {checkedItems.completed && splittedConsultations.completed.map(
                     (c) => (
-                        <ConsultationCard consultation={c} user={user} />
+                        <ConsultationCard key={c.id} consultation={c} user={user} />
                     )
                 )}
             </div>

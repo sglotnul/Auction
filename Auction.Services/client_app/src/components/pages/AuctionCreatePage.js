@@ -16,7 +16,10 @@ const AuctionCreatePage = () => {
 
     const [tab, setTab] = useState(0);
     const [enabledTab, setEnabledTab] = useState(0);
-    const [auctionFormData, setAuctionFormData] = useState({});
+    const [auctionFormData, setAuctionFormData] = useState({
+        initialPrice: 1,
+        minDecrease: 1,
+    });
     const [selectedCategories, setSelectedCategories] = useState([]);
 
     useEffect(() => {
@@ -76,7 +79,7 @@ const AuctionCreatePage = () => {
 
     const handleMoneyChange = (event) => {
         const newValue = parseFloat(event.target.value);
-        if (!isNaN(newValue) && newValue >= 0)
+        if (!isNaN(newValue) && newValue >= 1)
             setAuctionFormData(prev => { return { ...prev, [event.target.name]: newValue }});
     };
 
@@ -135,7 +138,7 @@ const AuctionCreatePage = () => {
                         <TextField
                             label="Initial Price"
                             name="initialPrice"
-                            value={(auctionFormData.initialPrice ?? 0).toFixed(2)}
+                            value={(auctionFormData.initialPrice).toFixed(2)}
                             onChange={handleMoneyChange}
                             margin="normal"
                             fullWidth
@@ -144,7 +147,7 @@ const AuctionCreatePage = () => {
                         <TextField
                             label="Minimum decrease"
                             name="minDecrease"
-                            value={(auctionFormData.minDecrease ?? 0).toFixed(2)}
+                            value={(auctionFormData.minDecrease).toFixed(2)}
                             onChange={handleMoneyChange}
                             margin="normal"
                             fullWidth

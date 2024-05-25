@@ -12,4 +12,7 @@ public static class ErrorCodes
     public const string InvalidAuctionState = "InvalidAuctionState";
     public const string InvalidLaunchPeriod = "InvalidLaunchPeriod";
     public const string InvalidInitialPrice = "InvalidInitialPrice";
+    public const string CategoriesEmpty = "CategoriesEmpty";
+    public const string TitleTooLong = "TitleTooLong";
+    public const string DescriptionTooLong = "DescriptionTooLong";
 }

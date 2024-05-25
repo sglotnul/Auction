@@ -2,7 +2,14 @@ export const ERROR_CODE_MESSAGES = {
     InternalServerError: 'Internal server error',
     InvalidUserNameOrPassword: "Invalid user name or password",
     NotFound: "Not found",
-    DuplicateUserName: "User with this name already exists",
+    InvalidRole: "Invalid role",
+    Forbidden: "Forbidden",
     InvalidBid: "Invalid bid",
-    Forbidden: "Forbidden"
+    AuctionAlreadyStarted: "Auction has already started",
+    InvalidLaunchPeriod: "Invalid launch period",
+    InvalidInitialPrice: "Invalid initial price",
+    CategoriesEmpty: "Choose from 1 to 10 categories",
+    TitleTooLong: "Title too long. Maximum length: 70 chars",
+    DescriptionTooLong: "Description too long. Maximum length: 512 chars",
+    DuplicateUserName: "User with this name already exists",
 }
