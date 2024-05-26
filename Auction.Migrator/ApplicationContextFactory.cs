@@ -13,9 +13,10 @@ public class ApplicationContextFactory : IDesignTimeDbContextFactory<AppDbContex
 {
 	public AppDbContext CreateDbContext(string[] args)
 	{
-		var connectionString = ConfigurationHelper.CreateConfiguration()
-			.GetConnectionString("DefaultConnection") 
-				?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+		var connectionFromEnv = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+		
+		var connectionString = connectionFromEnv ?? ConfigurationHelper.CreateConfiguration().GetConnectionString("DefaultConnection") 
+			?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 		
 		var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 		optionsBuilder.UseNpgsql(
