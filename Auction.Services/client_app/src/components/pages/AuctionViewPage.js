@@ -111,13 +111,14 @@ const BidList = ({auction, auctionLoading}) => {
     }
     
     const currentPrice = bids.currentPrice ?? auction.initialPrice;
+
     const endTime = new Date(auction.endAt);
     const showTimer = new Date() < endTime
 
     return (
         <div className="auction-bids">
             {showTimer && <Timer endTime={endTime} onEnd={onTimeEnd} />}
-            <BidButton auctionId={auction.id} visible={buttonVisible} currentPrice={currentPrice} minDecrease={auction.minDecrease} onAction={reload}/>
+            <BidButton auctionId={auction.id} visible={showTimer && buttonVisible} currentPrice={currentPrice} minDecrease={auction.minDecrease} onAction={reload}/>
             {!bids.bids?.length && <div className="no-bids">no bids</div>}
             {bids.bids?.map((b, i) => (
                 <Fragment key={b.id}>

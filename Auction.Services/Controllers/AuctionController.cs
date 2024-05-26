@@ -86,14 +86,7 @@ public class AuctionController : ControllerBase
 		if (auction is null)
 			return ErrorCode(ErrorCodes.NotFound);
 		
-		var userId = _userManager.GetUserId(HttpContext.User);
-		if (userId != auction.User.UserId && !AuctionRunning())
-			return ErrorCode(ErrorCodes.NotFound);
-		
 		return Json(auction);
-
-		bool AuctionRunning()
-			=> auction.Status == AuctionStatus.Started && auction.EndAt > DateTime.UtcNow;
 	}
 
 	[HttpPost("create")]
@@ -314,10 +307,6 @@ public class AuctionController : ControllerBase
 		if (auction is null)
 			return ErrorCode(ErrorCodes.NotFound);
 		
-		var userId = _userManager.GetUserId(HttpContext.User);
-		if (userId != auction.UserId && !GetAuctionRunningExpression().Compile().Invoke(auction))
-			return ErrorCode(ErrorCodes.NotFound);
-
 		var bids = auction.Bids
 			.Where(b => b.AuctionId == id)
 			.Select(b => new BidResponse
