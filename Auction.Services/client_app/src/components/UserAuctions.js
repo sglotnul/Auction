@@ -299,6 +299,7 @@ const LaunchAuctionButton = ({auctionId}) => {
                             type="number"
                             value={amount}
                             onChange={handleAmountChange}
+                            sx={{marginBottom: '8px'}}
                             fullWidth
                         />
                         <Select
@@ -307,6 +308,7 @@ const LaunchAuctionButton = ({auctionId}) => {
                             onChange={handleUnitChange}
                             label="Unit"
                             fullWidth
+                            sx={{marginBottom: '8px'}}
                         >
                             <MenuItem value="minutes">Minutes</MenuItem>
                             <MenuItem value="hours">Hours</MenuItem>
