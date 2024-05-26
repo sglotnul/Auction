@@ -22,12 +22,13 @@ services:
       - ConnectionStrings__DefaultConnection=User ID=dmon;Password=A1mostdone;Host=db;Port=5432;Database=dmondb;
     depends_on:
       - db
+    restart: on-failure:3
 
-  app:
+  services:
     build:
       context: .
       dockerfile: Services.Dockerfile 
-    container_name: myapp_container
+    container_name: auction_container
     ports:
       - "8080:8080"
     environment:
