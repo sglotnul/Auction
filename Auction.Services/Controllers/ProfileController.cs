@@ -36,6 +36,7 @@ public class ProfileController : ControllerBase
 		var result = new ProfileResponse
 		{
 			Id = profile.Id,
+			Email = profile.Email,
 			FirstName = profile.FirstName,
 			LastName = profile.LastName,
 			BirthDate = profile.BirthDate,
@@ -54,6 +55,9 @@ public class ProfileController : ControllerBase
 		if (user is null)
 			throw new InvalidDataException("Authorized user not found.");
 		
+		if (profileRequest.Email is not null && !EmailValidator.IsValidEmail(profileRequest.Email))
+			return ErrorCode(ErrorCodes.InvalidEmail);
+		
 		if (profileRequest.FirstName?.Length > 32)
 			return ErrorCode(ErrorCodes.FirstNameTooLong);
 		
@@ -69,6 +73,7 @@ public class ProfileController : ControllerBase
 		var newProfile = new Profile
 		{
 			UserId = user.Id,
+			Email = profileRequest.Email?.Trim(),
 			FirstName = profileRequest.FirstName?.Trim(),
 			LastName = profileRequest.LastName?.Trim(),
 			BirthDate = profileRequest.BirthDate?.Date,
@@ -84,6 +89,7 @@ public class ProfileController : ControllerBase
 		var result = new ProfileResponse
 		{
 			Id = profile.Id,
+			Email = profile.Email,
 			FirstName = profile.FirstName,
 			LastName = profile.LastName,
 			BirthDate = profile.BirthDate,

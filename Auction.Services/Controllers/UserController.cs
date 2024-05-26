@@ -34,12 +34,16 @@ public class UserController : ControllerBase
             ? null
             : new Profile
             {
+                Email = request.Profile.Email?.Trim(),
                 FirstName = request.Profile.FirstName?.Trim(),
                 LastName = request.Profile.LastName?.Trim(),
                 BirthDate = request.Profile.BirthDate?.Date,
                 Biography = request.Profile.Biography?.Trim(),
                 Education = request.Profile.Education?.Trim()
             };
+        
+        if (request.Profile?.Email is not null && !EmailValidator.IsValidEmail(request.Profile.Email))
+            return ErrorCode(ErrorCodes.InvalidEmail);
         
         if (request.Profile?.FirstName?.Length > 32)
             return ErrorCode(ErrorCodes.FirstNameTooLong);

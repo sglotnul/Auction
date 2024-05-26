@@ -31,6 +31,7 @@ public static class ServiceCollectionExtensions
             resolver.Map(ErrorCodes.LastNameTooLong, HttpStatusCode.BadRequest);
             resolver.Map(ErrorCodes.EducationTooLong, HttpStatusCode.BadRequest);
             resolver.Map(ErrorCodes.BiographyTooLong, HttpStatusCode.BadRequest);
+            resolver.Map(ErrorCodes.InvalidEmail, HttpStatusCode.BadRequest);
             
             resolver.Map(DuplicateUserNameCode, HttpStatusCode.BadRequest);
             resolver.Map(PasswordTooShort, HttpStatusCode.BadRequest);

@@ -1,5 +1,17 @@
 ﻿import React from "react";
-import { List, Datagrid, TextField, DateField, EditButton, Edit, SimpleForm, TextInput, DateInput, Create } from "react-admin";
+import {
+    List,
+    Datagrid,
+    TextField,
+    DateField,
+    EditButton,
+    Edit,
+    SimpleForm,
+    TextInput,
+    DateInput,
+    Create,
+    EmailField
+} from "react-admin";
 
 const postFilters = [
     <TextInput label="Search" name="name" source="name" alwaysOn />,
@@ -10,6 +22,7 @@ export const ProfileList = (props) => (
         <Datagrid rowClick="edit">
             <TextField sortable={false} source="id" />
             <TextField sortable={false} source="userId" />
+            <EmailField sortable={false} source="email" />
             <TextField sortable={false} source="firstName" />
             <TextField sortable={false} source="lastName" />
             <DateField sortable={false} source="birthDate" />
@@ -24,6 +37,7 @@ export const ProfileEdit = (props) => (
     <Edit {...props}>
         <SimpleForm>
             <TextInput source="userId" name="userId" />
+            <TextInput source="email" name="email" />
             <TextInput source="firstName" name="firstName" />
             <TextInput source="lastName" name="lastName" />
             <DateInput source="birthDate" name="birthDate" />
@@ -37,6 +51,7 @@ export const ProfileCreate = (props) => (
     <Create {...props}>
         <SimpleForm>
             <TextInput source="userId" name="userId" />
+            <TextInput source="email" name="email" />
             <TextInput source="firstName" name="firstName" />
             <TextInput source="lastName" name="lastName" />
             <DateInput source="birthDate" name="birthDate" />

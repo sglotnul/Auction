@@ -95,6 +95,15 @@ const UserProfile = ({user, userName}) => {
                 <div className="profile-data-container">
                     <ProfileField
                         editable={edit}
+                        label="Email"
+                        name="email"
+                        value={profile?.email}
+                        onChange={handleProfileInputChange}
+                        disabled={!canEdit}
+                        fullWidth
+                    />
+                    <ProfileField
+                        editable={edit}
                         label="First name"
                         name="firstName"
                         value={profile?.firstName}

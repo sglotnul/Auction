@@ -154,6 +154,14 @@ const RegisterPage = () => {
                 <form onSubmit={handleSubmit}>
                     <div className="default-input-container">
                         <TextField
+                            label="Email"
+                            name="email"
+                            value={profileFormData?.email}
+                            onChange={handleProfileInputChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                        <TextField
                             label="First name"
                             name="firstName"
                             value={profileFormData?.firstName}

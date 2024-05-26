@@ -16,6 +16,7 @@ export const ERROR_CODE_MESSAGES = {
     LastNameTooLong: 'Last name too long. Maximum value: 32 chars',
     EducationTooLong: 'Education too long. Maximum value: 32 chars',
     BiographyTooLong: 'Biography too long. Maximum value: 32 chars',
+    InvalidEmail: 'Invalid email',
     DuplicateUserName: 'User with this name already exists',
     PasswordConfirmationFailed: 'Passwords do not match',
     PasswordTooShort: 'Passwords must be at least 6 characters',

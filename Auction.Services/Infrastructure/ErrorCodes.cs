@@ -20,4 +20,5 @@ public static class ErrorCodes
     public const string LastNameTooLong = "LastNameTooLong";
     public const string EducationTooLong = "EducationTooLong";
     public const string BiographyTooLong = "BiographyTooLong";
+    public const string InvalidEmail = "InvalidEmail";
 }
