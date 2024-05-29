@@ -1,5 +1,5 @@
 import React from 'react';
-import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import {BrowserRouter as Router, Navigate, Route, Routes} from 'react-router-dom';
 import LoginPage from './components/pages/LoginPage';
 import RegisterPage from './components/pages/RegisterPage';
 import AuctionsPage from './components/pages/AuctionsPage';
@@ -28,7 +28,7 @@ const App = () => {
                       <Route path="/auctions/:auctionId" element={<AuctionViewPage />} />
                       <Route path="/auctions/:auctionId/edit" element={<AuctionEditPage />} />
                       <Route path="/auctions/new" element={<AuctionCreatePage />} />
-                      <Route path="" element={<AuctionsPage />} />
+                      <Route path="*" element={<Navigate to="/auctions" />} />
                   </Routes>
               </DefaultPageLayout>
           </Router>
