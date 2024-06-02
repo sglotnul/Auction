@@ -59,7 +59,7 @@ const AuctionView = ({auction, auctionLoading}) => {
             </Link>
             <h2>{auction.title}</h2>
             <div className="auction-description-row">
-                {formatDate(auction.startAt)}
+                {auction.startAt && formatDate(auction.startAt)}
             </div>
             <div className="auction-description-row">
                 <CategoriesView categories={auction.categories}/>
@@ -209,6 +209,13 @@ const BidButton = ({auctionId, visible, currentPrice, minDecrease, onAction}) =>
 }
 
 const Description = ({ description }) => {
+    if (!description) {
+        return (
+            <div className="auction-description-row">
+            </div>
+        );
+    }
+
     const lines = description.split('\n');
 
     return (

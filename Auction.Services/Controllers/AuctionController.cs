@@ -103,10 +103,10 @@ public class AuctionController : ControllerBase
 		if (request.InitialPrice < 1 || request.InitialPrice < request.MinDecrease)
 			return ErrorCode(ErrorCodes.InvalidInitialPrice);
 
-		if (request.Title.Length > 70)
+		if (request.Title.Length > 120)
 			return ErrorCode(ErrorCodes.TitleTooLong);
 		
-		if (request.Description.Length > 512)
+		if (request.Description.Length > 2048)
 			return ErrorCode(ErrorCodes.DescriptionTooLong);
 
 		var categories = await _dbContext.Categories.Where(c => request.Categories.Contains(c.Id)).ToListAsync();
@@ -152,10 +152,10 @@ public class AuctionController : ControllerBase
 		if (request.InitialPrice < 1 || request.InitialPrice < request.MinDecrease)
 			return ErrorCode(ErrorCodes.InvalidInitialPrice);
 		
-		if (request.Title.Length > 70)
+		if (request.Title.Length > 120)
 			return ErrorCode(ErrorCodes.TitleTooLong);
 		
-		if (request.Description.Length > 512)
+		if (request.Description.Length > 2048)
 			return ErrorCode(ErrorCodes.DescriptionTooLong);
 		
 		var categories = await _dbContext.Categories.Where(c => request.Categories.Contains(c.Id)).Distinct().ToListAsync();

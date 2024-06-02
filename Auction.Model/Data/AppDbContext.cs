@@ -64,8 +64,8 @@ public class AppDbContext : IdentityDbContext<User>
 					j => j.HasOne<Category>().WithMany().HasForeignKey("CategoryId"),
 					j => j.HasOne<Auction>().WithMany().HasForeignKey("AuctionId"));
 
-			entity.Property(e => e.Title).HasMaxLength(70);
-			entity.Property(e => e.Description).HasMaxLength(512);
+			entity.Property(e => e.Title).HasMaxLength(120);
+			entity.Property(e => e.Description).HasMaxLength(2048);
 		});
 		
 		modelBuilder.Entity<Category>(entity =>

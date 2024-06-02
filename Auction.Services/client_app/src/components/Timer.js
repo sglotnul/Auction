@@ -25,15 +25,16 @@ const Timer = ({ endTime, onEnd }) => {
             return { hours: 0, minutes: 0, seconds: 0 };
         }
 
-        const hours = Math.floor((difference / 1000 / 60 / 60));
+        const days = Math.floor((difference / 1000 / 60 / 60 / 24));
+        const hours = Math.floor((difference / 1000 / 60 / 60 % 24));
         const minutes = Math.floor((difference / 1000 / 60) % 60);
         const seconds = Math.floor((difference / 1000) % 60);
 
-        return { hours, minutes, seconds };
+        return { days, hours, minutes, seconds };
     }
 
-    const formatTime = ({ hours, minutes, seconds }) => {
-        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    const formatTime = ({ days, hours, minutes, seconds }) => {
+        return `${String(days).padStart(2, '0')}:${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     };
 
     return (

@@ -212,11 +212,13 @@ footer {
 }
 
 .auction-card-title { 
+  display: block;
   color: #468ffd;
   line-height: 1.5em;
   font-size: 21px;
   font-weight: 700;
   margin-bottom: 12px;
+  max-width: calc(100% - 260px);
 }
 
 .auction-card-outer-link {
@@ -330,7 +332,6 @@ footer {
 
 .auction-page {
   display: flex;
-  flex-wrap: wrap;
 }
 
 .auction-owner-view {
@@ -350,7 +351,7 @@ footer {
 }
 
 .auction-container {
-  width: 900px;
+  width: 840px;
   padding: 20px;
   box-sizing: border-box;
   margin-right: 20px;
