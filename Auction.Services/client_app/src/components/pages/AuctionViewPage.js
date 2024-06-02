@@ -126,7 +126,7 @@ const BidList = ({auction, auctionLoading}) => {
                         <Link to={`/profile/${b.user.userName}`}><span
                             className="profile-icon auction-bid-icon"/></Link>
                         <div className="auction-bid-content">
-                            <Link to={`/profile/${b.user.userName}`}><span>{b.user.userName}{b.user.userId === user?.userId && ' (You)'}</span></Link>
+                            <Link to={`/profile/${b.user.userName}`}><span>{getUserFullName(b.user.userName, b.user.profile)}{b.user.userId === user?.userId && ' (You)'}</span></Link>
                             <span className="auction-bid-amount">{b.amount.toFixed(2)}</span>
                             <span className="auction-bid-comment">{b.comment}</span>
                         </div>

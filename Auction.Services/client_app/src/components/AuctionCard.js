@@ -35,7 +35,7 @@ const AuctionCard = ({auction, children}) => {
                                 className="profile-icon auction-bid-icon"/></Link>
                             <div className="auction-bid-content">
                                 <Link
-                                    to={`/profile/${auction.currentBid.user.userName}`}><span>{auction.currentBid.user.userName}</span></Link>
+                                    to={`/profile/${auction.currentBid.user.userName}`}><span>{getUserFullName(auction.currentBid.user.userName, auction.currentBid.user.profile)}</span></Link>
                                 <span className="auction-bid-amount">{auction.currentBid.amount.toFixed(2)}</span>
                             </div>
                         </div>
