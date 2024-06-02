@@ -4,7 +4,6 @@ import {useNavigate} from "react-router-dom";
 import AuthContext from "../../contexts/AuthContext";
 import ErrorContext from "../../contexts/ErrorContext";
 import ErrorCode from "../../models/ErrorCode";
-import {ERROR_CODE_MESSAGES} from "../../models/errorCodes";
 
 const RegisterPage = () => {
     const navigate = useNavigate();
@@ -15,9 +14,9 @@ const RegisterPage = () => {
     const [tab, setTab] = useState(0);
     const [enabledTab, setEnabledTab] = useState(0);
     const [userFormData, setUserFormData] = useState({
-        username: undefined,
-        password: undefined,
-        confirmPassword: undefined,
+        username: '',
+        password: '',
+        confirmPassword: '',
         role: 1
     });
     const [profileFormData, setProfileFormData] = useState(undefined);
@@ -66,7 +65,7 @@ const RegisterPage = () => {
         setUserFormData(prev => {
             let value = event.target.value;
             
-            if (!regex.test(event.target.value)) {
+            if (!regex.test(value)) {
                 value = prev[event.target.name];
             }
             
