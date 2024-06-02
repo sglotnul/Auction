@@ -192,6 +192,9 @@ public class AuctionController : ControllerBase
 
 		if (request.Period < TimeSpan.FromMinutes(1))
 			return ErrorCode(ErrorCodes.InvalidLaunchPeriod);
+		
+		if (request.Period > TimeSpan.FromDays(30))
+			return ErrorCode(ErrorCodes.InvalidLaunchPeriod);
 
 		var currentDateTimeUtc = DateTime.UtcNow;
 		auction.Status = AuctionStatus.Started;
