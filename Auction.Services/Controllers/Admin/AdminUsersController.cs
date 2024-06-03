@@ -75,7 +75,6 @@ public class AdminUsersController : Controller
 
         user.UserName = request.UserName;
         user.Role = request.Role;
-        user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, request.Password);
         
         try
         {
@@ -115,7 +114,7 @@ public class AdminUsersController : Controller
 
         try
         {
-            var result = await _userManager.CreateAsync(user, request.Password);
+            var result = await _userManager.CreateAsync(user, request.Password!);
             if (!result.Succeeded)
                 return BadRequest();
         }
@@ -154,7 +153,7 @@ public class AdminUsersController : Controller
     public class UserRequest
     {
         public string UserName { get; init; } = null!;
-        public string Password { get; init; } = null!;
+        public string? Password { get; init; }
         public Role Role { get; init; }
     }
     

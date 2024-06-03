@@ -40,7 +40,7 @@ const LoginPage = () => {
             <form onSubmit={handleSubmit}>
                 <div className="default-input-container">
                     <TextField
-                        label="User name"
+                        label="Имя пользователя"
                         name="username"
                         value={username}
                         onChange={e => setUsername(e.target.value)}
@@ -49,7 +49,7 @@ const LoginPage = () => {
                         required
                     />
                     <TextField
-                        label="Password"
+                        label="Пароль"
                         name="password"
                         type="password"
                         value={password}
@@ -60,7 +60,7 @@ const LoginPage = () => {
                     />
                     </div>
                 <Button type="submit" variant="contained" fullWidth>
-                    Login
+                    Войти
                 </Button>
             </form>
         </div>

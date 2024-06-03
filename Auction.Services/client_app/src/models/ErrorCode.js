@@ -12,7 +12,7 @@ class ErrorCode {
     
     message() {
         if (!ERROR_CODE_MESSAGES.hasOwnProperty(this.code)) {
-            return 'Unexpected error';
+            return 'Ошибка';
         }
         
         return ERROR_CODE_MESSAGES[this.code];

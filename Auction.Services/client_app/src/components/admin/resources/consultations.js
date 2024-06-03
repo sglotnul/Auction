@@ -22,13 +22,13 @@ const postFilters = [
 export const ConsultationList = (props) => (
     <List filters={postFilters} {...props}>
         <Datagrid rowClick="edit">
-            <TextField sortable={false} source="id" />
-            <TextField sortable={false} source="startAt" />
-            <TextField sortable={false} source="status" />
-            <TextField sortable={false} source="consultantId" />
-            <TextField sortable={false} source="studentId" />
-            <TextField sortable={false} source="auctionId" />
-            <TextField sortable={false} source="bidId" />
+            <TextField sortable={false} source="id" label="Идентификатор"/>
+            <TextField sortable={false} source="startAt" label="Время начала"/>
+            <TextField sortable={false} source="status" label="Статус"/>
+            <TextField sortable={false} source="consultantId" label="Идентификатор консультанта"/>
+            <TextField sortable={false} source="studentId" label="Идентификатор студента" />
+            <TextField sortable={false} source="auctionId" label="Идентификатор лота"/>
+            <TextField sortable={false} source="bidId" label="Идентификатор ставки" />
             <EditButton />
         </Datagrid>
     </List>
@@ -37,12 +37,12 @@ export const ConsultationList = (props) => (
 export const ConsultationEdit = (props) => (
     <Edit {...props}>
         <SimpleForm>
-            <DateTimeInput name="startAt" source="startAt"/>
-            <NumberInput required source="status" name="status"/>
-            <TextInput required source="consultantId" name="consultantId"/>
-            <TextInput required source="studentId" name="studentId"/>
-            <NumberInput required source="auctionId" name="auctionId"/>
-            <NumberInput required source="bidId" name="bidId"/>
+            <DateTimeInput name="startAt" source="startAt" label="Время начала"/>
+            <NumberInput required source="status" name="status" label="Статус"/>
+            <TextInput required source="consultantId" name="consultantId" label="Идентификатор консультанта"/>
+            <TextInput required source="studentId" name="studentId" label="Идентификатор студента"/>
+            <NumberInput required source="auctionId" name="auctionId" label="Идентификатор лота"/>
+            <NumberInput required source="bidId" name="bidId" label="Идентификатор ставки"/>
         </SimpleForm>
     </Edit>
 );
@@ -50,12 +50,12 @@ export const ConsultationEdit = (props) => (
 export const ConsultationCreate = (props) => (
     <Create {...props}>
         <SimpleForm>
-            <DateTimeInput name="startAt" source="startAt"/>
-            <NumberInput required source="status" name="status"/>
-            <TextInput required source="consultantId" name="consultantId"/>
-            <TextInput required source="studentId" name="studentId"/>
-            <NumberInput required source="auctionId" name="auctionId"/>
-            <NumberInput required source="bidId" name="bidId"/>
+            <DateTimeInput name="startAt" source="startAt" label="Время начала"/>
+            <NumberInput required source="status" name="status" label="Статус"/>
+            <TextInput required source="consultantId" name="consultantId" label="Идентификатор консультанта"/>
+            <TextInput required source="studentId" name="studentId" label="Идентификатор студента"/>
+            <NumberInput required source="auctionId" name="auctionId" label="Идентификатор лота"/>
+            <NumberInput required source="bidId" name="bidId" label="Идентификатор ставки"/>
         </SimpleForm>
     </Create>
 );

@@ -1,6 +1,7 @@
 ﻿import { formatDistanceToNow, parseISO, format } from 'date-fns';
+import { ru } from 'date-fns/locale';
 
-export function getUserFullName(userName, profile){
+export function getUserFullName(userName, profile) {
     if (!profile?.firstName && !profile?.lastName) {
         return userName;
     }
@@ -10,12 +11,15 @@ export function getUserFullName(userName, profile){
 
 export function formatTimeRemaining(utcString) {
     const targetDate = parseISO(utcString);
-    const timeLeft = formatDistanceToNow(targetDate, { addSuffix: true }).replace('in ', '').replace('about ', '');
+    const timeLeft = formatDistanceToNow(targetDate, { addSuffix: true, locale: ru })
+        .replace('через ', '')
+        .replace('приблизительно ', '');
 
-    return `${timeLeft} left`;
+    return `${timeLeft} осталось`;
 }
+
 export function formatDate(utcDateString) {
     const date = parseISO(utcDateString);
 
-    return format(date, "d MMMM yyyy, HH:mm", { locale: undefined });
+    return format(date, "d MMMM yyyy, HH:mm", { locale: ru });
 }

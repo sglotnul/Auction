@@ -58,7 +58,7 @@ const UserConsultations = ({user, userName}) => {
         return (
             <div className="profile-page-content">
                 <div className="profile-auctions-container">
-                    Error.
+                    Ошибка.
                 </div>
             </div>
         );
@@ -75,8 +75,8 @@ const UserConsultations = ({user, userName}) => {
         <div className="profile-page-content">
             <div className="profile-auctions-container">
                 <ConsultationStatusFilter started={checkedItems.started} completed={checkedItems.completed} onChange={handleChange}/>
-                {!consultations.length && 'Nothing found'}
-                {checkedItems.started && !!splittedConsultations.started.length && <div className="auction-separator active">Active consultations</div>}
+                {!consultations.length && 'Ничего не найдено'}
+                {checkedItems.started && !!splittedConsultations.started.length && <div className="auction-separator active">Активные консультации</div>}
                 {checkedItems.started && splittedConsultations.started.map(
                     (c) => (
                         <ConsultationCard key={c.id} consultation={c} user={user}>
@@ -88,7 +88,7 @@ const UserConsultations = ({user, userName}) => {
                     )
                 )}
                 {checkedItems.completed && !!splittedConsultations.completed.length &&
-                    <div className="auction-separator">Completed consultations</div>}
+                    <div className="auction-separator">Завершенные консультации</div>}
                 {checkedItems.completed && splittedConsultations.completed.map(
                     (c) => (
                         <ConsultationCard key={c.id} consultation={c} user={user} />
@@ -102,7 +102,7 @@ const UserConsultations = ({user, userName}) => {
 const ConsultationCard = ({consultation, user, children}) => {
     
     const getFullName = (u) => {
-        return `${getUserFullName(u.userName, u.profile)}${u.userId === user.userId ? ' (You)' : ''}`
+        return `${getUserFullName(u.userName, u.profile)}${u.userId === user.userId ? ' (Вы)' : ''}`
     }
     
     return (
@@ -120,7 +120,7 @@ const ConsultationCard = ({consultation, user, children}) => {
                 </Link>
                 <Link to={`/profile/${consultation.consultant.userName}`}>
                     <span className="consultation-member-name">{getFullName(consultation.consultant)}</span>
-                    <span className="consultation-member-role">consultant</span>
+                    <span className="consultation-member-role">Консультант</span>
                 </Link>
             </div>
             <div className="consultation-member">
@@ -129,7 +129,7 @@ const ConsultationCard = ({consultation, user, children}) => {
                 </Link>
                 <Link to={`/profile/${consultation.student.userName}`}>
                     <span className="consultation-member-name">{getFullName(consultation.student)}</span>
-                    <span className="consultation-member-role">student</span>
+                    <span className="consultation-member-role">Студент</span>
                 </Link>
             </div>
             <div className="consultation-card-price">
@@ -158,7 +158,7 @@ const CancelButton = ({consultationId, onAction}) => {
         }
     }, []);
 
-    return (<Button variant="contained" color="error" onClick={handleClick}>Cancel</Button>);
+    return (<Button variant="contained" color="error" onClick={handleClick}>Отменить</Button>);
 };
 
 const CompleteButton = ({consultationId, onAction}) => {
@@ -180,7 +180,7 @@ const CompleteButton = ({consultationId, onAction}) => {
         }
     }, []);
 
-    return (<Button variant="contained" color="success" onClick={handleClick}>Complete</Button>);
+    return (<Button variant="contained" color="success" onClick={handleClick}>Завершить</Button>);
 };
 
 const ConsultationStatusFilter = ({started, completed, onChange}) => {
@@ -195,7 +195,7 @@ const ConsultationStatusFilter = ({started, completed, onChange}) => {
                             name="started"
                         />
                     }
-                    label="Active"
+                    label="Активные"
                 />
             </div>
             <div className="auction-type-filter-item">
@@ -207,7 +207,7 @@ const ConsultationStatusFilter = ({started, completed, onChange}) => {
                             name="completed"
                         />
                     }
-                    label="Completed"
+                    label="Завершенные"
                 />
             </div>
         </div>

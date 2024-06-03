@@ -18,9 +18,9 @@ const postFilters = [
 export const UserList = (props) => (
     <List filters={postFilters} {...props}>
         <Datagrid rowClick="edit">
-            <TextField sortable={false} source="id" />
-            <TextField sortable={false} source="userName" />
-            <TextField sortable={false} source="role" />
+            <TextField sortable={false} source="id" label="Идентификатор"/>
+            <TextField sortable={false} source="userName" label="Имя пользователя"/>
+            <TextField sortable={false} source="role" label="Роль"/>
             <EditButton />
         </Datagrid>
     </List>
@@ -29,14 +29,14 @@ export const UserList = (props) => (
 export const UserEdit = (props) => (
     <Edit {...props}>
         <SimpleForm>
-            <TextInput required source="userName" name="userName" />
-            <PasswordInput required source="password" name="password" />
-            <SelectInput 
-                source="role" 
+            <TextInput source="userName" name="userName" label="Имя пользователя"/>
+            <SelectInput
+                source="role"
+                label="Роль"
                 choices={[
-                    { id: 1, name: 'Student' },
-                    { id: 2, name: 'Consultant' },
-                    { id: 3, name: 'Admin' },
+                    { id: 1, name: 'Студент' },
+                    { id: 2, name: 'Консультант' },
+                    { id: 3, name: 'Администратор' },
                 ]} 
             />
         </SimpleForm>
@@ -46,14 +46,16 @@ export const UserEdit = (props) => (
 export const UserCreate = (props) => (
     <Create {...props}>
         <SimpleForm>
-            <TextInput required source="userName" name="userName" />
-            <PasswordInput required source="password" name="password" />
+            <TextInput required source="userName" name="userName" label="Имя пользователя"/>
+            <PasswordInput required source="password" name="password" label="Пароль"/>
             <SelectInput
+                required
                 source="role"
+                label="Роль"
                 choices={[
-                    { id: 1, name: 'Student' },
-                    { id: 2, name: 'Consultant' },
-                    { id: 2, name: 'Admin' },
+                    { id: 1, name: 'Студент' },
+                    { id: 2, name: 'Консультант' },
+                    { id: 3, name: 'Администратор' },
                 ]}
             />
         </SimpleForm>

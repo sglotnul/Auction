@@ -20,15 +20,15 @@ const postFilters = [
 export const AuctionList = (props) => (
     <List filters={postFilters} {...props}>
         <Datagrid rowClick="edit">
-            <TextField sortable={false} source="id" />
-            <TextField sortable={false} source="title" />
-            <TextField sortable={false} source="description" />
-            <TextField sortable={false} source="status" />
-            <TextField sortable={false} source="startAt" />
-            <TextField sortable={false} source="endAt" />
-            <NumberField sortable={false} source="initialPrice" />
-            <NumberField sortable={false} source="minDecrease" />
-            <TextField sortable={false} source="userId" />
+            <TextField sortable={false} label="Идентификатор" source="id" />
+            <TextField sortable={false} label="Заголовок" source="title" />
+            <TextField sortable={false} label="Описание" source="description" />
+            <TextField sortable={false} label="Статус" source="status" />
+            <TextField sortable={false} label="Время начала" source="startAt" />
+            <TextField sortable={false} label="Время окончания" source="endAt" />
+            <NumberField sortable={false} label="Начальная цена" source="initialPrice" />
+            <NumberField sortable={false} label="Минимальное снижение" source="minDecrease" />
+            <TextField sortable={false} label="Идентификатор пользователя" source="userId" />
             <EditButton />
         </Datagrid>
     </List>
@@ -37,14 +37,14 @@ export const AuctionList = (props) => (
 export const AuctionEdit = (props) => (
     <Edit {...props}>
         <SimpleForm>
-            <TextInput required source="title" name="title"/>
-            <TextInput required source="description" name="description"/>
-            <NumberInput required source="status" name="status"/>
-            <DateTimeInput  source="startAt" name="startAt"/>
-            <DateTimeInput source="endAt" name="endAt" />
-            <NumberInput required source="initialPrice" name="initialPrice" />
-            <NumberInput required source="minDecrease" name="minDecrease" />
-            <TextInput required source="userId" name="userId" />
+            <TextInput required source="title" label="Заголовок" name="title"/>
+            <TextInput required source="description" label="Описание" name="description"/>
+            <NumberInput required source="status" label="Статус" name="status"/>
+            <DateTimeInput  source="startAt" label="Время начала" name="startAt"/>
+            <DateTimeInput source="endAt" label="Время окончания" name="endAt" />
+            <NumberInput required source="initialPrice" label="Начальная цена" name="initialPrice" />
+            <NumberInput required source="minDecrease" label="Минимальное снижение" name="minDecrease" />
+            <TextInput required source="userId" label="Идентификатор пользователя" name="userId" />
         </SimpleForm>
     </Edit>
 );
@@ -52,14 +52,14 @@ export const AuctionEdit = (props) => (
 export const AuctionCreate = (props) => (
     <Create {...props}>
         <SimpleForm>
-            <TextInput required source="title" name="title" />
-            <TextInput required source="description" name="description" />
-            <NumberInput required source="status" name="status"/>
-            <DateTimeInput source="startAt" name="startAt" />
-            <DateTimeInput source="endAt" name="endAt" />
-            <NumberInput required source="initialPrice" name="initialPrice" />
-            <NumberInput required source="minDecrease" name="minDecrease" />
-            <TextInput required source="userId" name="userId" />
+            <TextInput required source="title" label="Заголовок" name="title"/>
+            <TextInput required source="description" label="Описание" name="description"/>
+            <NumberInput required source="status" label="Статус" name="status"/>
+            <DateTimeInput  source="startAt" label="Время начала" name="startAt"/>
+            <DateTimeInput source="endAt" label="Время окончания" name="endAt" />
+            <NumberInput required source="initialPrice" label="Начальная цена" name="initialPrice" />
+            <NumberInput required source="minDecrease" label="Минимальное снижение" name="minDecrease" />
+            <TextInput required source="userId" label="Идентификатор пользователя" name="userId" />
         </SimpleForm>
     </Create>
 );

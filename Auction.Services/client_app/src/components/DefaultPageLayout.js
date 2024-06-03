@@ -10,7 +10,7 @@ const Header = () => {
         <header>
             <div className="wrapper">
                 <div className="header-container">
-                    <Link to="/"><h1>Auction</h1></Link>
+                    <Link to="/"><h1>Аукцион</h1></Link>
                     <ProfileIcon/>
                 </div>
             </div>
@@ -22,7 +22,7 @@ const Footer = () => {
     return (
         <footer>
             <div className="wrapper">
-                <Link to="/"><h1>Auction</h1></Link>
+                <Link to="/"><h1>Аукцион</h1></Link>
             </div>
         </footer>
     );
@@ -78,8 +78,8 @@ const ProfileIcon = () => {
         : !user
             ? (
                 <div className="sing-in-bar">
-                    <Link className="sing-up-link" to='/register'>Sing Up</Link>
-                    <Link className="sing-in-link" to='/login'>Sing In</Link>
+                    <Link className="sing-up-link" to='/register'>Регистрация</Link>
+                    <Link className="sing-in-link" to='/login'>Вход</Link>
                 </div>
             )
             : (

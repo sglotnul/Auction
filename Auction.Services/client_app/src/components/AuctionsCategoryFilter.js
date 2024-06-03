@@ -33,7 +33,7 @@ const AuctionsCategoryFilter = ({initialCategories, onSubmit}) => {
     }
 
     if (!categories) {
-        return 'Error.'
+        return 'Ошибка.'
     }
 
     const updateSelectedCategories = (categoryId) => (e) => {
@@ -66,7 +66,7 @@ const AuctionsCategoryFilter = ({initialCategories, onSubmit}) => {
                 fullWidth
                 onClick={onButtonClick}
             >
-                Submit
+                Подтвердить
             </Button>
         </div>
     );

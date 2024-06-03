@@ -85,15 +85,15 @@ const RegisterPage = () => {
     return (
         <div className="default-container">
             <div className="tab-bar default-tabs">
-                <div className={enabledTab >= 0 ? 'tab' : 'tab disabled'} onClick={changeTab(0)}>Account</div>
-                <div className={enabledTab >= 1 ? 'tab' : 'tab disabled'} onClick={changeTab(1)}>Role</div>
-                <div className={enabledTab >= 2 ? 'tab' : 'tab disabled'} onClick={changeTab(2)}>Profile</div>
+                <div className={enabledTab >= 0 ? 'tab' : 'tab disabled'} onClick={changeTab(0)}>Аккаунт</div>
+                <div className={enabledTab >= 1 ? 'tab' : 'tab disabled'} onClick={changeTab(1)}>Роль</div>
+                <div className={enabledTab >= 2 ? 'tab' : 'tab disabled'} onClick={changeTab(2)}>Профиль</div>
             </div>
             {tab === 0 && (
                 <form onSubmit={changeTab(tab + 1, true)}>
                     <div className="default-input-container">
                         <TextField
-                            label="User name"
+                            label="Имя пользователя"
                             name="username"
                             value={userFormData.username}
                             onChange={handleInputChange}
@@ -102,7 +102,7 @@ const RegisterPage = () => {
                             required
                         />
                         <TextField
-                            label="Password"
+                            label="Пароль"
                             name="password"
                             type="password"
                             value={userFormData.password}
@@ -112,7 +112,7 @@ const RegisterPage = () => {
                             required
                         />
                         <TextField
-                            label="Confirm password"
+                            label="Подтверждение пароля"
                             name="confirmPassword"
                             type="password"
                             value={userFormData.confirmPassword}
@@ -123,29 +123,29 @@ const RegisterPage = () => {
                         />
                     </div>
                     <Button type="submit" variant="contained" fullWidth>
-                        Confirm
+                        Подтвердить
                     </Button>
                 </form>
             )}
             {tab === 1 && (
                 <form onSubmit={changeTab(tab + 1, true)}>
                     <div className="default-input-container">
-                        <InputLabel id="select-label">Choose role</InputLabel>
+                        <InputLabel id="select-label">Выберите роль</InputLabel>
                         <Select
                             labelId="select-label"
                             id="select"
                             name="role"
                             value={userFormData.role}
                             onChange={handleInputChange}
-                            label="Role"
+                            label="Роль"
                             fullWidth
                         >
-                            <MenuItem value={1}>Student</MenuItem>
-                            <MenuItem value={2}>Consultant</MenuItem>
+                            <MenuItem value={1}>Студент</MenuItem>
+                            <MenuItem value={2}>Консультант</MenuItem>
                         </Select>
                     </div>
                     <Button type="submit" variant="contained" fullWidth>
-                        Confirm
+                        Подтвердить
                     </Button>
                 </form>
             )}
@@ -153,7 +153,7 @@ const RegisterPage = () => {
                 <form onSubmit={handleSubmit}>
                     <div className="default-input-container">
                         <TextField
-                            label="Email"
+                            label="Эл.почта"
                             name="email"
                             value={profileFormData?.email}
                             onChange={handleProfileInputChange}
@@ -161,7 +161,7 @@ const RegisterPage = () => {
                             margin="normal"
                         />
                         <TextField
-                            label="First name"
+                            label="Имя"
                             name="firstName"
                             value={profileFormData?.firstName}
                             onChange={handleProfileInputChange}
@@ -169,7 +169,7 @@ const RegisterPage = () => {
                             margin="normal"
                         />
                         <TextField
-                            label="Last name"
+                            label="Фамилия"
                             name="lastName"
                             value={profileFormData?.lastName}
                             onChange={handleProfileInputChange}
@@ -178,7 +178,7 @@ const RegisterPage = () => {
                         />
                         <TextField
                             InputLabelProps={{ shrink: true }}
-                            label="Birth date"
+                            label="Дата рождения"
                             name="birthDate"
                             type="date"
                             value={profileFormData?.birthDate}
@@ -186,7 +186,7 @@ const RegisterPage = () => {
                             margin="normal"
                         />
                         <TextField
-                            label="Education"
+                            label="Образование"
                             name="education"
                             value={profileFormData?.education}
                             onChange={handleProfileInputChange}
@@ -194,7 +194,7 @@ const RegisterPage = () => {
                             margin="normal"
                         />
                         <TextField
-                            label="Biography"
+                            label="О себе"
                             name="biography"
                             multiline
                             rows={4}
@@ -205,7 +205,7 @@ const RegisterPage = () => {
                         />
                     </div>
                     <Button type="submit" variant="contained" fullWidth>
-                        Confirm
+                        Подтвердить
                     </Button>
                 </form>
             )}

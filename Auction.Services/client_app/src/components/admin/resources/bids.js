@@ -21,12 +21,12 @@ const postFilters = [
 export const BidList = (props) => (
     <List filters={postFilters} {...props}>
         <Datagrid rowClick="edit">
-            <TextField sortable={false} source="id" />
-            <NumberField sortable={false} source="amount" />
-            <TextField sortable={false} source="comment" />
-            <TextField sortable={false} source="dateTime" />
-            <TextField sortable={false} source="auctionId" />
-            <TextField sortable={false} source="userId" />
+            <TextField sortable={false} label="Идентификатор" source="id" />
+            <NumberField sortable={false} label="Сумма" source="amount" />
+            <TextField sortable={false} label="Коментарий" source="comment" />
+            <TextField sortable={false} label="Время" source="dateTime" />
+            <TextField sortable={false} label="Идентификатор лота" source="auctionId" />
+            <TextField sortable={false} label="Идентификатор пользователя" source="userId" />
             <EditButton />
         </Datagrid>
     </List>
@@ -35,11 +35,11 @@ export const BidList = (props) => (
 export const BidEdit = (props) => (
     <Edit {...props}>
         <SimpleForm>
-            <NumberInput required source="amount" name="amount"/>
-            <TextInput source="comment" name="comment" />
-            <DateTimeInput required source="dateTime" name="dateTime" />
-            <NumberInput required source="auctionId" name="auctionId" />
-            <TextInput required source="userId" name="userId" />
+            <NumberInput required source="amount" name="amount" label="Сумма"/>
+            <TextInput source="comment" name="comment" label="Коментарий"/>
+            <DateTimeInput required source="dateTime" name="dateTime" label="Время"/>
+            <NumberInput required source="auctionId" name="auctionId" label="Идентификатор лота"/>
+            <TextInput required source="userId" name="userId" label="Идентификатор пользователя"/>
         </SimpleForm>
     </Edit>
 );
@@ -47,11 +47,11 @@ export const BidEdit = (props) => (
 export const BidCreate = (props) => (
     <Create {...props}>
         <SimpleForm>
-            <NumberInput required source="amount" name="amount"/>
-            <TextInput source="comment" name="comment" />
-            <DateTimeInput required source="dateTime" name="dateTime" />
-            <NumberInput required source="auctionId" name="auctionId" />
-            <TextInput required source="userId" name="userId" />
+            <NumberInput required source="amount" name="amount" label="Сумма"/>
+            <TextInput source="comment" name="comment" label="Коментарий"/>
+            <DateTimeInput required source="dateTime" name="dateTime" label="Время"/>
+            <NumberInput required source="auctionId" name="auctionId" label="Идентификатор лота"/>
+            <TextInput required source="userId" name="userId" label="Идентификатор пользователя"/>
         </SimpleForm>
     </Create>
 );

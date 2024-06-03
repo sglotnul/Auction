@@ -33,8 +33,8 @@ const ProfileDrawer = ({isOpen, onClose}) => {
         }
     }, []);
 
-    const auctionLink = () => user.role === 1 || user.role === 3 ? <Link className="profile-drawer-link" to="/profile?tab=1" onClick={onClose}>Your auctions</Link> : null;
-    const adminLink = () => user.role === 3 ? <Link className="profile-drawer-link" target="_blank" to="/admin" onClick={onClose}>Administration</Link> : null;
+    const auctionLink = () => user.role === 1 || user.role === 3 ? <Link className="profile-drawer-link" to="/profile?tab=1" onClick={onClose}>Мои лоты</Link> : null;
+    const adminLink = () => user.role === 3 ? <Link className="profile-drawer-link" target="_blank" to="/admin" onClick={onClose}>Администрирование</Link> : null;
     
     return (
         <Drawer
@@ -48,13 +48,13 @@ const ProfileDrawer = ({isOpen, onClose}) => {
                     <div className="profile-drawer">
                         <div className="profile-drawer-content">
                             <div className="profile-drawer-user-name"><span className="profile-icon auction-owner-icon"/>{getUserFullName(user.userName, profile)}</div>
-                            <Link className="profile-drawer-link" to="/profile?tab=0" onClick={onClose}>Your profile</Link>
-                            <Link className="profile-drawer-link" to="/profile?tab=2" onClick={onClose}>Your consultations</Link>
+                            <Link className="profile-drawer-link" to="/profile?tab=0" onClick={onClose}>Мой профиль</Link>
+                            <Link className="profile-drawer-link" to="/profile?tab=2" onClick={onClose}>Мои консультации</Link>
                             {auctionLink()}
                             {adminLink()}
                         </div>
                         <Button onClick={onLogout} variant="contained" fullWidth color="error">
-                            Log Out
+                            Выйти
                         </Button>
                     </div>
                 )

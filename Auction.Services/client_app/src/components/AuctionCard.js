@@ -39,10 +39,10 @@ const AuctionCard = ({auction, children}) => {
                                 <span className="auction-bid-amount">{auction.currentBid.amount.toFixed(2)}</span>
                             </div>
                         </div>
-                        <div className="current-bid-separator">Current bid</div>
+                        <div className="current-bid-separator">Текущая ставка</div>
                     </div>
                 )
-                : <div className="auction-card-status-view"><div className="no-bids">no bids</div></div>
+                : <div className="auction-card-status-view"><div className="no-bids">Нет ставок</div></div>
             }
             {isActive && (
                 <div className="auction-card-remaining-time">

@@ -44,7 +44,7 @@ const AuctionView = ({auction, auctionLoading}) => {
     if (!auction) {
         return (
             <div className="auction-container">
-                Error.
+                Ошибка.
             </div>
         );
     }
@@ -95,7 +95,7 @@ const BidList = ({auction, auctionLoading}) => {
     if (!auctionLoading && !auction) {
         return (
             <div className="auction-bids">
-                Error.
+                Ошибка.
             </div>
         );
     }
@@ -119,19 +119,19 @@ const BidList = ({auction, auctionLoading}) => {
         <div className="auction-bids">
             {showTimer && <Timer endTime={endTime} onEnd={onTimeEnd} />}
             <BidButton auctionId={auction.id} visible={showTimer && buttonVisible} currentPrice={currentPrice} minDecrease={auction.minDecrease} onAction={reload}/>
-            {!bids.bids?.length && <div className="no-bids">no bids</div>}
+            {!bids.bids?.length && <div className="no-bids">Нет ставок</div>}
             {bids.bids?.map((b, i) => (
                 <Fragment key={b.id}>
                     <div className="auction-bid-container">
                         <Link to={`/profile/${b.user.userName}`}><span
                             className="profile-icon auction-bid-icon"/></Link>
                         <div className="auction-bid-content">
-                            <Link to={`/profile/${b.user.userName}`}><span>{getUserFullName(b.user.userName, b.user.profile)}{b.user.userId === user?.userId && ' (You)'}</span></Link>
+                            <Link to={`/profile/${b.user.userName}`}><span>{getUserFullName(b.user.userName, b.user.profile)}{b.user.userId === user?.userId && ' (Вы)'}</span></Link>
                             <span className="auction-bid-amount">{b.amount.toFixed(2)}</span>
                             <span className="auction-bid-comment">{b.comment}</span>
                         </div>
                     </div>
-                    {i === 0 && (<div className="current-bid-separator">Current bid</div>)}
+                    {i === 0 && (<div className="current-bid-separator">Текущая ставка</div>)}
                 </Fragment>
             ))}
         </div>
@@ -182,7 +182,7 @@ const BidButton = ({auctionId, visible, currentPrice, minDecrease, onAction}) =>
 
     return (
         <Fragment>
-            <Button disabled={currentPrice === 0} variant="contained" onClick={handleOpen} fullWidth>{currentPrice === 0 ? 'Unable to bid' : 'Bid'}</Button>
+            <Button disabled={currentPrice === 0} variant="contained" onClick={handleOpen} fullWidth>{currentPrice === 0 ? 'Ставки недоступны' : 'Ставка'}</Button>
             <Modal
                 open={isOpen}
                 onClose={handleClose}
@@ -191,7 +191,7 @@ const BidButton = ({auctionId, visible, currentPrice, minDecrease, onAction}) =>
                     <form onSubmit={handleSubmit}>
                         <NumericStepper maxValue={currentPrice - minDecrease} minValue={0} initialValue={currentPrice - minDecrease} step={minDecrease} onChange={handleStepperChange} />
                         <TextField
-                            label="Comment"
+                            label="Коментарий"
                             name="comment"
                             value={formData?.comment}
                             onChange={handleInputChange}
@@ -199,7 +199,7 @@ const BidButton = ({auctionId, visible, currentPrice, minDecrease, onAction}) =>
                             margin="normal"
                         />
                         <Button type="submit" variant="contained" fullWidth>
-                            Confirm
+                            Подтвердить
                         </Button>
                     </form>
                 </div>

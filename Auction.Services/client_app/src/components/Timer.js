@@ -40,7 +40,7 @@ const Timer = ({ endTime, onEnd }) => {
     return (
         <div className="timer-container">
             <div className="timer-display">{formatTime(timeLeft)}</div>
-            <div className="timer-text">until the end</div>
+            <div className="timer-text">до конца</div>
         </div>
     );
 };

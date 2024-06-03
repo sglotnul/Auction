@@ -36,7 +36,7 @@ const UserProfile = ({user, userName}) => {
         return (
             <div className="profile-page-content">
                 <div className="profile-data-container">
-                    Error.
+                    Ошибка.
                 </div>
             </div>
         );
@@ -95,7 +95,7 @@ const UserProfile = ({user, userName}) => {
                 <div className="profile-data-container">
                     <ProfileField
                         editable={edit}
-                        label="Email"
+                        label="Эл.почта"
                         name="email"
                         value={profile?.email}
                         onChange={handleProfileInputChange}
@@ -104,7 +104,7 @@ const UserProfile = ({user, userName}) => {
                     />
                     <ProfileField
                         editable={edit}
-                        label="First name"
+                        label="Имя"
                         name="firstName"
                         value={profile?.firstName}
                         onChange={handleProfileInputChange}
@@ -113,7 +113,7 @@ const UserProfile = ({user, userName}) => {
                     />
                     <ProfileField
                         editable={edit}
-                        label="Last name"
+                        label="Фамилия"
                         name="lastName"
                         value={profile?.lastName}
                         onChange={handleProfileInputChange}
@@ -122,7 +122,7 @@ const UserProfile = ({user, userName}) => {
                     />
                     <ProfileField
                         editable={edit}
-                        label="Birth date"
+                        label="Дата рождения"
                         name="birthDate"
                         type="date"
                         value={formatDate(profile?.birthDate)}
@@ -133,7 +133,7 @@ const UserProfile = ({user, userName}) => {
                     />
                     <ProfileField
                         editable={edit}
-                        label="Education"
+                        label="Образование"
                         name="education"
                         value={profile?.education}
                         onChange={handleProfileInputChange}
@@ -142,7 +142,7 @@ const UserProfile = ({user, userName}) => {
                     />
                     <ProfileField
                         editable={edit}
-                        label="Biography"
+                        label="О себе"
                         name="biography"
                         multiline
                         value={profile?.biography}
@@ -154,7 +154,7 @@ const UserProfile = ({user, userName}) => {
                 {
                     canEdit && (
                         <Button type="submit" variant="contained" fullWidth>
-                            { edit ? 'Confirm' : 'Edit'}
+                            { edit ? 'Подтверить' : 'Изменить'}
                         </Button>
                     )
                 }

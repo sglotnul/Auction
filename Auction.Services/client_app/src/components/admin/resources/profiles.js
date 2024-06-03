@@ -20,14 +20,14 @@ const postFilters = [
 export const ProfileList = (props) => (
     <List filters={postFilters} {...props}>
         <Datagrid rowClick="edit">
-            <TextField sortable={false} source="id" />
-            <TextField sortable={false} source="userId" />
-            <EmailField sortable={false} source="email" />
-            <TextField sortable={false} source="firstName" />
-            <TextField sortable={false} source="lastName" />
-            <DateField sortable={false} source="birthDate" />
-            <TextField sortable={false} source="biography" />
-            <TextField sortable={false} source="education" />
+            <TextField sortable={false} source="id" label="Идентификатор" />
+            <TextField sortable={false} source="userId" label="Идентификатор пользователя"/>
+            <EmailField sortable={false} source="email" label="Эл.почта"/>
+            <TextField sortable={false} source="firstName" label="Имя"/>
+            <TextField sortable={false} source="lastName" label="Фамилия"/>
+            <DateField sortable={false} source="birthDate" label="Дата рождения"/>
+            <TextField sortable={false} source="biography" label="О себе"/>
+            <TextField sortable={false} source="education" label="Образование"/>
             <EditButton />
         </Datagrid>
     </List>
@@ -36,13 +36,13 @@ export const ProfileList = (props) => (
 export const ProfileEdit = (props) => (
     <Edit {...props}>
         <SimpleForm>
-            <TextInput source="userId" name="userId" />
-            <TextInput source="email" name="email" />
-            <TextInput source="firstName" name="firstName" />
-            <TextInput source="lastName" name="lastName" />
-            <DateInput source="birthDate" name="birthDate" />
-            <TextInput source="biography" name="biography" />
-            <TextInput source="education"  name="education" />
+            <TextInput source="userId" name="userId" label="Идентификатор пользователя"/>
+            <TextInput source="email" name="email" label="Эл.почта"/>
+            <TextInput source="firstName" name="firstName" label="Имя"/>
+            <TextInput source="lastName" name="lastName" label="Фамилия"/>
+            <DateInput source="birthDate" name="birthDate" label="Дата рождения"/>
+            <TextInput source="biography" name="biography" label="О себе"/>
+            <TextInput source="education"  name="education" label="Образование"/>
         </SimpleForm>
     </Edit>
 );
@@ -50,13 +50,13 @@ export const ProfileEdit = (props) => (
 export const ProfileCreate = (props) => (
     <Create {...props}>
         <SimpleForm>
-            <TextInput source="userId" name="userId" />
-            <TextInput source="email" name="email" />
-            <TextInput source="firstName" name="firstName" />
-            <TextInput source="lastName" name="lastName" />
-            <DateInput source="birthDate" name="birthDate" />
-            <TextInput source="biography" name="biography" />
-            <TextInput source="education" name="education" />
+            <TextInput source="userId" name="userId" label="Идентификатор пользователя"/>
+            <TextInput source="email" name="email" label="Эл.почта"/>
+            <TextInput source="firstName" name="firstName" label="Имя"/>
+            <TextInput source="lastName" name="lastName" label="Фамилия"/>
+            <DateInput source="birthDate" name="birthDate" label="Дата рождения"/>
+            <TextInput source="biography" name="biography" label="О себе"/>
+            <TextInput source="education"  name="education" label="Образование"/>
         </SimpleForm>
     </Create>
 );

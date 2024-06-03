@@ -55,9 +55,9 @@ const ProfilePage = () => {
     return (
         <div className="default-container">
             <div className="tab-bar default-tabs">
-                <div className={tab === 0 ? 'tab disabled' : 'tab'} onClick={changeTab(0)}>Profile</div>
-                {isStudent && <div className={tab === 1 ? 'tab disabled' : 'tab'} onClick={changeTab(1)}>Auctions</div>}
-                {isCurrentUser && <div className={tab === 2 ? 'tab disabled' : 'tab'} onClick={changeTab(2)}>Consultations</div>}
+                <div className={tab === 0 ? 'tab disabled' : 'tab'} onClick={changeTab(0)}>Профиль</div>
+                {isStudent && <div className={tab === 1 ? 'tab disabled' : 'tab'} onClick={changeTab(1)}>Лоты</div>}
+                {isCurrentUser && <div className={tab === 2 ? 'tab disabled' : 'tab'} onClick={changeTab(2)}>Консультации</div>}
             </div>
             {tab === 0 && <UserProfile user={currentUser} userName={userName}/>}
             {isStudent && tab === 1 && <UserAuctions user={currentUser} userName={userName} />}

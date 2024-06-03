@@ -58,7 +58,7 @@ const AuctionsList = ({auctions, loading}) => {
 						<AuctionCard key={auction.id} auction={auction} />
 					)
 				)
-				: 'Nothing found'
+				: 'Ничего не найдено.'
 			}
 		</div>
 	);
@@ -75,7 +75,7 @@ const AuctionsCountView = ({count, loading}) => {
 
 	return (
 		<div className="auctions-count-bar">
-			Found {count} auctions
+			Найдено {count} лотов
 		</div>
 	);
 }

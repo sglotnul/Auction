@@ -72,7 +72,7 @@ const UserAuctions = ({user, userName}) => {
         return (
             <div className="profile-page-content">
                 <div className="profile-auctions-container">
-                    Error.
+                    Ошибка.
                 </div>
             </div>
         );
@@ -90,10 +90,10 @@ const UserAuctions = ({user, userName}) => {
     return (
         <div className="profile-page-content">
             <div className="profile-auctions-container">
-                {isOwner && <Link to="/auctions/new"><Button variant="contained" color="success" fullWidth>New</Button></Link>}
+                {isOwner && <Link to="/auctions/new"><Button variant="contained" color="success" fullWidth>Новый лот</Button></Link>}
                 {isOwner && <AuctionStatusFilter drafts={checkedItems.drafts} active={checkedItems.active} completed={checkedItems.completed} onChange={handleChange}/>}
-                {!auctions.length && 'Nothing found'}
-                {!!splittedAuctions.confirmation.length && <div className="auction-separator active">Waiting for confirmation</div>}
+                {!auctions.length && 'Ничего не найдено.'}
+                {!!splittedAuctions.confirmation.length && <div className="auction-separator active">Ожидающие подтверждения</div>}
                 {splittedAuctions.confirmation.map(
                     (auction) => (
                         <AuctionCard key={auction.id} auction={auction}>
@@ -104,18 +104,18 @@ const UserAuctions = ({user, userName}) => {
                         </AuctionCard>
                     )
                     )}
-                {checkedItems.drafts && !!splittedAuctions.drafts.length && <div className="auction-separator">Drafts</div>}
+                {checkedItems.drafts && !!splittedAuctions.drafts.length && <div className="auction-separator">Черновики</div>}
                 {checkedItems.drafts && splittedAuctions.drafts.map(
                     (auction) => (
                         <AuctionCard key={auction.id} auction={auction}>
                             <div className="auction-card-button-row">
                                 <LaunchAuctionButton auctionId={auction.id} />
-                                <Link to={`/auctions/${auction.id}/edit`}><Button variant="contained">Edit</Button></Link>
+                                <Link to={`/auctions/${auction.id}/edit`}><Button variant="contained">Редактировать</Button></Link>
                             </div>
                         </AuctionCard>
                     )
                 )}
-                {checkedItems.active && !!splittedAuctions.active.length && <div className="auction-separator active">Active auctions</div>}
+                {checkedItems.active && !!splittedAuctions.active.length && <div className="auction-separator active">Активные лоты</div>}
                 {checkedItems.active && splittedAuctions.active.map(
                     (auction) => (
                         <AuctionCard key={auction.id} auction={auction}>
@@ -125,7 +125,7 @@ const UserAuctions = ({user, userName}) => {
                         </AuctionCard>
                     )
                     )}
-                {checkedItems.completed && !!splittedAuctions.completed.length && <div className="auction-separator">Completed auctions</div>}
+                {checkedItems.completed && !!splittedAuctions.completed.length && <div className="auction-separator">Завершенные лоты</div>}
                 {checkedItems.completed && splittedAuctions.completed.map(
                     (auction) => (
                         <AuctionCard key={auction.id} auction={auction} />
@@ -148,7 +148,7 @@ const AuctionStatusFilter = ({drafts, active, completed, onChange}) => {
                             name="drafts"
                         />
                     }
-                    label="Drafts"
+                    label="Черновики"
                 />
             </div>
             <div className="auction-type-filter-item">
@@ -160,7 +160,7 @@ const AuctionStatusFilter = ({drafts, active, completed, onChange}) => {
                             name="active"
                         />
                     }
-                    label="Active"
+                    label="Активные"
                 />
             </div>
             <div className="auction-type-filter-item">
@@ -172,7 +172,7 @@ const AuctionStatusFilter = ({drafts, active, completed, onChange}) => {
                             name="completed"
                         />
                     }
-                    label="Completed"
+                    label="Завершенные"
                 />
             </div>
         </div>
@@ -198,7 +198,7 @@ const CancelButton = ({auctionId, onAction}) => {
         }
     }, []);
 
-    return (<Button variant="contained" color="error" onClick={handleClick}>Cancel</Button>);
+    return (<Button variant="contained" color="error" onClick={handleClick}>Отменить</Button>);
 };
 
 const ConfirmButton = ({auctionId}) => {
@@ -222,7 +222,7 @@ const ConfirmButton = ({auctionId}) => {
         }
     }, []);
 
-    return (<Button variant="contained" color="success" onClick={handleClick}>Start consultation</Button>);
+    return (<Button variant="contained" color="success" onClick={handleClick}>Начать консультацию</Button>);
 };
 
 const LaunchAuctionButton = ({auctionId}) => {
@@ -286,7 +286,7 @@ const LaunchAuctionButton = ({auctionId}) => {
 
     return (
         <>
-            <Button variant="contained" color="success" onClick={handleOpen}>Launch</Button>
+            <Button variant="contained" color="success" onClick={handleOpen}>Запустить</Button>
             <Modal
                 open={isOpen}
                 onClose={handleClose}
@@ -306,16 +306,16 @@ const LaunchAuctionButton = ({auctionId}) => {
                             name="unit"
                             value={unit}
                             onChange={handleUnitChange}
-                            label="Unit"
+                            label="Ед.измерения"
                             fullWidth
                             sx={{marginBottom: '8px'}}
                         >
-                            <MenuItem value="minutes">Minutes</MenuItem>
-                            <MenuItem value="hours">Hours</MenuItem>
-                            <MenuItem value="days">Days</MenuItem>
+                            <MenuItem value="minutes">Минут</MenuItem>
+                            <MenuItem value="hours">Часов</MenuItem>
+                            <MenuItem value="days">Дней</MenuItem>
                         </Select>
                         <Button type="submit" variant="contained" fullWidth>
-                            Confirm
+                            Подтвердить
                         </Button>
                     </form>
                 </div>

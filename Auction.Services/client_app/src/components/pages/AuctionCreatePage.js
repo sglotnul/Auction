@@ -90,15 +90,15 @@ const AuctionCreatePage = () => {
     return (
         <div className="default-container">
             <div className="tab-bar default-tabs">
-                <div className={enabledTab >= 0 ? 'tab' : 'tab disabled'} onClick={changeTab(0)}>Title</div>
-                <div className={enabledTab >= 1 ? 'tab' : 'tab disabled'} onClick={changeTab(1)}>Description</div>
-                <div className={enabledTab >= 2 ? 'tab' : 'tab disabled'} onClick={changeTab(2)}>Details</div>
+                <div className={enabledTab >= 0 ? 'tab' : 'tab disabled'} onClick={changeTab(0)}>Заголовок</div>
+                <div className={enabledTab >= 1 ? 'tab' : 'tab disabled'} onClick={changeTab(1)}>Описание</div>
+                <div className={enabledTab >= 2 ? 'tab' : 'tab disabled'} onClick={changeTab(2)}>Подробности</div>
             </div>
             {tab === 0 && (
                 <form onSubmit={changeTab(tab + 1, true)}>
                     <div className="default-input-container">
                         <TextField
-                            label="Title"
+                            label="Заголовок"
                             name="title"
                             value={auctionFormData.title}
                             onChange={handleInputChange}
@@ -108,7 +108,7 @@ const AuctionCreatePage = () => {
                         />
                     </div>
                     <Button type="submit" variant="contained" fullWidth>
-                        Confirm
+                        Подтвердить
                     </Button>
                 </form>
             )}
@@ -116,7 +116,7 @@ const AuctionCreatePage = () => {
                 <form onSubmit={changeTab(tab + 1, true)}>
                     <div className="default-input-container">
                         <TextField
-                            label="Description"
+                            label="Описание"
                             name="description"
                             multiline
                             rows={4}
@@ -128,7 +128,7 @@ const AuctionCreatePage = () => {
                         />
                     </div>
                     <Button type="submit" variant="contained" fullWidth>
-                        Confirm
+                        Подтвердить
                     </Button>
                 </form>
             )}
@@ -136,7 +136,7 @@ const AuctionCreatePage = () => {
                 <form onSubmit={handleSubmit}>
                     <div className="default-input-container">
                         <TextField
-                            label="Initial Price"
+                            label="Начальная цена"
                             name="initialPrice"
                             value={(auctionFormData.initialPrice).toFixed(2)}
                             onChange={handleMoneyChange}
@@ -145,7 +145,7 @@ const AuctionCreatePage = () => {
                             required
                         />
                         <TextField
-                            label="Minimum decrease"
+                            label="Минимальное снижение"
                             name="minDecrease"
                             value={(auctionFormData.minDecrease).toFixed(2)}
                             onChange={handleMoneyChange}
@@ -153,14 +153,14 @@ const AuctionCreatePage = () => {
                             fullWidth
                             required
                         />
-                        <InputLabel id="multiple-checkbox-label">Categories</InputLabel>
+                        <InputLabel id="multiple-checkbox-label">Категории</InputLabel>
                         <Select
                             labelId="multiple-checkbox-label"
                             id="multiple-checkbox"
                             multiple
                             value={selectedCategories}
                             onChange={handleCheckboxChange}
-                            renderValue={selected => selected.map(s => categories.find(c => c.id === s)?.name).join(', ') || 'Choose categories'}
+                            renderValue={selected => selected.map(s => categories.find(c => c.id === s)?.name).join(', ') || 'Выберите категории'}
                             fullWidth
                             displayEmpty
                             margin="normal"
@@ -174,7 +174,7 @@ const AuctionCreatePage = () => {
                         </Select>
                     </div>
                     <Button type="submit" variant="contained" fullWidth>
-                        Confirm
+                        Подтвердить
                     </Button>
                 </form>
             )}
