@@ -20,7 +20,7 @@ const customRussianMessages = {
     ...russianMessages,
     resources: {
         auctions: {
-            name: 'Аукционы',
+            name: 'Лоты',
         },
         bids: {
             name: 'Ставки',
